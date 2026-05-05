@@ -385,15 +385,28 @@
      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
         <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Tabel Master Presensi</h3>
-        <button onclick="exportData()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2">📥 <span class="hidden sm:inline">Download CSV</span></button>
+        <div class="flex gap-2">
+          <button onclick="toggleAlfaRecap()" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded-lg transition-colors flex items-center gap-2">❌ <span class="hidden sm:inline">Rekap Alfa</span></button>
+          <button onclick="exportData()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-2">📥 <span class="hidden sm:inline">Download CSV</span></button>
+        </div>
       </div>
+      
+      <!-- Rekap Alfa Card (Hidden by Default) -->
+      <div id="alfa-recap-card" class="hidden bg-slate-50 border-b border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="font-bold text-red-700 text-lg">📑 Rekapan Siswa Alfa (Sesuai Filter)</h4>
+          <button onclick="toggleAlfaRecap()" class="text-slate-500 hover:text-slate-700 text-sm font-bold">Tutup Rekap</button>
+        </div>
+        <div id="alfa-recap-content"></div>
+      </div>
+
       <div class="overflow-x-auto">
        <table class="w-full text-left">
         <thead class="bg-slate-100/50">
          <tr>
           <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa / Ket.</th>
           <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider mobile-hide-col">Tanggal</th>
+          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider mobile-hide-col">Waktu Presensi</th>
           <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status Presensi</th>
           <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider mobile-hide-col">Pencatat</th>
           <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Opsi</th>
@@ -601,35 +614,56 @@
 
     <!-- Admin Pengelolaan Siswa Tab -->
     <div id="content-admin" class="tab-content hidden fade-in">
-     <div class="max-w-4xl mx-auto">
+     <div class="max-w-6xl mx-auto">
       <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 slide-up">
        <div class="mb-8 border-b border-slate-100 pb-6">
-         <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚙️ Kelola Data Siswa (Mutasi/Baru)</h2>
-         <p class="text-slate-500 text-sm mt-1">Gunakan panel ini untuk menambah siswa baru atau menghapus/mutasi siswa yang sudah ada. Perubahan akan disimpan di browser Anda.</p>
+         <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚙️ Kelola Data Siswa & Kelas</h2>
+         <p class="text-slate-500 text-sm mt-1">Tambah, edit, atau hapus kelas dan siswa. Fitur input/hapus massal tersedia untuk mempercepat kerja Anda.</p>
        </div>
        
-       <div class="grid sm:grid-cols-3 gap-6">
-        <div class="sm:col-span-1 space-y-6">
+       <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Kolom Kiri: Manajemen Kelas & Input -->
+        <div class="lg:col-span-1 space-y-6">
+         
+         <!-- Manajemen Kelas -->
          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Kelas</label>
-          <select id="admin-class-select" onchange="renderAdminStudentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 transition-colors">
+          <label class="block text-sm font-bold text-slate-700 mb-2">Pilih / Kelola Kelas</label>
+          <select id="admin-class-select" onchange="renderAdminStudentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 transition-colors mb-3">
             <option value="">-- Pilih Kelas --</option>
-            <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option>
-            <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option>
-            <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option>
           </select>
+          <div class="flex gap-2">
+            <button onclick="promptAddClass()" class="flex-1 py-2 text-xs font-bold bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg transition-colors">➕ Tambah</button>
+            <button onclick="promptRenameClass()" class="flex-1 py-2 text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-lg transition-colors">✏️ Edit</button>
+            <button onclick="promptDeleteClass()" class="flex-1 py-2 text-xs font-bold bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors">🗑️ Hapus</button>
+          </div>
          </div>
          
+         <!-- Tambah Siswa Tunggal -->
          <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
-          <label class="block text-sm font-bold text-blue-900 mb-2">Tambah Siswa Baru</label>
-          <input type="text" id="admin-new-student" placeholder="Nama Lengkap Siswa" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 mb-3 bg-white font-medium">
-          <button onclick="addStudent()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all">Tambah Siswa</button>
+          <label class="block text-sm font-bold text-blue-900 mb-2">Input Siswa Tunggal</label>
+          <input type="text" id="admin-new-student" placeholder="Nama Lengkap Siswa" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 mb-3 bg-white font-medium text-sm">
+          <button onclick="addStudent()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all text-sm">Tambah Siswa</button>
          </div>
+
+         <!-- Input Massal -->
+         <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+          <label class="block text-sm font-bold text-emerald-900 mb-2">Input Massal (Banyak Siswa)</label>
+          <p class="text-xs text-emerald-700 mb-2">Ketik/Paste daftar nama siswa (pisahkan dengan enter):</p>
+          <textarea id="admin-bulk-students" rows="4" placeholder="Siswa A&#10;Siswa B&#10;Siswa C..." class="w-full px-4 py-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 mb-3 bg-white font-medium text-sm resize-none"></textarea>
+          <button onclick="addBulkStudents()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-500/20 transition-all text-sm">Tambah Massal</button>
+         </div>
+
         </div>
 
-        <div class="sm:col-span-2">
-         <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 h-[500px] flex flex-col">
-          <h3 class="font-bold text-slate-700 mb-4 pb-2 border-b border-slate-200">Daftar Siswa Kelas Ini</h3>
+        <!-- Kolom Kanan: Daftar Siswa -->
+        <div class="lg:col-span-2">
+         <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 h-full min-h-[600px] flex flex-col">
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+            <h3 class="font-bold text-slate-700">Daftar Siswa Kelas Terpilih</h3>
+            <button onclick="deleteAllStudentsInClass()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+              🗑️ Hapus Massal (Semua)
+            </button>
+          </div>
           <div id="admin-student-list" class="flex-1 overflow-y-auto scrollbar-thin pr-2">
             <div class="text-center py-16 text-slate-400">
               <span class="text-5xl mb-3 block opacity-50">📋</span>
@@ -699,7 +733,7 @@
    <footer class="bg-white border-t border-slate-200 mt-12">
     <div class="max-w-7xl mx-auto px-4 py-6">
      <div class="text-center">
-      <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">© 2026 Noviyalpg Creative. Sistem Presensi Terintegrasi Cerdas.</p>
+      <p class="text-sm font-semibold text-slate-500 tracking-wide">© 2026 Noviyalpg Creative. Sistem Presensi Terintegrasi Cerdas.</p>
      </div>
     </div>
    </footer>
@@ -1015,7 +1049,7 @@
             </div>
             <div class="flex-1 min-w-0">
               <p class="font-black text-slate-800 truncate mb-0.5">${record.student_name}</p>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kelas ${record.class_name}</p>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kelas ${record.class_name} • ${record.created_at ? new Date(record.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-'} WIB</p>
             </div>
             <span class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider ${getTypeBadgeClass(record.type)}">
               ${record.type}
@@ -1147,14 +1181,19 @@
 
       const sorted = [...filteredRecords].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
 
-      tbody.innerHTML = sorted.map(record => `
+      tbody.innerHTML = sorted.map(record => {
+        const timeStr = record.created_at ? new Date(record.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-';
+        return `
         <tr class="hover:bg-slate-50 transition-colors bg-white border-b border-slate-100">
           <td class="px-4 py-4">
             <div class="font-black text-slate-800 text-sm tracking-wide">${record.student_name}</div>
             ${record.description ? `<div class="text-xs font-semibold text-slate-400 mt-1 max-w-[200px] truncate" title="${record.description}">📌 ${record.description}</div>` : ''}
           </td>
           <td class="px-4 py-4 text-slate-600 text-sm font-bold">${record.class_name}</td>
-          <td class="px-4 py-4 text-slate-500 text-sm font-medium mobile-hide-col">${formatDate(record.date)}</td>
+          <td class="px-4 py-4 text-slate-500 text-sm font-medium mobile-hide-col">
+            ${formatDate(record.date)}
+            <br><span class="text-xs text-slate-400 font-bold">${timeStr} WIB</span>
+          </td>
           <td class="px-4 py-4">
             <span class="px-3 py-1.5 rounded-lg text-xs font-black tracking-wider uppercase inline-flex items-center gap-1.5 ${getTypeBadgeClass(record.type)}">
               ${getTypeIcon(record.type)} <span class="hidden sm:inline">${record.type}</span>
@@ -1172,7 +1211,7 @@
             </div>
           </td>
         </tr>
-      `).join('');
+      `}).join('');
     }
 
     function formatDate(dateStr) {
@@ -1282,6 +1321,9 @@
       });
 
       updateHistoryTable();
+      if (!document.getElementById('alfa-recap-card').classList.contains('hidden')) {
+        renderAlfaRecap();
+      }
     }
 
     function clearFilters() {
@@ -1291,6 +1333,71 @@
       document.getElementById('filter-type').value = '';
       filteredRecords = [...allRecords];
       updateHistoryTable();
+      if (!document.getElementById('alfa-recap-card').classList.contains('hidden')) {
+        renderAlfaRecap();
+      }
+    }
+
+    // Toggle dan Render Rekap Alfa
+    function toggleAlfaRecap() {
+      const card = document.getElementById('alfa-recap-card');
+      if(card.classList.contains('hidden')) {
+        card.classList.remove('hidden');
+        renderAlfaRecap();
+      } else {
+        card.classList.add('hidden');
+      }
+    }
+
+    function renderAlfaRecap() {
+      const alfaRecords = filteredRecords.filter(r => r.type === 'alfa');
+      const container = document.getElementById('alfa-recap-content');
+      
+      if (alfaRecords.length === 0) {
+        container.innerHTML = '<div class="text-center py-6 text-slate-400"><p class="font-medium text-lg">✨ Tidak ada data Alfa pada filter ini.</p></div>';
+        return;
+      }
+
+      // Kelompokkan berdasarkan kelas
+      const grouped = {};
+      alfaRecords.forEach(r => {
+        if(!grouped[r.class_name]) grouped[r.class_name] = [];
+        grouped[r.class_name].push(r);
+      });
+
+      // Urutkan kelas (7.1, 7.2, dll)
+      const sortedClasses = Object.keys(grouped).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+      
+      let html = '<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">';
+      sortedClasses.forEach(cls => {
+        // Urutkan siswa berdasarkan abjad A-Z dalam tiap kelas
+        const students = grouped[cls].sort((a, b) => a.student_name.localeCompare(b.student_name));
+        
+        html += `
+        <div class="bg-white border border-red-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="bg-red-50 px-4 py-3 border-b border-red-100 flex justify-between items-center">
+                <h4 class="font-bold text-red-800">Kelas ${cls}</h4>
+                <span class="bg-red-100 text-red-600 text-xs font-black px-2 py-1 rounded-lg">${students.length} Siswa</span>
+            </div>
+            <ul class="divide-y divide-slate-100 max-h-60 overflow-y-auto scrollbar-thin">
+                ${students.map(s => {
+                  const timeStr = s.created_at ? new Date(s.created_at).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' WIB' : '';
+                  return `
+                    <li class="px-4 py-3 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-700">${s.student_name}</span>
+                        <div class="text-right">
+                            <span class="block text-xs font-bold text-slate-500">${formatDate(s.date)}</span>
+                            <span class="block text-[10px] font-medium text-slate-400">${timeStr}</span>
+                        </div>
+                    </li>
+                  `;
+                }).join('')}
+            </ul>
+        </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
     }
 
     // Student Individual Filter Functions
@@ -1396,9 +1503,10 @@
         return;
       }
 
-      let csv = 'Nama Siswa,Kelas,Tanggal,Jenis Presensi,Guru Pencatat,Keterangan Tambahan\n';
+      let csv = 'Nama Siswa,Kelas,Tanggal,Waktu,Jenis Presensi,Guru Pencatat,Keterangan Tambahan\n';
       filteredRecords.forEach(r => {
-        csv += `"${r.student_name}","${r.class_name}","${r.date}","${r.type.toUpperCase()}","${r.teacher_name}","${r.description || '-'}"\n`;
+        const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-';
+        csv += `"${r.student_name}","${r.class_name}","${r.date}","${timeStr}","${r.type.toUpperCase()}","${r.teacher_name}","${r.description || '-'}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1425,7 +1533,7 @@
 
       const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
       if (students.length === 0) {
-        listContainer.innerHTML = `<p class="text-center text-slate-500 py-4">Tidak ada data siswa.</p>`;
+        listContainer.innerHTML = `<p class="text-center text-slate-500 py-4">Tidak ada data siswa. Gunakan fitur "Tambah Siswa" atau "Input Massal".</p>`;
         return;
       }
 
@@ -1472,6 +1580,130 @@
         renderAdminStudentList();
         initDate(); // Refresh total count
         showToast(`${name} berhasil dihapus dari daftar kelas.`, "success");
+      }
+    }
+
+    // PENAMBAHAN FITUR MANAJEMEN KELAS & INPUT/HAPUS MASSAL
+    function populateClassSelects() {
+      const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+      const selects = [
+        { id: 'bulk-class', defaultText: '-- Kelas --' },
+        { id: 'student-filter-class', defaultText: '-- Pilih Kelas --' },
+        { id: 'filter-class', defaultText: 'Semua Kelas' },
+        { id: 'edit-class-name', defaultText: '-- Kelas --' },
+        { id: 'qr-class', defaultText: '-- Kelas --' },
+        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' }
+      ];
+
+      selects.forEach(selInfo => {
+        const sel = document.getElementById(selInfo.id);
+        if (!sel) return;
+        const currentVal = sel.value;
+        sel.innerHTML = `<option value="">${selInfo.defaultText}</option>` +
+          classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        // Pertahankan opsi yang sedang dipilih (jika kelas tersebut masih ada)
+        if (classes.includes(currentVal)) sel.value = currentVal;
+      });
+    }
+
+    function promptAddClass() {
+      const newCls = prompt("Masukkan nama kelas baru (Contoh: 10.1):");
+      if(newCls && newCls.trim()) {
+        const clsName = newCls.trim();
+        if(studentsByClass[clsName]) return showToast("Nama kelas sudah ada!", "error");
+        
+        studentsByClass[clsName] = ['NIHIL'];
+        saveStudentsToLocal();
+        populateClassSelects();
+        
+        document.getElementById('admin-class-select').value = clsName;
+        renderAdminStudentList();
+        showToast(`Kelas ${clsName} berhasil ditambahkan`, "success");
+      }
+    }
+
+    function promptRenameClass() {
+      const oldCls = document.getElementById('admin-class-select').value;
+      if(!oldCls) return showToast("Pilih kelas pada dropdown terlebih dahulu!", "error");
+      
+      const newCls = prompt(`Ubah nama kelas ${oldCls} menjadi:`, oldCls);
+      if(newCls && newCls.trim() && newCls.trim() !== oldCls) {
+        const clsName = newCls.trim();
+        if(studentsByClass[clsName]) return showToast("Nama kelas tersebut sudah digunakan!", "error");
+        
+        studentsByClass[clsName] = studentsByClass[oldCls];
+        delete studentsByClass[oldCls];
+        
+        saveStudentsToLocal();
+        populateClassSelects();
+        
+        document.getElementById('admin-class-select').value = clsName;
+        renderAdminStudentList();
+        showToast("Nama kelas berhasil diubah", "success");
+      }
+    }
+
+    function promptDeleteClass() {
+      const cls = document.getElementById('admin-class-select').value;
+      if(!cls) return showToast("Pilih kelas pada dropdown terlebih dahulu!", "error");
+      
+      if(confirm(`⚠️ PERINGATAN!\n\nYakin ingin menghapus kelas ${cls} beserta seluruh daftar siswanya?`)) {
+        delete studentsByClass[cls];
+        saveStudentsToLocal();
+        populateClassSelects();
+        
+        document.getElementById('admin-class-select').value = "";
+        renderAdminStudentList();
+        initDate(); // Perbarui statistik populasi
+        showToast(`Kelas ${cls} beserta daftarnya berhasil dihapus`, "success");
+      }
+    }
+
+    function addBulkStudents() {
+      const cls = document.getElementById('admin-class-select').value;
+      if(!cls) return showToast("Pilih kelas terlebih dahulu!", "error");
+      
+      const text = document.getElementById('admin-bulk-students').value;
+      const names = text.split('\n').map(n => n.trim()).filter(n => n);
+      
+      if(names.length === 0) return showToast("Daftar nama tidak boleh kosong!", "error");
+
+      let added = 0;
+      names.forEach(name => {
+        if(!studentsByClass[cls].map(s=>s.toLowerCase()).includes(name.toLowerCase())) {
+          studentsByClass[cls].push(name);
+          added++;
+        }
+      });
+
+      if(added > 0) {
+        const hasNihil = studentsByClass[cls].includes('NIHIL');
+        const others = studentsByClass[cls].filter(s => s !== 'NIHIL').sort();
+        studentsByClass[cls] = hasNihil ? ['NIHIL', ...others] : others;
+        
+        saveStudentsToLocal();
+        renderAdminStudentList();
+        initDate();
+        document.getElementById('admin-bulk-students').value = '';
+        showToast(`${added} siswa berhasil ditambahkan secara massal!`, "success");
+      } else {
+        showToast("Gagal: Semua siswa tersebut sudah terdaftar di kelas ini.", "error");
+      }
+    }
+
+    function deleteAllStudentsInClass() {
+      const cls = document.getElementById('admin-class-select').value;
+      if(!cls) return showToast("Pilih kelas terlebih dahulu!", "error");
+      
+      const studentCount = studentsByClass[cls].filter(s => s !== 'NIHIL').length;
+      if(studentCount === 0) return showToast("Daftar siswa sudah kosong!", "error");
+
+      if(confirm(`⚠️ PERINGATAN BAHAYA!\n\nYakin menghapus SEMUA SISWA (${studentCount} orang) dari kelas ${cls}?\nTindakan ini akan mengosongkan daftar secara permanen.`)) {
+        studentsByClass[cls] = ['NIHIL'];
+        saveStudentsToLocal();
+        renderAdminStudentList();
+        initDate();
+        showToast(`Seluruh siswa di kelas ${cls} berhasil dihapus.`, "success");
       }
     }
 
@@ -2188,9 +2420,10 @@
 
     // App Init
     async function initApp() {
-      initDate();
+      // Pastikan dropdown kelas menyesuaikan data dari memory
+      populateClassSelects();
       
-      // Set bulk date to today
+      initDate();
       document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
 
       // ========================================================
