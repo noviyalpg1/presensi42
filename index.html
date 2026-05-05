@@ -13,6 +13,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <!-- Library untuk Memindai QR Code via Kamera -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <!-- Library untuk Download ZIP Massal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -431,12 +433,17 @@
         <div class="space-y-4">
          <div>
           <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Kelas</label>
-          <select id="qr-class" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
-           <option value="">-- Pilih Kelas --</option>
-           <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option>
-           <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option>
-           <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option>
-          </select>
+          <div class="flex gap-2">
+           <select id="qr-class" class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option>
+            <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option>
+            <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option>
+           </select>
+           <button onclick="downloadBulkQR()" id="btn-bulk-qr" disabled title="Download QR Satu Kelas (ZIP)" class="px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-bold text-sm">
+             📥 <span class="hidden sm:inline">ZIP Massal</span>
+           </button>
+          </div>
          </div>
          <div>
           <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Siswa</label>
@@ -445,15 +452,18 @@
           </select>
          </div>
          <button onclick="generateQR()" id="btn-generate-qr" disabled class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          Buat QR Code
+          Lihat QR Code
          </button>
         </div>
         <div class="flex flex-col items-center justify-center p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl min-h-[300px]">
          <div id="qr-result-container" class="hidden flex flex-col items-center w-full">
           <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-4 flex flex-col items-center w-full max-w-[250px]">
-           <h3 class="font-bold text-slate-800 mb-1 text-center" id="qr-display-name">Nama Siswa</h3>
+           <h3 class="font-bold text-slate-800 mb-1 text-center truncate w-full px-2" id="qr-display-name">Nama Siswa</h3>
            <p class="text-sm text-slate-500 mb-4 text-center" id="qr-display-class">Kelas</p>
-           <canvas id="qr-canvas" class="mx-auto"></canvas>
+           <canvas id="qr-canvas" class="mx-auto mb-3"></canvas>
+           <button onclick="downloadSingleQR()" class="w-full px-3 py-2 mt-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+            📥 Download Kartu (PNG)
+           </button>
           </div>
           <div class="w-full space-y-2">
            <label class="block text-xs font-medium text-slate-500 text-center">URL Link Presensi (Bagikan ke siswa)</label>
@@ -491,10 +501,11 @@
           <h3 class="text-xl font-bold text-slate-800" id="scan-student-name">-</h3>
           <p class="text-slate-600 font-medium" id="scan-student-class">-</p>
          </div>
-         <button onclick="resetScanResult()" class="text-slate-400 hover:text-slate-600 text-xl font-bold touch-target">✕</button>
+         <div id="scan-status-badge"></div>
+         <button onclick="resetScanResult()" class="text-slate-400 hover:text-slate-600 text-xl font-bold touch-target hidden" id="close-scan-btn">✕</button>
         </div>
         
-        <div class="space-y-4">
+        <div id="manual-scan-actions" class="space-y-4 hidden">
          <div>
           <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Status Kehadiran:</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -609,6 +620,8 @@
     let html5QrcodeScanner = null;
     let isScannerRunning = false;
     let currentScannedStudent = null;
+    let lastScannedText = "";
+    let scanTimeout = null;
 
     // Student Data by Class
     const studentsByClass = {
@@ -1020,10 +1033,10 @@
           <td class="px-2 sm:px-4 py-2 sm:py-3 text-slate-600 text-sm mobile-hide-col">${record.teacher_name}</td>
           <td class="px-2 sm:px-4 py-2 sm:py-3">
             <div class="flex items-center justify-center gap-1">
-              <button onclick="openEditModal('${record.__backendId}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors touch-target" title="Edit">
+              <button onclick="openEditModal('${record.__backendId || record.id}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors touch-target" title="Edit">
                 ✏️
               </button>
-              <button onclick="openDeleteModal('${record.__backendId}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors touch-target" title="Hapus">
+              <button onclick="openDeleteModal('${record.__backendId || record.id}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors touch-target" title="Hapus">
                 🗑️
               </button>
             </div>
@@ -1074,7 +1087,7 @@
 
     // Edit Modal
     function showEditModal(id) {
-      editTargetRecord = allRecords.find(r => r.__backendId === id);
+      editTargetRecord = allRecords.find(r => r.__backendId === id || r.id === id);
       if (!editTargetRecord) return;
 
       document.getElementById('edit-id').value = id;
@@ -1126,7 +1139,7 @@
 
     // Delete Modal
     function openDeleteModal(id) {
-      deleteTargetRecord = allRecords.find(r => r.__backendId === id);
+      deleteTargetRecord = allRecords.find(r => r.__backendId === id || r.id === id);
       document.getElementById('delete-modal').classList.remove('hidden');
       document.getElementById('delete-password').value = '';
       document.getElementById('delete-password-error').classList.add('hidden');
@@ -1357,11 +1370,13 @@
       const selectedClass = this.value;
       const studentSelect = document.getElementById('qr-student');
       const btnGenerate = document.getElementById('btn-generate-qr');
+      const btnBulk = document.getElementById('btn-bulk-qr');
       
       if (!selectedClass) {
         studentSelect.disabled = true;
         studentSelect.innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
         btnGenerate.disabled = true;
+        btnBulk.disabled = true;
         return;
       }
       
@@ -1371,6 +1386,8 @@
       studentSelect.disabled = false;
       studentSelect.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>' + 
         filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
+        
+      btnBulk.disabled = filterableStudents.length === 0;
     });
 
     document.getElementById('qr-student').addEventListener('change', function() {
@@ -1409,6 +1426,135 @@
       copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
       showToast('Link disalin ke clipboard!', 'success');
+    }
+
+    // Pembuatan Canvas Kartu Identitas Gabungan (Desain Kartu)
+    function createQRCardCanvas(name, cls, qrUrl) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 300;
+      canvas.height = 420;
+      const ctx = canvas.getContext('2d');
+
+      // Background Putih
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Border luar
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+
+      // Header Warna
+      ctx.fillStyle = '#2563eb';
+      ctx.fillRect(0, 0, canvas.width, 60);
+
+      // Text Header
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px "Plus Jakarta Sans", Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('KARTU PRESENSI QR', 150, 38);
+
+      // Generate QR pada canvas temporary
+      const qrCanvas = document.createElement('canvas');
+      new QRious({
+        element: qrCanvas,
+        value: qrUrl,
+        size: 200,
+        level: 'H',
+        foreground: '#1e293b'
+      });
+
+      // Gambarkan QR ke canvas utama
+      ctx.drawImage(qrCanvas, 50, 80, 200, 200);
+
+      // Text Nama Siswa (Dengan Batasan Lebar)
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 18px "Plus Jakarta Sans", Arial, sans-serif';
+      ctx.fillText(name, 150, 320, 280);
+
+      // Text Kelas
+      ctx.fillStyle = '#64748b';
+      ctx.font = '16px "Plus Jakarta Sans", Arial, sans-serif';
+      ctx.fillText(`Kelas ${cls}`, 150, 350);
+      
+      // Footer Info
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '12px "Plus Jakarta Sans", Arial, sans-serif';
+      ctx.fillText('Tunjukkan QR ini ke Kamera Guru', 150, 390);
+
+      return canvas;
+    }
+
+    // Fungsi Download Individual
+    function downloadSingleQR() {
+      const cls = document.getElementById('qr-class').value;
+      const name = document.getElementById('qr-student').value;
+      if(!cls || !name) return;
+
+      const baseUrl = window.location.origin + window.location.pathname;
+      const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
+      
+      const cardCanvas = createQRCardCanvas(name, cls, qrUrl);
+      
+      const link = document.createElement('a');
+      const safeName = name.replace(/[^a-z0-9]/gi, '_');
+      link.download = `Kartu_QR_${safeName}_${cls}.png`;
+      link.href = cardCanvas.toDataURL('image/png');
+      link.click();
+      
+      showToast('Kartu QR berhasil diunduh!', 'success');
+    }
+
+    // Fungsi Download Massal dalam ZIP
+    async function downloadBulkQR() {
+      const cls = document.getElementById('qr-class').value;
+      if (!cls) {
+        showToast('Pilih kelas terlebih dahulu', 'error');
+        return;
+      }
+
+      const students = studentsByClass[cls].filter(name => name !== 'NIHIL');
+      if (students.length === 0) return;
+
+      const btn = document.getElementById('btn-bulk-qr');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Processing...';
+
+      try {
+        const zip = new JSZip();
+        const baseUrl = window.location.origin + window.location.pathname;
+        
+        // Buat folder khusus dalam ZIP (opsional tapi lebih rapi)
+        const folder = zip.folder(`Kartu_QR_Kelas_${cls}`);
+
+        for (const name of students) {
+          const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
+          const cardCanvas = createQRCardCanvas(name, cls, qrUrl);
+          
+          // Konversi ke base64 (hilangkan data:image/png;base64,)
+          const dataUrl = cardCanvas.toDataURL('image/png');
+          const base64Data = dataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
+          
+          const safeName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+          folder.file(`QR_${safeName}.png`, base64Data, {base64: true});
+        }
+
+        // Generate the ZIP file dan mulai trigger download
+        const content = await zip.generateAsync({type: "blob"});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `Kartu_QR_Kelas_${cls}.zip`;
+        link.click();
+        
+        showToast(`Berhasil men-download ${students.length} QR Code untuk Kelas ${cls}`, 'success');
+      } catch (error) {
+        console.error(error);
+        showToast('Terjadi kesalahan saat memproses file ZIP', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
     }
 
     // ==========================================
@@ -1461,8 +1607,31 @@
       }
     }
 
+    function playBeep() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 800;
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.1);
+      } catch (e) { console.log("Audio not supported"); }
+    }
+
     function onScanSuccess(decodedText, decodedResult) {
-      if (isScannerRunning) toggleScanner(); // Jeda kamera secara otomatis setelah membaca
+      if (!isScannerRunning) return;
+      
+      // Mencegah scan ganda secara cepat dari QR yang sama
+      if (decodedText === lastScannedText) return;
+      lastScannedText = decodedText;
+      
+      clearTimeout(scanTimeout);
+      scanTimeout = setTimeout(() => { lastScannedText = ""; }, 3000);
       
       try {
         const url = new URL(decodedText);
@@ -1470,7 +1639,8 @@
         const studentName = url.searchParams.get('s');
         
         if (cls && studentName) {
-          processScannedData(cls, studentName);
+          playBeep();
+          autoSubmitPresence(cls, studentName);
         } else {
           showToast('QR Code bukan berasal dari aplikasi ini.', 'error');
         }
@@ -1483,27 +1653,88 @@
       // Fitur ini dibiarkan kosong agar terus mencari QR (Silent Fail)
     }
 
-    function processScannedData(cls, studentName) {
+    async function autoSubmitPresence(cls, studentName) {
       const students = studentsByClass[cls];
       if (!students || !students.includes(studentName)) {
         showToast('Data siswa tidak ditemukan / tidak valid.', 'error');
         return;
       }
       
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Cek apakah sudah presensi hadir hari ini
+      const alreadyScanned = allRecords.find(r => r.student_name === studentName && r.class_name === cls && r.date === today && r.type === 'hadir');
+      
+      if (alreadyScanned) {
+        showToast(`${studentName} sudah melakukan presensi hari ini.`, 'error');
+        showScanCard(cls, studentName, 'Sudah Presensi', 'bg-amber-100', 'text-amber-700');
+        return;
+      }
+
       currentScannedStudent = { class: cls, name: studentName };
       
+      const record = {
+        student_name: studentName,
+        class_name: cls,
+        date: today,
+        type: 'hadir', 
+        description: 'Hadir otomatis via Scan QR',
+        teacher_name: 'Sistem QR Scanner',
+        created_at: new Date().toISOString()
+      };
+
+      const result = await window.dataSdk.create(record);
+      
+      if (result.isOk) {
+        showToast(`Berhasil mencatat kehadiran: ${studentName}`, 'success');
+        showScanCard(cls, studentName, 'Berhasil Hadir', 'bg-green-100', 'text-green-700');
+      } else {
+        showToast('Gagal memproses data kehadiran.', 'error');
+      }
+    }
+
+    function showScanCard(cls, studentName, statusText, bgClass, textClass) {
       document.getElementById('scan-student-name').textContent = studentName;
       document.getElementById('scan-student-class').textContent = `Kelas ${cls}`;
-      document.getElementById('scan-description').value = '';
       
-      document.getElementById('scan-result-card').classList.remove('hidden');
+      const card = document.getElementById('scan-result-card');
+      card.classList.remove('hidden');
       document.getElementById('scan-idle-state').classList.add('hidden');
-      showToast('Data Siswa Terdeteksi!', 'success');
+      
+      const manualActions = document.getElementById('manual-scan-actions');
+      if (manualActions) manualActions.classList.add('hidden');
+      
+      const badgeContainer = document.getElementById('scan-status-badge');
+      if (badgeContainer) {
+        badgeContainer.innerHTML = `<span class="px-3 py-1 rounded-full text-sm font-bold ${bgClass} ${textClass}">✅ ${statusText}</span>`;
+      }
+      
+      const closeBtn = document.getElementById('close-scan-btn');
+      
+      // Jika menggunakan scanner built-in, sembunyikan otomatis untuk lanjut ke scan berikutnya
+      if (isScannerRunning) {
+        if (closeBtn) closeBtn.classList.add('hidden');
+        setTimeout(() => {
+          card.classList.add('hidden');
+          if (isScannerRunning) {
+            document.getElementById('scan-idle-state').classList.remove('hidden');
+          }
+        }, 2500);
+      } else {
+        // Jika dibuka via Link langsung dari browser HP, biarkan tampil dan sediakan tombol tutup
+        if (closeBtn) closeBtn.classList.remove('hidden');
+      }
+    }
+
+    function processScannedData(cls, studentName) {
+      autoSubmitPresence(cls, studentName);
     }
 
     function resetScanResult() {
       currentScannedStudent = null;
       document.getElementById('scan-result-card').classList.add('hidden');
+      const closeBtn = document.getElementById('close-scan-btn');
+      if (closeBtn) closeBtn.classList.add('hidden');
       if (!isScannerRunning) {
         document.getElementById('scan-idle-state').classList.remove('hidden');
       }
@@ -1517,8 +1748,8 @@
         class_name: currentScannedStudent.class,
         date: new Date().toISOString().split('T')[0],
         type: type, // 'hadir', 'izin', 'sakit', 'alfa'
-        description: document.getElementById('scan-description').value.trim() || 'Dicatat via Presensi QR',
-        teacher_name: 'Guru Piket (Scanner)',
+        description: document.getElementById('scan-description').value.trim() || 'Dicatat via Link Presensi QR',
+        teacher_name: 'Input Manual/Link QR',
         created_at: new Date().toISOString()
       };
 
@@ -1527,8 +1758,6 @@
       if (result.isOk) {
         showToast(`Berhasil menandai ${currentScannedStudent.name} sebagai ${type.toUpperCase()}`, 'success');
         resetScanResult();
-        // Otomatis restart scanner agar siap untuk siswa berikutnya
-        setTimeout(toggleScanner, 1000); 
       } else {
         showToast('Gagal memproses data.', 'error');
       }
@@ -1542,8 +1771,7 @@
         const s = urlParams.get('s');
         if (cls && s) {
           switchTab('scan');
-          processScannedData(cls, s);
-          // Bersihkan URL bar agar tidak reload loop
+          autoSubmitPresence(cls, s);
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       }
@@ -2077,29 +2305,104 @@
       // Set bulk date to today
       document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
 
-      // Initialize Element SDK
-      if (window.elementSdk) {
-        window.elementSdk.init({
-          defaultConfig,
-          onConfigChange,
-          mapToCapabilities: (cfg) => ({
-            recolorables: [],
-            borderables: [],
-            fontEditable: undefined,
-            fontSizeable: undefined
-          }),
-          mapToEditPanelValues: (cfg) => new Map([
-            ['app_title', cfg.app_title || defaultConfig.app_title],
-            ['school_name', cfg.school_name || defaultConfig.school_name]
-          ])
-        });
-      }
+      // ========================================================
+      // TAUTKAN URL WEB APP DARI GOOGLE APPS SCRIPT DI BAWAH INI
+      // ========================================================
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbzgkKxUId17k5kKyDJjgZyosFWhFwU_w6w6eAkTIp86W7BP3OXQemZjk_iBsa6Ruxwx/exec"; // Contoh: "https://script.google.com/macros/s/AKfycby.../exec"
 
-      // Initialize Data SDK
-      if (window.dataSdk) {
-        const result = await window.dataSdk.init(dataHandler);
-        if (!result.isOk) {
-          console.error('Failed to initialize data SDK');
+      if (GAS_URL !== "") {
+        showToast('Menghubungkan ke Database...', 'success');
+        try {
+          // Ambil data awal dari Spreadsheet
+          const res = await fetch(GAS_URL);
+          const data = await res.json();
+          dataHandler.onDataChanged(Array.isArray(data) ? data : []);
+          showToast('Data berhasil dimuat dari Spreadsheet', 'success');
+        } catch (e) {
+          console.error(e);
+          showToast('Gagal memuat data dari Spreadsheet', 'error');
+        }
+
+        // Tumpuk (Override) fungsionalitas Data SDK agar mengirim data ke GAS
+        window.dataSdk = {
+          create: async (record) => {
+            record.id = 'id_' + Date.now() + Math.floor(Math.random() * 1000);
+            try {
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'create', data: record })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                allRecords.push(record);
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
+            } catch (e) { return { isOk: false }; }
+          },
+          update: async (record) => {
+            try {
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'update', data: record })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId));
+                if (idx > -1) allRecords[idx] = record;
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
+            } catch (e) { return { isOk: false }; }
+          },
+          delete: async (record) => {
+            try {
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId));
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
+            } catch (e) { return { isOk: false }; }
+          }
+        };
+
+        // Initialize UI SDK (Warna & Judul)
+        if (window.elementSdk) {
+          window.elementSdk.init({
+            defaultConfig,
+            onConfigChange,
+            mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }),
+            mapToEditPanelValues: (cfg) => new Map([
+              ['app_title', cfg.app_title || defaultConfig.app_title],
+              ['school_name', cfg.school_name || defaultConfig.school_name]
+            ])
+          });
+        }
+
+      } else {
+        // JIKA GAS_URL KOSONG: Gunakan SDK Lokal Canvas
+        if (window.elementSdk) {
+          window.elementSdk.init({
+            defaultConfig,
+            onConfigChange,
+            mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }),
+            mapToEditPanelValues: (cfg) => new Map([
+              ['app_title', cfg.app_title || defaultConfig.app_title],
+              ['school_name', cfg.school_name || defaultConfig.school_name]
+            ])
+          });
+        }
+
+        if (window.dataSdk) {
+          const result = await window.dataSdk.init(dataHandler);
+          if (!result.isOk) {
+            console.error('Failed to initialize data SDK');
+          }
         }
       }
 
