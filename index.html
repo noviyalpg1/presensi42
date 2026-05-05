@@ -20,42 +20,16 @@
       box-sizing: border-box;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .scrollbar-thin::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .scrollbar-thin::-webkit-scrollbar-track {
-      background: #f8fafc;
-      border-radius: 3px;
-    }
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-    .fade-in {
-      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .slide-up {
-      animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .pulse-dot {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f8fafc; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-up { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
     /* Mobile Responsive Styles */
     @media (max-width: 640px) {
@@ -175,6 +149,10 @@
       </button>
       <button onclick="switchTab('scan')" id="tab-scan" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
         📷 <span class="mobile-hide">Scan Kamera</span><span class="sm:hidden">Scan</span> 
+      </button>
+      <!-- TOMBOL ADMIN BARU -->
+      <button onclick="checkAdminAccess()" id="tab-admin" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
+        ⚙️ <span class="mobile-hide">Kelola Siswa</span><span class="sm:hidden">Admin</span> 
       </button>
      </nav>
     </div>
@@ -620,6 +598,52 @@
       </div>
      </div>
     </div>
+
+    <!-- Admin Pengelolaan Siswa Tab -->
+    <div id="content-admin" class="tab-content hidden fade-in">
+     <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 slide-up">
+       <div class="mb-8 border-b border-slate-100 pb-6">
+         <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚙️ Kelola Data Siswa (Mutasi/Baru)</h2>
+         <p class="text-slate-500 text-sm mt-1">Gunakan panel ini untuk menambah siswa baru atau menghapus/mutasi siswa yang sudah ada. Perubahan akan disimpan di browser Anda.</p>
+       </div>
+       
+       <div class="grid sm:grid-cols-3 gap-6">
+        <div class="sm:col-span-1 space-y-6">
+         <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+          <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Kelas</label>
+          <select id="admin-class-select" onchange="renderAdminStudentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 transition-colors">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option>
+            <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option>
+            <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option>
+          </select>
+         </div>
+         
+         <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+          <label class="block text-sm font-bold text-blue-900 mb-2">Tambah Siswa Baru</label>
+          <input type="text" id="admin-new-student" placeholder="Nama Lengkap Siswa" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 mb-3 bg-white font-medium">
+          <button onclick="addStudent()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all">Tambah Siswa</button>
+         </div>
+        </div>
+
+        <div class="sm:col-span-2">
+         <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 h-[500px] flex flex-col">
+          <h3 class="font-bold text-slate-700 mb-4 pb-2 border-b border-slate-200">Daftar Siswa Kelas Ini</h3>
+          <div id="admin-student-list" class="flex-1 overflow-y-auto scrollbar-thin pr-2">
+            <div class="text-center py-16 text-slate-400">
+              <span class="text-5xl mb-3 block opacity-50">📋</span>
+              <p class="font-medium">Pilih kelas di sebelah kiri</p>
+            </div>
+          </div>
+         </div>
+        </div>
+       </div>
+
+      </div>
+     </div>
+    </div>
+
    </main>
 
    <!-- Edit Modal -->
@@ -700,8 +724,8 @@
     let lastScannedText = "";
     let scanTimeout = null;
 
-    // Student Data by Class
-    const studentsByClass = {
+    // Default Data
+    const defaultStudentsByClass = {
       '7.1': [
         'NIHIL',
         'A. Nurul Mutiarah', 'Adelia Difitri', 'Ahmad Maulana Yusuf', 'Atikah Salsabilla', 
@@ -824,6 +848,19 @@
       ]
     };
 
+    // Load Student Data dynamically from LocalStorage if exists
+    let studentsByClass = { ...defaultStudentsByClass };
+    const savedStudents = localStorage.getItem('studentsByClass');
+    if (savedStudents) {
+      try {
+        studentsByClass = JSON.parse(savedStudents);
+      } catch (e) { console.error("Gagal meload data siswa", e); }
+    }
+
+    function saveStudentsToLocal() {
+      localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
+    }
+
     // Calculate Total Base Students
     function getTotalStudents() {
       let total = 0;
@@ -843,6 +880,11 @@
     };
 
     let config = { ...defaultConfig };
+
+    // Function to Check Duplicates
+    function isDuplicatePresence(studentName, date) {
+      return allRecords.some(r => r.student_name === studentName && r.date === date);
+    }
 
     // Initialize Date
     function initDate() {
@@ -878,6 +920,26 @@
       }
     });
 
+    // Admin Access Management
+    let isAdminUnlocked = false;
+
+    function checkAdminAccess() {
+      if (isAdminUnlocked) {
+        switchTab('admin');
+        renderAdminStudentList();
+      } else {
+        const pass = prompt("Masukkan Password Admin:");
+        if (pass === "iatah" || pass === "rahasia") {
+          isAdminUnlocked = true;
+          showToast("Akses Pengelolaan Terbuka", "success");
+          switchTab('admin');
+          renderAdminStudentList();
+        } else if (pass !== null) {
+          showToast("Password Salah!", "error");
+        }
+      }
+    }
+
     // Tab Switching
     function switchTab(tabName) {
       if (tabName !== 'scan' && isScannerRunning) {
@@ -892,8 +954,10 @@
       
       document.getElementById(`content-${tabName}`).classList.remove('hidden');
       const activeTab = document.getElementById(`tab-${tabName}`);
-      activeTab.classList.add('active', 'border-blue-600', 'text-blue-600', 'font-bold');
-      activeTab.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:border-slate-300', 'font-semibold');
+      if (activeTab) {
+        activeTab.classList.add('active', 'border-blue-600', 'text-blue-600', 'font-bold');
+        activeTab.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:border-slate-300', 'font-semibold');
+      }
 
       if (tabName === 'analysis') {
         setTimeout(() => { updateAnalysisCharts(); }, 100);
@@ -919,7 +983,6 @@
       
       const totalSiswaAktif = getTotalStudents();
       
-      // Fokus ke Hitungan Kehadiran (Hadir, Izin, Sakit, Alfa)
       const hadirToday = todayRecords.filter(r => r.type === 'hadir').length;
       const izinToday = todayRecords.filter(r => r.type === 'izin').length;
       const sakitToday = todayRecords.filter(r => r.type === 'sakit').length;
@@ -1033,7 +1096,6 @@
       }).join('');
     }
 
-    // Helper Functions
     function getTypeIcon(type) {
       switch(type) {
         case 'hadir': return '✅';
@@ -1344,6 +1406,73 @@
       link.href = URL.createObjectURL(blob);
       link.download = `Data_Presensi_${new Date().toISOString().split('T')[0]}.csv`;
       link.click();
+    }
+
+    // Admin Student Mutasi/Baru Logic
+    function renderAdminStudentList() {
+      const cls = document.getElementById('admin-class-select').value;
+      const listContainer = document.getElementById('admin-student-list');
+      
+      if (!cls) {
+        listContainer.innerHTML = `
+          <div class="text-center py-16 text-slate-400">
+            <span class="text-5xl mb-3 block opacity-50">📋</span>
+            <p class="font-medium">Pilih kelas di sebelah kiri</p>
+          </div>
+        `;
+        return;
+      }
+
+      const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
+      if (students.length === 0) {
+        listContainer.innerHTML = `<p class="text-center text-slate-500 py-4">Tidak ada data siswa.</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = students.map((s, idx) => `
+        <div class="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl mb-2 hover:shadow-sm transition-shadow">
+          <span class="font-bold text-slate-700 text-sm">${idx + 1}. ${s}</span>
+          <button onclick="removeStudent('${cls}', '${s}')" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg text-xs font-black tracking-wider uppercase transition-colors">Mutasi/Hapus</button>
+        </div>
+      `).join('');
+    }
+
+    function addStudent() {
+      const cls = document.getElementById('admin-class-select').value;
+      const nameInput = document.getElementById('admin-new-student');
+      const name = nameInput.value.trim();
+
+      if (!cls) return showToast("Pilih kelas terlebih dahulu!", "error");
+      if (!name) return showToast("Nama siswa wajib diisi!", "error");
+      
+      if (studentsByClass[cls].map(s => s.toLowerCase()).includes(name.toLowerCase())) {
+        return showToast("Gagal: Nama siswa sudah terdaftar di kelas ini.", "error");
+      }
+
+      // Add student
+      studentsByClass[cls].push(name);
+      
+      // Sort (Keep NIHIL at top, sort the rest)
+      const hasNihil = studentsByClass[cls].includes('NIHIL');
+      const others = studentsByClass[cls].filter(s => s !== 'NIHIL').sort();
+      studentsByClass[cls] = hasNihil ? ['NIHIL', ...others] : others;
+
+      saveStudentsToLocal();
+      nameInput.value = '';
+      
+      renderAdminStudentList();
+      initDate(); // Refresh total count
+      showToast(`Berhasil menambahkan ${name} ke kelas ${cls}`, "success");
+    }
+
+    function removeStudent(cls, name) {
+      if (confirm(`Peringatan: Yakin ingin menghapus ${name} dari kelas ${cls}? Data historis presensinya di database tidak akan terhapus otomatis.`)) {
+        studentsByClass[cls] = studentsByClass[cls].filter(s => s !== name);
+        saveStudentsToLocal();
+        renderAdminStudentList();
+        initDate(); // Refresh total count
+        showToast(`${name} berhasil dihapus dari daftar kelas.`, "success");
+      }
     }
 
     // Charts Visualization
@@ -1854,11 +1983,11 @@
       }
       
       const today = new Date().toISOString().split('T')[0];
-      const alreadyScanned = allRecords.find(r => r.student_name === studentName && r.class_name === cls && r.date === today && r.type === 'hadir');
       
-      if (alreadyScanned) {
-        showToast('Presensi sudah masuk hari ini.', 'error');
-        showScanCard(cls, studentName, 'DATA SUDAH TERCATAT HARI INI', 'bg-amber-100', 'text-amber-700');
+      // CEK DATA GANDA: Jika siswa sudah ada datanya hari ini, tolak!
+      if (isDuplicatePresence(studentName, today)) {
+        showToast('Gagal: Presensi Anda sudah tercatat hari ini.', 'error');
+        showScanCard(cls, studentName, 'GAGAL (SUDAH PRESENSI)', 'bg-red-100', 'text-red-700');
         return;
       }
 
@@ -1985,15 +2114,29 @@
 
       btn.disabled = true; txt.textContent = `Memproses ke Database (${selected.length})...`; spin.classList.remove('hidden');
 
-      let success = 0, fail = 0;
+      let success = 0, fail = 0, skipped = 0;
       for (const name of selected) {
+        // CEK DATA GANDA UNTUK INPUT MASSAL
+        if (isDuplicatePresence(name, date)) {
+          skipped++;
+          continue; // Lewati siswa ini karena sudah ada datanya
+        }
+
         const result = await window.dataSdk.create({ student_name: name, class_name: cls, date: date, type: type, description: desc, teacher_name: teacher, created_at: new Date().toISOString() });
         if (result.isOk) success++; else fail++;
       }
 
       btn.disabled = false; txt.textContent = '💾 Simpan Presensi Terpilih'; spin.classList.add('hidden');
-      if (fail === 0) { showToast(`Sempurna! ${success} presensi berhasil didata.`, 'success'); switchTab('dashboard'); resetBulkForm(); } 
-      else { showToast(`Partial: ${success} masuk, ${fail} gagal jaringan.`, 'error'); }
+      
+      if (skipped > 0) {
+        showToast(`Tersimpan: ${success}, Gagal: ${fail}, Dilewati (Data Ganda): ${skipped}`, 'success');
+      } else if (fail === 0) { 
+        showToast(`Sempurna! ${success} presensi berhasil didata.`, 'success'); 
+      } else { 
+        showToast(`Partial: ${success} masuk, ${fail} gagal jaringan.`, 'error'); 
+      }
+      
+      switchTab('dashboard'); resetBulkForm();
     }
 
     function resetBulkForm() {
@@ -2029,10 +2172,10 @@
       }
       
       const today = new Date().toISOString().split('T')[0];
-      const alreadyScanned = allRecords.find(r => r.student_name === studentName && r.class_name === cls && r.date === today && r.type === 'hadir');
       
-      if (alreadyScanned) {
-        icon.innerHTML = '<span class="text-6xl">⚠️</span>'; title.textContent = "Sudah Direkam"; title.className = "text-3xl font-black text-amber-500 mb-2"; desc.textContent = `Tenang saja, kehadiran Anda (${studentName}) sudah masuk database untuk hari ini.`; return;
+      // CEK DATA GANDA: Tolak otomatis jika siswa masuk lewat Tautan Khusus
+      if (isDuplicatePresence(studentName, today)) {
+        icon.innerHTML = '<span class="text-6xl">⚠️</span>'; title.textContent = "Gagal (Sudah Presensi)"; title.className = "text-3xl font-black text-amber-500 mb-2"; desc.textContent = `Kehadiran Anda (${studentName}) sudah masuk database untuk hari ini. Tidak perlu scan lagi.`; return;
       }
 
       const result = await window.dataSdk.create({ student_name: studentName, class_name: cls, date: today, type: 'hadir', description: 'Hadir via Scan URL Siswa', teacher_name: 'Verifikasi Otomatis', created_at: new Date().toISOString() });
@@ -2049,7 +2192,7 @@
       document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
       
       // Setup Data SDK
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbzgkKxUId17k5kKyDJjgZyosFWhFwU_w6w6eAkTIp86W7BP3OXQemZjk_iBsa6Ruxwx/exec";
+      const GAS_URL = "";
       if (GAS_URL !== "") {
         try {
           const res = await fetch(GAS_URL); const data = await res.json();
@@ -2077,6 +2220,10 @@
             } catch (e) { return { isOk: false }; }
           }
         };
+      } else {
+        if (window.dataSdk) {
+          const result = await window.dataSdk.init(dataHandler);
+        }
       }
 
       document.getElementById('filter-search').addEventListener('input', applyFilters);
