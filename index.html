@@ -1,0 +1,2119 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Kehadiran Siswa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Library untuk Generate QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <!-- Library untuk Memindai QR Code via Kamera -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .slide-up {
+      animation: slideUp 0.4s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 640px) {
+      /* Compact header on mobile portrait */
+      header .flex-col-mobile {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      /* Smaller text on mobile */
+      .mobile-text-sm {
+        font-size: 0.875rem;
+      }
+      
+      /* Touch-friendly buttons */
+      .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+      }
+      
+      /* Hide long text on mobile */
+      .mobile-hide {
+        display: none;
+      }
+      
+      /* Stack stats vertically on small screens */
+      .mobile-stack {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      /* Full width buttons on mobile */
+      .mobile-full {
+        width: 100%;
+      }
+      
+      /* Reduce padding on mobile */
+      .mobile-compact {
+        padding: 0.75rem;
+      }
+      
+      /* Smaller font sizes for mobile */
+      .mobile-heading {
+        font-size: 1.125rem;
+      }
+      
+      /* Horizontal scroll for tabs */
+      .tab-scroll {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .tab-scroll::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    /* Landscape mobile - side by side layout */
+    @media (max-width: 896px) and (orientation: landscape) {
+      .landscape-flex {
+        display: flex;
+        gap: 1rem;
+      }
+      
+      .landscape-half {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .landscape-compact {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+      }
+    }
+
+    /* Better table responsiveness */
+    @media (max-width: 768px) {
+      table {
+        font-size: 0.813rem;
+      }
+      
+      thead th {
+        padding: 0.5rem;
+        font-size: 0.688rem;
+      }
+      
+      tbody td {
+        padding: 0.5rem;
+      }
+      
+      /* Hide less important columns on mobile */
+      .mobile-hide-col {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-slate-50">
+  <div id="app" class="h-full w-full overflow-auto scrollbar-thin"><!-- Header -->
+   <header class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+     <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+       <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm flex-shrink-0">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg>
+       </div>
+       <div class="min-w-0 flex-1">
+        <h1 id="app-title" class="text-base sm:text-xl font-bold tracking-tight truncate">Daftar Kehadiran Siswa</h1>
+        <p id="school-name" class="text-blue-100 text-xs sm:text-sm truncate">SMP Negeri 42 B. Lampung</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0"><button onclick="toggleFullscreen()" id="fullscreen-btn" class="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm touch-target" title="Toggle Fullscreen">
+        <svg id="fullscreen-icon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg></button>
+       <div class="hidden sm:flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm">
+        <div class="w-2 h-2 bg-green-400 rounded-full pulse-dot"></div><span class="text-sm font-medium" id="current-date"></span>
+       </div>
+      </div>
+     </div>
+    </div><!-- Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-3 sm:px-4">
+     <nav class="flex gap-1 -mb-px overflow-x-auto scrollbar-thin pb-px tab-scroll"><button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap bg-white text-blue-700 touch-target"> 📊 <span class="mobile-hide">Dashboard</span><span class="sm:hidden">Data</span> </button> <button onclick="switchTab('bulk')" id="tab-bulk" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap text-white/80 hover:text-white hover:bg-white/10 touch-target"> ⚡ <span class="mobile-hide">Input Cepat</span><span class="sm:hidden">Input</span> </button> <button onclick="switchTab('history')" id="tab-history" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap text-white/80 hover:text-white hover:bg-white/10 touch-target"> 📋 <span class="mobile-hide">Riwayat</span><span class="sm:hidden">Data</span> </button> <button onclick="switchTab('analysis')" id="tab-analysis" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap text-white/80 hover:text-white hover:bg-white/10 touch-target"> 📈 Analisis </button>
+     <button onclick="switchTab('qr')" id="tab-qr" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap text-white/80 hover:text-white hover:bg-white/10 touch-target"> 💳 <span class="mobile-hide">Kartu QR</span><span class="sm:hidden">QR</span> </button>
+     <button onclick="switchTab('scan')" id="tab-scan" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all whitespace-nowrap text-white/80 hover:text-white hover:bg-white/10 touch-target"> 📷 <span class="mobile-hide">Scan Presensi</span><span class="sm:hidden">Scan</span> </button>
+     </nav>
+    </div>
+   </header><!-- Main Content -->
+   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6"><!-- Dashboard Tab -->
+    <div id="content-dashboard" class="tab-content fade-in"><!-- Stats Cards -->
+     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+       <div class="flex items-center justify-between mb-2 sm:mb-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 bg-red-100 rounded-lg sm:rounded-xl flex items-center justify-center"><span class="text-xl sm:text-2xl">🚫</span>
+        </div><span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-full hidden sm:inline">Hari ini</span>
+       </div>
+       <p class="text-2xl sm:text-3xl font-bold text-slate-800" id="stat-total">0</p>
+       <p class="text-xs sm:text-sm text-slate-500 mt-1">Total <span class="hidden sm:inline">Tidak Hadir</span></p>
+      </div>
+      <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+       <div class="flex items-center justify-between mb-2 sm:mb-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 bg-amber-100 rounded-lg sm:rounded-xl flex items-center justify-center"><span class="text-xl sm:text-2xl">📝</span>
+        </div>
+       </div>
+       <p class="text-2xl sm:text-3xl font-bold text-amber-600" id="stat-izin">0</p>
+       <p class="text-xs sm:text-sm text-slate-500 mt-1">Izin</p>
+      </div>
+      <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+       <div class="flex items-center justify-between mb-2 sm:mb-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center"><span class="text-xl sm:text-2xl">🏥</span>
+        </div>
+       </div>
+       <p class="text-2xl sm:text-3xl font-bold text-blue-600" id="stat-sakit">0</p>
+       <p class="text-xs sm:text-sm text-slate-500 mt-1">Sakit</p>
+      </div>
+      <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+       <div class="flex items-center justify-between mb-2 sm:mb-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 bg-red-100 rounded-lg sm:rounded-xl flex items-center justify-center"><span class="text-xl sm:text-2xl">❌</span>
+        </div>
+       </div>
+       <p class="text-2xl sm:text-3xl font-bold text-red-600" id="stat-alfa">0</p>
+       <p class="text-xs sm:text-sm text-slate-500 mt-1">Alfa</p>
+      </div>
+     </div><!-- Charts Row -->
+     <div class="grid lg:grid-cols-2 gap-6 mb-6">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+       <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">📊</span> Statistik Per Kelas</h3>
+       <div class="h-64">
+        <canvas id="chart-class"></canvas>
+       </div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+       <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">🥧</span> Distribusi Ketidakhadiran</h3>
+       <div class="h-64 flex items-center justify-center">
+        <canvas id="chart-pie"></canvas>
+       </div>
+      </div>
+     </div><!-- Daily Statistics -->
+     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+      <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">📅</span> Statistik Data Ketidakhadiran Per Hari</h3>
+      <div class="overflow-x-auto scrollbar-thin">
+       <div class="inline-block min-w-full">
+        <div id="daily-stats-container" class="flex gap-3">
+         <div class="text-center py-8 text-slate-400 w-full"><span class="text-4xl mb-2 block">📊</span>
+          <p>Belum ada data ketidakhadiran</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Recent Records -->
+     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-4">
+       <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="text-lg">🕐</span> Data Terbaru Hari Ini</h3><button onclick="switchTab('history')" class="text-blue-600 text-sm font-medium hover:text-blue-700"> Lihat Semua → </button>
+      </div>
+      <div id="recent-records" class="space-y-3 max-h-80 overflow-y-auto scrollbar-thin">
+       <div class="text-center py-8 text-slate-400"><span class="text-4xl mb-2 block">📭</span>
+        <p>Belum ada data hari ini</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Bulk Input Tab -->
+    <div id="content-bulk" class="tab-content hidden fade-in">
+     <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 slide-up">
+       <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span class="text-lg">⚡</span> Input Cepat Massal</h2><!-- Bulk Form Header -->
+       <div class="grid sm:grid-cols-3 gap-4 mb-6 pb-6 border-b border-slate-200">
+        <div><label for="bulk-class" class="block text-sm font-semibold text-slate-700 mb-2">Pilih Kelas</label> <select id="bulk-class" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800 bg-white"> <option value="">-- Pilih Kelas --</option> <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option> <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option> <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option> </select>
+        </div>
+        <div><label for="bulk-date" class="block text-sm font-semibold text-slate-700 mb-2">Tanggal</label> <input type="date" id="bulk-date" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800">
+        </div>
+        <div><label for="bulk-teacher" class="block text-sm font-semibold text-slate-700 mb-2">Nama Guru Piket</label> <input type="text" id="bulk-teacher" required placeholder="Nama guru" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800 placeholder-slate-400">
+        </div>
+       </div><!-- Student List -->
+       <div id="bulk-student-list" class="mb-6">
+        <div class="text-center py-12 text-slate-400"><span class="text-4xl mb-2 block">👆</span>
+         <p>Pilih kelas untuk memulai</p>
+        </div>
+       </div><!-- Action Buttons -->
+       <div class="flex gap-3 pt-4 border-t border-slate-200"><button onclick="submitBulkAbsence()" id="bulk-submit-btn" disabled class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"> <span id="bulk-submit-text">💾 Simpan Data Terpilih</span>
+         <svg id="bulk-submit-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+         </svg></button> <button onclick="resetBulkForm()" class="px-6 py-3 border-2 border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-all"> 🔄 Reset </button>
+       </div><!-- Bulk Message -->
+       <div id="bulk-message" class="hidden mt-4 p-4 rounded-xl"></div>
+      </div>
+     </div>
+    </div><!-- History Tab -->
+    <div id="content-history" class="tab-content hidden fade-in"><!-- Student Individual Filter -->
+     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 shadow-sm border-2 border-blue-200 mb-6">
+      <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">👤</span> Filter Berdasarkan Siswa Individual</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kelas Siswa</label> <select id="student-filter-class" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"> <option value="">-- Pilih Kelas Terlebih Dahulu --</option> <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option> <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option> <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Pilih Nama Siswa</label> <select id="student-filter-name" disabled class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400"> <option value="">-- Pilih kelas dulu --</option> </select>
+       </div>
+      </div>
+      <div class="flex gap-2 mt-4"><button onclick="applyStudentFilter()" id="apply-student-filter-btn" disabled class="px-5 py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 touch-target"> <span>🔍</span> <span>Lihat Riwayat Siswa</span> </button> <button onclick="clearStudentFilter()" class="px-5 py-3 border-2 border-blue-200 text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-50 transition-colors flex items-center gap-2 touch-target"> <span>✕</span> <span>Reset</span> </button>
+      </div><!-- Student Statistics Card -->
+      <div id="student-stats-card" class="hidden mt-5 bg-white rounded-xl p-5 border-2 border-blue-300 shadow-lg">
+       <div class="flex items-start justify-between mb-4">
+        <div class="flex-1">
+         <h4 class="text-lg font-bold text-slate-800 mb-1" id="student-stats-name">-</h4>
+         <p class="text-sm text-slate-500" id="student-stats-class">-</p>
+        </div><button onclick="clearStudentFilter()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="Tutup"> <span class="text-slate-400 text-xl">✕</span> </button>
+       </div>
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3">
+         <p class="text-xs text-slate-500 mb-1">Total</p>
+         <p class="text-2xl font-bold text-slate-800" id="student-stat-total">0</p>
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3">
+         <p class="text-xs text-amber-600 mb-1">Izin</p>
+         <p class="text-2xl font-bold text-amber-700" id="student-stat-izin">0</p>
+        </div>
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3">
+         <p class="text-xs text-blue-600 mb-1">Sakit</p>
+         <p class="text-2xl font-bold text-blue-700" id="student-stat-sakit">0</p>
+        </div>
+        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-3">
+         <p class="text-xs text-red-600 mb-1">Alfa</p>
+         <p class="text-2xl font-bold text-red-700" id="student-stat-alfa">0</p>
+        </div>
+       </div>
+       <div class="bg-blue-50 rounded-lg p-4">
+        <p class="text-sm text-blue-800 font-medium mb-2">📊 Persentase Ketidakhadiran</p>
+        <div class="flex items-center gap-3">
+         <div class="flex-1 bg-white rounded-full h-3 overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-amber-400 via-blue-400 to-red-400 transition-all duration-500" id="student-stat-bar" style="width: 0%"></div>
+         </div><span class="text-sm font-bold text-blue-900" id="student-stat-percentage">0%</span>
+        </div>
+        <div class="flex items-center gap-4 mt-3 text-xs">
+         <div class="flex items-center gap-1">
+          <div class="w-3 h-3 rounded-full bg-amber-400"></div><span class="text-slate-600"><span id="student-stat-izin-pct">0</span>% Izin</span>
+         </div>
+         <div class="flex items-center gap-1">
+          <div class="w-3 h-3 rounded-full bg-blue-400"></div><span class="text-slate-600"><span id="student-stat-sakit-pct">0</span>% Sakit</span>
+         </div>
+         <div class="flex items-center gap-1">
+          <div class="w-3 h-3 rounded-full bg-red-400"></div><span class="text-slate-600"><span id="student-stat-alfa-pct">0</span>% Alfa</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Regular Filters -->
+     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+      <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">🔍</span> Filter &amp; Pencarian Umum</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+       <div><label class="block text-sm font-medium text-slate-600 mb-1">Cari Nama/Kelas</label> <input type="text" id="filter-search" placeholder="Ketik untuk mencari..." class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+       </div>
+       <div><label class="block text-sm font-medium text-slate-600 mb-1">Tanggal</label> <input type="date" id="filter-date" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+       </div>
+       <div><label class="block text-sm font-medium text-slate-600 mb-1">Kelas</label> <select id="filter-class" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"> <option value="">Semua Kelas</option> <option value="7.1">7.1</option> <option value="7.2">7.2</option> <option value="7.3">7.3</option> <option value="7.4">7.4</option> <option value="8.1">8.1</option> <option value="8.2">8.2</option> <option value="8.3">8.3</option> <option value="8.4">8.4</option> <option value="9.1">9.1</option> <option value="9.2">9.2</option> <option value="9.3">9.3</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-slate-600 mb-1">Jenis</label> <select id="filter-type" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"> <option value="">Semua Jenis</option> <option value="izin">📝 Izin</option> <option value="sakit">🏥 Sakit</option> <option value="alfa">❌ Alfa</option> </select>
+       </div>
+      </div>
+      <div class="flex gap-2 mt-4"><button onclick="applyFilters()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors touch-target"> 🔍 Terapkan Filter </button> <button onclick="clearFilters()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors touch-target"> ↺ Reset Filter </button>
+      </div>
+     </div><!-- Data Table -->
+     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100">
+       <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="text-lg">📋</span> Riwayat Ketidakhadiran</h3><span id="record-count" class="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">0 data</span>
+       </div>
+      </div>
+      <div class="overflow-x-auto">
+       <table class="w-full">
+        <thead class="bg-slate-50">
+         <tr>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Nama Siswa</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Kelas</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider mobile-hide-col">Tanggal</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Jenis</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider mobile-hide-col">Guru Piket</th>
+          <th class="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">Aksi</th>
+         </tr>
+        </thead>
+        <tbody id="history-table" class="divide-y divide-slate-100">
+         <tr>
+          <td colspan="6" class="px-4 py-12 text-center text-slate-400"><span class="text-4xl mb-2 block">📭</span> <p>Belum ada data ketidakhadiran</p></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div><!-- Analysis Tab -->
+    <div id="content-analysis" class="tab-content hidden fade-in"><!-- Period Selector -->
+     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+      <div class="flex flex-wrap items-center gap-4">
+       <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="text-lg">📅</span> Periode Analisis</h3>
+       <div class="flex gap-2"><button onclick="setAnalysisPeriod('daily')" id="period-daily" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white"> Harian </button> <button onclick="setAnalysisPeriod('weekly')" id="period-weekly" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200"> Mingguan </button> <button onclick="setAnalysisPeriod('monthly')" id="period-monthly" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200"> Bulanan </button>
+       </div>
+      </div>
+     </div><!-- Analysis Charts -->
+     <div class="grid lg:grid-cols-2 gap-6 mb-6">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+       <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">📊</span> Tren Ketidakhadiran</h3>
+       <div class="h-72">
+        <canvas id="chart-trend"></canvas>
+       </div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+       <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">🏫</span> Perbandingan Antar Tingkat</h3>
+       <div class="h-72">
+        <canvas id="chart-grade"></canvas>
+       </div>
+      </div>
+     </div><!-- Summary Stats -->
+     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+      <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><span class="text-lg">📈</span> Ringkasan Statistik</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" id="summary-stats">
+       <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4">
+        <p class="text-sm text-slate-500 mb-1">Total Semua Data</p>
+        <p class="text-2xl font-bold text-slate-800" id="summary-total">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4">
+        <p class="text-sm text-amber-600 mb-1">Total Izin</p>
+        <p class="text-2xl font-bold text-amber-700" id="summary-izin">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
+        <p class="text-sm text-blue-600 mb-1">Total Sakit</p>
+        <p class="text-2xl font-bold text-blue-700" id="summary-sakit">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4">
+        <p class="text-sm text-red-600 mb-1">Total Alfa</p>
+        <p class="text-2xl font-bold text-red-700" id="summary-alfa">0</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- QR Generation Tab -->
+    <div id="content-qr" class="tab-content hidden fade-in">
+     <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 slide-up">
+       <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span class="text-lg">💳</span> Generate Kartu &amp; QR Siswa</h2>
+       <div class="grid sm:grid-cols-2 gap-6">
+        <div class="space-y-4">
+         <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Kelas</label>
+          <select id="qr-class" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+           <option value="">-- Pilih Kelas --</option>
+           <option value="7.1">Kelas 7.1</option> <option value="7.2">Kelas 7.2</option> <option value="7.3">Kelas 7.3</option> <option value="7.4">Kelas 7.4</option>
+           <option value="8.1">Kelas 8.1</option> <option value="8.2">Kelas 8.2</option> <option value="8.3">Kelas 8.3</option> <option value="8.4">Kelas 8.4</option>
+           <option value="9.1">Kelas 9.1</option> <option value="9.2">Kelas 9.2</option> <option value="9.3">Kelas 9.3</option>
+          </select>
+         </div>
+         <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Siswa</label>
+          <select id="qr-student" disabled class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400">
+           <option value="">-- Pilih kelas dulu --</option>
+          </select>
+         </div>
+         <button onclick="generateQR()" id="btn-generate-qr" disabled class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          Buat QR Code
+         </button>
+        </div>
+        <div class="flex flex-col items-center justify-center p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl min-h-[300px]">
+         <div id="qr-result-container" class="hidden flex flex-col items-center w-full">
+          <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-4 flex flex-col items-center w-full max-w-[250px]">
+           <h3 class="font-bold text-slate-800 mb-1 text-center" id="qr-display-name">Nama Siswa</h3>
+           <p class="text-sm text-slate-500 mb-4 text-center" id="qr-display-class">Kelas</p>
+           <canvas id="qr-canvas" class="mx-auto"></canvas>
+          </div>
+          <div class="w-full space-y-2">
+           <label class="block text-xs font-medium text-slate-500 text-center">URL Link Presensi (Bagikan ke siswa)</label>
+           <div class="flex gap-2">
+            <input type="text" id="qr-url-link" readonly class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-600">
+            <button onclick="copyQRLink()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition-colors">Salin</button>
+           </div>
+          </div>
+         </div>
+         <div id="qr-placeholder" class="text-center text-slate-400">
+          <span class="text-4xl mb-2 block">📱</span>
+          <p class="text-sm">Pilih siswa untuk melihat QR Code</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Scan Tab -->
+    <div id="content-scan" class="tab-content hidden fade-in">
+     <div class="max-w-3xl mx-auto">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 slide-up">
+       <div class="flex flex-wrap items-center justify-between mb-6 gap-3">
+        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="text-lg">📷</span> Scan Presensi (Kamera)</h2>
+        <button onclick="toggleScanner()" id="btn-toggle-scan" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors w-full sm:w-auto">Mulai Kamera Scan</button>
+       </div>
+       
+       <div id="scanner-container" class="hidden overflow-hidden rounded-xl border-4 border-blue-100 bg-black flex items-center justify-center mb-6">
+        <div id="qr-reader" class="w-full max-w-lg"></div>
+       </div>
+
+       <div id="scan-result-card" class="hidden bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5 shadow-sm">
+        <div class="flex justify-between items-start mb-4">
+         <div>
+          <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full mb-2 inline-block">Siswa Terdeteksi</span>
+          <h3 class="text-xl font-bold text-slate-800" id="scan-student-name">-</h3>
+          <p class="text-slate-600 font-medium" id="scan-student-class">-</p>
+         </div>
+         <button onclick="resetScanResult()" class="text-slate-400 hover:text-slate-600 text-xl font-bold touch-target">✕</button>
+        </div>
+        
+        <div class="space-y-4">
+         <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Status Kehadiran:</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+           <button onclick="submitScannedAbsence('hadir')" class="py-2.5 bg-green-100 text-green-700 border border-green-200 rounded-lg font-bold hover:bg-green-200 transition-colors">✅ Hadir</button>
+           <button onclick="submitScannedAbsence('izin')" class="py-2.5 bg-amber-100 text-amber-700 border border-amber-200 rounded-lg font-bold hover:bg-amber-200 transition-colors">📝 Izin</button>
+           <button onclick="submitScannedAbsence('sakit')" class="py-2.5 bg-blue-100 text-blue-700 border border-blue-200 rounded-lg font-bold hover:bg-blue-200 transition-colors">🏥 Sakit</button>
+           <button onclick="submitScannedAbsence('alfa')" class="py-2.5 bg-red-100 text-red-700 border border-red-200 rounded-lg font-bold hover:bg-red-200 transition-colors">❌ Alfa</button>
+          </div>
+         </div>
+         <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Catatan Tambahan (Opsional):</label>
+          <input type="text" id="scan-description" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" placeholder="Contoh: Datang terlambat 10 menit...">
+         </div>
+        </div>
+       </div>
+       
+       <div id="scan-idle-state" class="text-center py-10 text-slate-400">
+        <span class="text-4xl mb-2 block">📷</span>
+        <p>Klik tombol <strong>Mulai Kamera Scan</strong> dan arahkan kamera<br> ke QR Code atau Kartu Siswa</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main><!-- Password Modal -->
+   <div id="password-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6">
+     <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-3xl">🔐</span>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Masukkan Password</h3>
+      <p class="text-slate-500 text-sm">Password diperlukan untuk mengedit data</p>
+     </div>
+     <form id="password-form" class="space-y-4">
+      <div><input type="password" id="edit-password" placeholder="Masukkan password" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 placeholder-slate-400">
+      </div>
+      <div id="password-error" class="hidden text-sm text-red-600 text-center">
+       Password salah! Coba lagi.
+      </div>
+      <div class="flex gap-3"><button type="button" onclick="closePasswordModal()" class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-colors"> Batal </button> <button type="submit" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"> Lanjutkan </button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Edit Modal -->
+   <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90%] overflow-y-auto">
+     <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+       <h3 class="text-xl font-bold text-slate-800">✏️ Edit Data</h3><button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"> ✕ </button>
+      </div>
+      <form id="edit-form" class="space-y-4"><input type="hidden" id="edit-id">
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Nama Siswa</label> <input type="text" id="edit-student-name" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+       </div>
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Kelas</label> <select id="edit-class-name" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"> <option value="7.1">7.1</option> <option value="7.2">7.2</option> <option value="7.3">7.3</option> <option value="7.4">7.4</option> <option value="8.1">8.1</option> <option value="8.2">8.2</option> <option value="8.3">8.3</option> <option value="8.4">8.4</option> <option value="9.1">9.1</option> <option value="9.2">9.2</option> <option value="9.3">9.3</option> </select>
+       </div>
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Tanggal</label> <input type="date" id="edit-date" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+       </div>
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Jenis Ketidakhadiran</label> <select id="edit-type" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"> <option value="izin">📝 Izin</option> <option value="sakit">🏥 Sakit</option> <option value="alfa">❌ Alfa</option> </select>
+       </div>
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Nama Guru Piket</label> <input type="text" id="edit-teacher" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+       </div>
+       <div><label class="block text-sm font-semibold text-slate-700 mb-2">Keterangan</label> <textarea id="edit-description" rows="2" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+       </div>
+       <div class="flex gap-3 pt-2"><button type="submit" id="edit-submit-btn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"> 💾 Simpan Perubahan </button> <button type="button" onclick="closeEditModal()" class="px-6 py-3 border-2 border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-colors"> Batal </button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div><!-- Delete Confirmation Modal -->
+   <div id="delete-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6">
+     <div class="text-center">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-3xl">🗑️</span>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus Data?</h3>
+      <p class="text-slate-500 mb-4">Data yang dihapus tidak dapat dikembalikan.</p>
+      <form id="delete-form" class="space-y-4">
+       <div><input type="password" id="delete-password" placeholder="Masukkan password untuk menghapus" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 text-slate-800 placeholder-slate-400">
+       </div>
+       <div id="delete-password-error" class="hidden text-sm text-red-600">
+        Password salah! Coba lagi.
+       </div>
+       <div class="flex gap-3"><button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-colors"> Batal </button> <button type="submit" id="confirm-delete-btn" class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors"> Hapus </button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div><!-- Toast Notification -->
+   <div id="toast" class="hidden fixed bottom-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg transform transition-all duration-300">
+    <div class="flex items-center gap-3"><span id="toast-icon" class="text-xl"></span> <span id="toast-message" class="font-medium"></span>
+    </div>
+   </div><!-- Footer -->
+   <footer class="bg-gradient-to-r from-slate-800 to-slate-900 text-white mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+     <div class="text-center">
+      <p class="text-sm text-slate-300">© 2026 Noviyalpg. Semua Hak Dilindungi.</p>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // App State
+    let allRecords = [];
+    let filteredRecords = [];
+    let deleteTargetRecord = null;
+    let editTargetRecord = null;
+    let currentPeriod = 'daily';
+    let chartClass = null;
+    let chartPie = null;
+    let chartTrend = null;
+    let chartGrade = null;
+    let currentStudentFilter = null;
+    let html5QrcodeScanner = null;
+    let isScannerRunning = false;
+    let currentScannedStudent = null;
+
+    // Student Data by Class
+    const studentsByClass = {
+      '7.1': [
+        'NIHIL',
+        'A. Nurul Mutiarah', 'Adelia Difitri', 'Ahmad Maulana Yusuf', 'Atikah Salsabilla', 
+        'Bhayu Shetiawan', 'Devi Eka Safitri', 'Erlangga Dwi Irawan', 'Givan Dwie Abian', 
+        'Ilyas Samsul', 'Inayah Septianah', 'Kenzi Prasetio', 'Laili Dwi Khiar. H', 
+        'M Muiidzan Zaki Sfiyan', 'M. Nabil Nopriyansyah', 'M.Ardiyansa', 'M.Rama Dhanu', 
+        'M.Rizal', 'Muhammad Adam Khoiru', 'Muhammad Fuzi', 'Muhammad Nur Ramadhan', 
+        'Nasyila Maghfirotul Afalla', 'Nova Haryani', 'Putri Rahaf Abdul Naser', 'Rakka Al-Fathir', 
+        'Rizky Novia Azzahra', 'Silva Deswita H', 'Siti Hafidzoh', 'Syafikah Nawwarah', 
+        'Vitalia Charisa Putri', 'Wieni Dwi Anggraeni', 'Yusuf Juriansyah'
+      ],
+      '8.1': [
+        'NIHIL',
+        'ABU HANIFAH AR-RAYHAN', 'AISYARINI RUSWANDI', 'ALBI AL FARIZI', 'AMELLA NUR HUSNAH',
+        'ANNISA TRI RAHMADANI', 'ANNISAH', 'ARYANA FEBRA SABILA', 'ASYIFA',
+        'CAHYA NOVITA PUTRI', 'CHANTIO RAFFA MAULANA', 'FATTAN AQILA PRANAJA', 'GELORA FLORRA INESIA',
+        'LUTHFIYAH AL VARRETA', 'M ALFARAS', 'M SAMAN AL KAMAL', 'M. FHAKRI FHAQI',
+        'M. NAZZARULLAH FAJAR AKBAR', 'M. Yogi Syah Putra', 'NABILA VITA LIA', 'NAIRA SYIFA WANDIRA',
+        'NURIZA GUSTIANI PUTRI', 'RAFASHA NICHO ATHMAJA', 'RAYEN PUTRA PERATAMA', 'RIZKY RIDHO SYAPUTRA',
+        'SAFFA PUTRI AMELIA', 'SEFA LIYANA PURNAMA', 'SITI NUR AENI', 'SITI SARNAH',
+        'SYAFIK ABIABDILLAH', 'SYHID SEPTIADI', 'TIARA ANGGITA SARI', 'VILA SATIRA'
+      ],
+      '7.2': [
+        'NIHIL',
+        'Adliyan Viki Wijaya', 'Al Faqih', 'Alika Putri', 'Amelia Safitri', 
+        'Aniqah Hanun Azalia', 'Aqila Cinta Ramadhan', 'Aulia Puteri Zulhijjah', 'Candra Maulana Rajata', 
+        'Dewi Widiyah', 'Fadli Muhammad Yusuf', 'Hibnu Targiansyah', 'Iswatul Nur Al-Liyah', 
+        'Lisda Amelia', 'M Aji Saputra', 'M Tora Hidayat', 'M. Rafi', 
+        'M.Arfan Pratama', 'M.Rendi', 'M.Satrio Arifin', 'Muhammad Al Faisal', 
+        'Muhammad Indra Herlangga', 'Muhammad Ridho Wijaya', 'Nazwa Al Mukarromah', 'Nurul Afifah Addini', 
+        'Refi Yana', 'Rizki Harvierdi Pratama', 'Sapirah', 'Shiva Nijwa', 
+        'Siti Kaesa Al Husna', 'Tanisa Oktaviani', 'Windi Lestari', 'Zidane Hatim Al-Habib'
+      ],
+      '7.3': [
+        'NIHIL',
+        'Ahmad Luthfi Zaidan', 'Albi Alkhalifi', 'Alika Safitri', 'Amora Al Adhwa Ananda', 
+        'Arjun Rahman Saputra', 'Cika Juliana', 'Diajeng Ayu Santosa', 'Gibran Ibni Al-Habshi', 
+        'Jassica Kristabel', 'Jihad Abdillah', 'M Alif Julian Syah', 'M. Indra Saputra', 
+        'M. Khoirul', 'M. Rezeque Caesar Khemiz', 'M.Arka Saputra', 'M.Rian Maulana', 
+        'Medina Humaira', 'Muhamad Davi', 'Muhammad Desta Mahardhika', 'Muhammad Khanif', 
+        'Muhammmad Fikri', 'Nazwa Safitri', 'Putri Anisya', 'Restu Ali Diansah', 
+        'Rindi Yani Alika', 'Rizky Pratama Yunus', 'Sevani Nurkholifah', 'Siti Ayu Maulina Anam', 
+        'Siti Hanifah Anggraeini', 'Siti Syakila', 'Tiara Anggraeni', 'Zaskia Rahmadani'
+      ],
+      '7.4': [
+        'NIHIL',
+        'Anisa Febriyanti', 'Arkan Maulana Yusuf', 'Asifa Aulia', 'Azkar Mahvin', 
+        'Cindy Lestari', 'Desta Marchell Pratama', 'Dimas Satrio', 'Feni Yuanita Sari', 
+        'Jihan Sofiyah Azizah', 'Joshua Andrian', 'Kynaya Vitaloka Afriyani', 'M Khoirul Hubay', 
+        'M. Melfiaro Rakyan Firman', 'M.Alfarizy', 'M.Farhan Elkadi', 'M.Ridho Rhomadon', 
+        'Mikayla Ramadhani', 'Muhamad Lutfi', 'Muhammad Faqih', 'Muhammad Nasir', 
+        'Neynah Anjayani', 'Putri Nayra', 'Raditiya Sulaiman', 'Risti Andini', 
+        'Sandi Drajat', 'Sinta Wati', 'Siti Ainurrohmah', 'Siti Cahaya Kamila', 
+        'Siti Zahrah', 'Viky Agustiyan Ramadhani', 'Yoga Saputra', 'Zahra Aqilah Putri'
+      ],
+      '8.2': [
+        'NIHIL',
+        'ALISA KANZA RINA', 'AMELIA AZZAHRA', 'ASHILA SANDRA', 'AULIA', 'DIMAS ADITYA RIZKI', 
+        'EKA SYAPUTRA', 'ERIK HARTAWAN', 'FARDAN ABDILLAH', 'HAFIDZH ALJABAR', 'HOIRUL PRATAMA', 
+        'IKHWAN UBADILAH', 'IRHAM EFFENDI', 'M ARDIAN ILHAM', 'M MARYAN', 'M. JHAFA MAULANA', 
+        'M. RIZKI ALVARO', 'M. VALENTINO', 'M. WILDAN AL-FARIZI', 'M. YUSUF RAMLAN', 
+        'MUHAMAD YAVIS ALGHIFARI', 'MUHAMMAD AFANDY MAULANA', 'MUHAMMAD FADHIL AKNI FEBRIAN', 
+        'MUHAMMAD FARIZ AL-KHATAM', 'MUHAMMAD RIZKI FATUWLOH', 'RAIHAN SAPUTRA', 
+        'RIMBUN AZMA PUTRI SABILA', 'SATRIA ABDURROHIM', 'TRI SUNARYO', 'VIOLA WINDRIA', 
+        'WAWAN SAPUTRA', 'ZHUANDIKA TRI CAHAYADI'
+      ],
+      '8.3': [
+        'NIHIL',
+        'A. MUHAMMAD TAUFIK HIDAYAT', 'ADE IRMA AULIA', 'ADELIA RAMADHANI', 'AHMAD AKBAR',
+        'AJENG PARAMITA', 'ALVIERO AGRA', 'ALYA FEBRIYANI', 'BAGASKORO SAPUTRA',
+        'FANDY HEZA HAIKAL', 'FARDEN PERMANA PUTRA', 'ILHAM', 'KARINA',
+        'KAYLA SYAVANA', 'KHOIRUL NIZAM', 'LAODIA FADHILA AZAHRA', 'M. ALIF SAHAN',
+        'M. DEFRAN ARIZKI', 'M. FADHIL AL AZZAM', 'M. IRWANSYAH', 'M. MIFTAH FARID',
+        'M. REPAN', 'M. RIZKI', 'M.ADZAN', 'MUHAMMAD FADLU',
+        'MUHAMMAD FIKRI MAULANA', 'MUHAMMAD ZAKI AMDIANSYAH', 'NAZWA PUTRI JAMILAH', 'NURISA APRILIA',
+        'RANDIKA', 'RASTIA PUTRI', 'VANIA DWI TADZKIRA'
+      ],
+      '8.4': [
+        'NIHIL',
+        'ABDULA SIDIK', 'AFIKAH BACHRI', 'AGHIS ZULHAQ MAULANA', 'ALIF NUR ROHMAN', 
+        'ALISYAH PUTRI RAMADHANI', 'AMELIA', 'ARUMI FATMAWATI', 'AZZAHRA DEWI PUTRI', 
+        'CAHAYA PUTRI', 'DIKA RIZKI', 'ELVAISHA SAIFA', 'JUWITA RAHMADANTI', 
+        'KENZO SEBASTIAN RAMADHAN', 'KEYLA ZALIYA', 'KIRANA ANGGRAENI', 'LEVI AMANDA', 
+        'M ABDUL FATTAH', 'M. RANGGA SAPUTRA', 'MAULA MIFTAHUR RISKYA', 
+        'MUHAMAD ARYADHILLA ALISLAMY', 'MUHAMMAD ARDABILLI', 'MUHAMMAD AZHAR GUNAWAN', 
+        'MUHAMMAD KEYZA ALFARIZI', 'NAYSIFA AULIA', 'PUTRI NAISILAH', 'SAHARA AULIA', 
+        'SILVANA AZZARA OKTAVIANI', 'TOMI PUTRA RAMADHAN', 'TRI OKTA WULANDARI', 
+        'VITA LIA', 'ZAFIR FADILLAH AZKA', 'WENDI EKA PUTRA'
+      ],
+      '9.1': [
+        'NIHIL',
+        'ALIF BILALDI AL HABSY', 'ARIEA PUTRI SWASTIKANING NUGROHO', 'BELLA RAMADHANI', 
+        'CITRA IMELDA TIARA SYAHRINI', 'ERICK SUSANTO', 'FITRI AULIA', 'FITRI WULANDARI', 
+        'GIZKA PUTRI APRILIA', 'HALWA RENITA', 'HERLIN DAMARWULAN', 'LELA ADELIA', 
+        'M RYAN SYAFARI NUR', 'M. ARIPKA DUTAMA', 'M. RAMADHAN AL GHAFFAR', 'M.AKBAR RAJABIE', 
+        'MELISA SAFARIAH', 'NATASYA DEWI', 'NOLI AULIA', 'NUR RIZKI KAMILA HS', 
+        'NUR ZAKILAH PADILAH', 'NURAINI', 'NUR\'AINI', 'NURUL AQILA SYARAFAH', 
+        'RISKA PURNAMA SARI', 'ROSDIANA', 'SALSABILLA ARIANA', 'SYAHRANI PUTRI', 
+        'TANIA PUTRI NURYANTO', 'VIKA DAMAYANTI', 'ZAHIRA'
+      ],
+      '9.2': [
+        'NIHIL',
+        'A. ROYANI', 'A.GIBRAN ANAFRI', 'DWIKA APRILIA', 'EDO VERNANDO', 'FATIA DESKANIA PUTRI', 
+        'GALANG ESTRADA PUTRA IRAWAN', 'HANDIKA PRATAMA', 'IBRAHIM WICAKSONO', 'INDRI YANI', 
+        'KHIARA JAUZA ZAHIR', 'M. ALDI SAPUTRA', 'M. ANAS MUQODASH', 'M. BAGUS MAULANA', 
+        'M. NASRUDIN', 'M. RIVALDI SAPUTRA', 'MAULIYA ISMAYANTI', 'MUHAMAD HABIBIE', 
+        'MUHAMMAD FARDAN AL DUSLAN', 'MUHAMMAD HUSEN', 'MUHAMMAD TAUFIQ QURAHMAN', 
+        'NAUFAL FATHAN HIDAYAH', 'NAURA', 'RENGGA DUWI TABRANI', 'REZZA DEWA AGUSTA', 
+        'SADEWA PRATAMA', 'SAFITRA INDRIYANI', 'SUDIRA WIJAYA', 'VIRGINIA AGUSTIN'
+      ],
+      '9.3': [
+        'NIHIL',
+        'AFRIYANSAH', 'AHMAD ALFA IBRAHIM', 'AHMAD ANWAR', 'AHMAD MUFRODI', 'ANDI BAOMA NUANSA', 
+        'ANDRE SETIAWAN PRATAMA', 'BAYYU GHONI', 'BULAN JUHAYIRAH', 'DEDE WILYARDI', 
+        'HAERUL ALDI SAPUTRA', 'ILHAMUSSALIM', 'IRFAN SETIAWAN', 'KHAIRULLAH', 'M. NASRUDIN', 
+        'M. RIFKI MAULANA', 'M.ARKHAN PRATAMA', 'M.FAZRIEL FAHREZY', 'M.SANDI PRATAMA', 
+        'MUHAMAD HABIBI ILHAM', 'MUHAMMAD  AXL DEALOVA', 'MURFID HADI', 'NURUL ASRAFA', 
+        'OMAN SAPUTRA', 'PAJA FAUZAN', 'PARIS PRAKASA', 'PUTRA ARYA PRIANTO', 
+        'RENO ADRIANSYAH', 'REZA MANDALA PUTRA', 'RIFANDI', 'SADEWA PRATAMA', 'YUSUF HIDAYAT'
+      ]
+    };
+
+    // Default Config
+    const defaultConfig = {
+      app_title: 'Daftar Kehadiran Siswa',
+      school_name: 'SMP Negeri 42 B. Lampung',
+      primary_color: '#2563eb',
+      secondary_color: '#4f46e5',
+      accent_color: '#0ea5e9'
+    };
+
+    let config = { ...defaultConfig };
+
+    // Initialize Date
+    function initDate() {
+      const today = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', options);
+    }
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      const elem = document.documentElement;
+      
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().catch(err => {
+            console.warn(`Akses fullscreen ditolak: ${err.message}`);
+            showToast('Mode fullscreen tidak diizinkan pada tampilan ini.', 'error');
+          });
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
+      } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => console.warn(err));
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    }
+
+    // Listen for fullscreen changes (when user presses ESC or clicks toggle)
+    document.addEventListener('fullscreenchange', () => {
+      const icon = document.getElementById('fullscreen-icon');
+      if (!document.fullscreenElement) {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>';
+      } else {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9H4m0 0v5m0-5l5 5M15 15h5m0 0v-5m0 5l-5-5"></path>';
+      }
+    });
+
+    // Tab Switching
+    function switchTab(tabName) {
+      // Matikan kamera secara otomatis jika pindah tab saat kamera menyala
+      if (tabName !== 'scan' && isScannerRunning) {
+        toggleScanner(); 
+      }
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active', 'bg-white', 'text-blue-700');
+        el.classList.add('text-white/80', 'hover:text-white', 'hover:bg-white/10');
+      });
+      
+      document.getElementById(`content-${tabName}`).classList.remove('hidden');
+      const activeTab = document.getElementById(`tab-${tabName}`);
+      activeTab.classList.add('active', 'bg-white', 'text-blue-700');
+      activeTab.classList.remove('text-white/80', 'hover:text-white', 'hover:bg-white/10');
+
+      if (tabName === 'analysis') {
+        setTimeout(() => {
+          updateAnalysisCharts();
+        }, 100);
+      }
+    }
+
+    // Data Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allRecords = data;
+        filteredRecords = [...data];
+        updateDashboard();
+        updateHistoryTable();
+        updateCharts();
+        updateSummaryStats();
+      }
+    };
+
+    // Update Dashboard Stats
+    function updateDashboard() {
+      const today = new Date().toISOString().split('T')[0];
+      const todayRecords = allRecords.filter(r => r.date === today);
+      
+      const totalToday = todayRecords.length;
+      const izinToday = todayRecords.filter(r => r.type === 'izin').length;
+      const sakitToday = todayRecords.filter(r => r.type === 'sakit').length;
+      const alfaToday = todayRecords.filter(r => r.type === 'alfa').length;
+
+      document.getElementById('stat-total').textContent = totalToday;
+      document.getElementById('stat-izin').textContent = izinToday;
+      document.getElementById('stat-sakit').textContent = sakitToday;
+      document.getElementById('stat-alfa').textContent = alfaToday;
+
+      // Update Daily Statistics
+      updateDailyStatistics();
+
+      // Update Recent Records
+      const recentContainer = document.getElementById('recent-records');
+      if (todayRecords.length === 0) {
+        recentContainer.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <span class="text-4xl mb-2 block">📭</span>
+            <p>Belum ada data hari ini</p>
+          </div>
+        `;
+      } else {
+        const sorted = [...todayRecords].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        recentContainer.innerHTML = sorted.slice(0, 5).map(record => `
+          <div class="flex items-center gap-4 p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center ${getTypeColor(record.type)}">
+              ${getTypeIcon(record.type)}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-slate-800 truncate">${record.student_name}</p>
+              <p class="text-sm text-slate-500">Kelas ${record.class_name}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(record.type)}">
+              ${record.type.charAt(0).toUpperCase() + record.type.slice(1)}
+            </span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Update Daily Statistics
+    function updateDailyStatistics() {
+      const container = document.getElementById('daily-stats-container');
+      
+      // Group records by date
+      const recordsByDate = {};
+      allRecords.forEach(record => {
+        if (!recordsByDate[record.date]) {
+          recordsByDate[record.date] = { izin: 0, sakit: 0, alfa: 0, total: 0 };
+        }
+        recordsByDate[record.date][record.type]++;
+        recordsByDate[record.date].total++;
+      });
+
+      // Sort dates descending
+      const sortedDates = Object.keys(recordsByDate).sort((a, b) => new Date(b) - new Date(a));
+
+      if (sortedDates.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400 w-full">
+            <span class="text-4xl mb-2 block">📊</span>
+            <p>Belum ada data ketidakhadiran</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Show last 7 days or all available dates
+      const displayDates = sortedDates.slice(0, 7);
+      
+      container.innerHTML = displayDates.map(dateStr => {
+        const stats = recordsByDate[dateStr];
+        const date = new Date(dateStr);
+        const dayName = date.toLocaleDateString('id-ID', { weekday: 'short' });
+        const dateDisplay = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+        return `
+          <div class="flex-shrink-0 w-48 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 border-2 ${isToday ? 'border-blue-500 shadow-lg' : 'border-slate-200'}">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase">${dayName}</p>
+                <p class="text-sm font-bold text-slate-800">${dateDisplay}</p>
+              </div>
+              ${isToday ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">Hari Ini</span>' : ''}
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">📝</span>
+                  <span class="text-xs text-slate-600">Izin</span>
+                </div>
+                <span class="text-sm font-bold text-amber-600">${stats.izin}</span>
+              </div>
+              <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🏥</span>
+                  <span class="text-xs text-slate-600">Sakit</span>
+                </div>
+                <span class="text-sm font-bold text-blue-600">${stats.sakit}</span>
+              </div>
+              <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">❌</span>
+                  <span class="text-xs text-slate-600">Alfa</span>
+                </div>
+                <span class="text-sm font-bold text-red-600">${stats.alfa}</span>
+              </div>
+              <div class="flex items-center justify-between bg-slate-700 text-white rounded-lg px-3 py-2 mt-3">
+                <span class="text-xs font-semibold">TOTAL</span>
+                <span class="text-lg font-bold">${stats.total}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Helper Functions
+    function getTypeIcon(type) {
+      switch(type) {
+        case 'hadir': return '✅';
+        case 'izin': return '📝';
+        case 'sakit': return '🏥';
+        case 'alfa': return '❌';
+        default: return '📋';
+      }
+    }
+
+    function getTypeColor(type) {
+      switch(type) {
+        case 'hadir': return 'bg-green-100';
+        case 'izin': return 'bg-amber-100';
+        case 'sakit': return 'bg-blue-100';
+        case 'alfa': return 'bg-red-100';
+        default: return 'bg-slate-100';
+      }
+    }
+
+    function getTypeBadgeClass(type) {
+      switch(type) {
+        case 'hadir': return 'bg-green-100 text-green-700';
+        case 'izin': return 'bg-amber-100 text-amber-700';
+        case 'sakit': return 'bg-blue-100 text-blue-700';
+        case 'alfa': return 'bg-red-100 text-red-700';
+        default: return 'bg-slate-100 text-slate-700';
+      }
+    }
+
+    // Update History Table
+    function updateHistoryTable() {
+      const tbody = document.getElementById('history-table');
+      const recordCount = document.getElementById('record-count');
+      
+      recordCount.textContent = `${filteredRecords.length} data`;
+
+      if (filteredRecords.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-4 py-12 text-center text-slate-400">
+              <span class="text-4xl mb-2 block">📭</span>
+              <p>Tidak ada data yang ditemukan</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Sort by date descending
+      const sorted = [...filteredRecords].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      tbody.innerHTML = sorted.map(record => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="px-2 sm:px-4 py-2 sm:py-3">
+            <div class="font-medium text-slate-800 text-sm">${record.student_name}</div>
+            ${record.description ? `<div class="text-xs text-slate-400">${record.description}</div>` : ''}
+          </td>
+          <td class="px-2 sm:px-4 py-2 sm:py-3 text-slate-600 text-sm">${record.class_name}</td>
+          <td class="px-2 sm:px-4 py-2 sm:py-3 text-slate-600 text-sm mobile-hide-col">${formatDate(record.date)}</td>
+          <td class="px-2 sm:px-4 py-2 sm:py-3">
+            <span class="px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(record.type)}">
+              ${getTypeIcon(record.type)} <span class="hidden sm:inline">${record.type.charAt(0).toUpperCase() + record.type.slice(1)}</span>
+            </span>
+          </td>
+          <td class="px-2 sm:px-4 py-2 sm:py-3 text-slate-600 text-sm mobile-hide-col">${record.teacher_name}</td>
+          <td class="px-2 sm:px-4 py-2 sm:py-3">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="openEditModal('${record.__backendId}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors touch-target" title="Edit">
+                ✏️
+              </button>
+              <button onclick="openDeleteModal('${record.__backendId}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors touch-target" title="Hapus">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // Password Modal
+    let pendingEditId = null;
+    let isEditUnlocked = false;
+
+    function openEditModal(id) {
+      if (isEditUnlocked) {
+        showEditModal(id);
+      } else {
+        pendingEditId = id;
+        document.getElementById('password-modal').classList.remove('hidden');
+        document.getElementById('edit-password').value = '';
+        document.getElementById('password-error').classList.add('hidden');
+      }
+    }
+
+    function closePasswordModal() {
+      document.getElementById('password-modal').classList.add('hidden');
+      pendingEditId = null;
+    }
+
+    document.getElementById('password-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('edit-password').value;
+      
+      if (password === 'rahasia') {
+        isEditUnlocked = true;
+        closePasswordModal();
+        showEditModal(pendingEditId);
+        showToast('Mode edit diaktifkan! Sekarang Anda bisa mengedit data', 'success');
+      } else {
+        document.getElementById('password-error').classList.remove('hidden');
+        document.getElementById('edit-password').value = '';
+      }
+    });
+
+    // Edit Modal
+    function showEditModal(id) {
+      editTargetRecord = allRecords.find(r => r.__backendId === id);
+      if (!editTargetRecord) return;
+
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-student-name').value = editTargetRecord.student_name;
+      document.getElementById('edit-class-name').value = editTargetRecord.class_name;
+      document.getElementById('edit-date').value = editTargetRecord.date;
+      document.getElementById('edit-type').value = editTargetRecord.type;
+      document.getElementById('edit-teacher').value = editTargetRecord.teacher_name;
+      document.getElementById('edit-description').value = editTargetRecord.description || '';
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      editTargetRecord = null;
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!editTargetRecord) return;
+
+      const editBtn = document.getElementById('edit-submit-btn');
+      editBtn.disabled = true;
+      editBtn.textContent = 'Menyimpan...';
+
+      const updatedRecord = {
+        ...editTargetRecord,
+        student_name: document.getElementById('edit-student-name').value.trim(),
+        class_name: document.getElementById('edit-class-name').value,
+        date: document.getElementById('edit-date').value,
+        type: document.getElementById('edit-type').value,
+        description: document.getElementById('edit-description').value.trim(),
+        teacher_name: document.getElementById('edit-teacher').value.trim()
+      };
+
+      const result = await window.dataSdk.update(updatedRecord);
+
+      editBtn.disabled = false;
+      editBtn.textContent = '💾 Simpan Perubahan';
+
+      if (result.isOk) {
+        showToast('Data berhasil diperbarui!', 'success');
+        closeEditModal();
+      } else {
+        showToast('Gagal memperbarui data. Coba lagi.', 'error');
+      }
+    });
+
+    // Delete Modal
+    function openDeleteModal(id) {
+      deleteTargetRecord = allRecords.find(r => r.__backendId === id);
+      document.getElementById('delete-modal').classList.remove('hidden');
+      document.getElementById('delete-password').value = '';
+      document.getElementById('delete-password-error').classList.add('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').classList.add('hidden');
+      deleteTargetRecord = null;
+      document.getElementById('delete-password').value = '';
+      document.getElementById('delete-password-error').classList.add('hidden');
+    }
+
+    document.getElementById('delete-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('delete-password').value;
+      
+      if (password !== 'rahasia') {
+        document.getElementById('delete-password-error').classList.remove('hidden');
+        document.getElementById('delete-password').value = '';
+        return;
+      }
+
+      if (!deleteTargetRecord) return;
+
+      const confirmBtn = document.getElementById('confirm-delete-btn');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Menghapus...';
+
+      const result = await window.dataSdk.delete(deleteTargetRecord);
+
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Hapus';
+
+      if (result.isOk) {
+        showToast('Data berhasil dihapus!', 'success');
+        closeDeleteModal();
+      } else {
+        showToast('Gagal menghapus data. Coba lagi.', 'error');
+      }
+    });
+
+    // Filters
+    function applyFilters() {
+      const search = document.getElementById('filter-search').value.toLowerCase();
+      const date = document.getElementById('filter-date').value;
+      const classFilter = document.getElementById('filter-class').value;
+      const typeFilter = document.getElementById('filter-type').value;
+
+      filteredRecords = allRecords.filter(record => {
+        const matchSearch = !search || 
+          record.student_name.toLowerCase().includes(search) || 
+          record.class_name.toLowerCase().includes(search);
+        const matchDate = !date || record.date === date;
+        const matchClass = !classFilter || record.class_name === classFilter;
+        const matchType = !typeFilter || record.type === typeFilter;
+
+        return matchSearch && matchDate && matchClass && matchType;
+      });
+
+      updateHistoryTable();
+    }
+
+    function clearFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-date').value = '';
+      document.getElementById('filter-class').value = '';
+      document.getElementById('filter-type').value = '';
+      filteredRecords = [...allRecords];
+      updateHistoryTable();
+    }
+
+    // Student Individual Filter Functions
+    document.getElementById('student-filter-class').addEventListener('change', function() {
+      const selectedClass = this.value;
+      const nameSelect = document.getElementById('student-filter-name');
+      const applyBtn = document.getElementById('apply-student-filter-btn');
+
+      if (!selectedClass) {
+        nameSelect.disabled = true;
+        nameSelect.innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
+        applyBtn.disabled = true;
+        return;
+      }
+
+      const students = studentsByClass[selectedClass];
+      if (!students) {
+        nameSelect.disabled = true;
+        nameSelect.innerHTML = '<option value="">-- Data siswa tidak tersedia --</option>';
+        applyBtn.disabled = true;
+        return;
+      }
+
+      // Populate student names (exclude NIHIL from filter)
+      const filterableStudents = students.filter(name => name !== 'NIHIL');
+      nameSelect.disabled = false;
+      nameSelect.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>' + 
+        filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
+      applyBtn.disabled = true;
+    });
+
+    document.getElementById('student-filter-name').addEventListener('change', function() {
+      const applyBtn = document.getElementById('apply-student-filter-btn');
+      applyBtn.disabled = !this.value;
+    });
+
+    function applyStudentFilter() {
+      const selectedClass = document.getElementById('student-filter-class').value;
+      const selectedStudent = document.getElementById('student-filter-name').value;
+
+      if (!selectedClass || !selectedStudent) {
+        showToast('Pilih kelas dan nama siswa terlebih dahulu', 'error');
+        return;
+      }
+
+      currentStudentFilter = {
+        class: selectedClass,
+        name: selectedStudent
+      };
+
+      // Filter records for this specific student
+      const studentRecords = allRecords.filter(r => 
+        r.class_name === selectedClass && r.student_name === selectedStudent
+      );
+
+      // Update statistics card
+      updateStudentStatsCard(selectedStudent, selectedClass, studentRecords);
+
+      // Update table to show only this student's records
+      filteredRecords = studentRecords;
+      updateHistoryTable();
+
+      // Clear general filters
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-date').value = '';
+      document.getElementById('filter-class').value = '';
+      document.getElementById('filter-type').value = '';
+
+      showToast(`Menampilkan riwayat ${selectedStudent}`, 'success');
+    }
+
+    function updateStudentStatsCard(studentName, className, records) {
+      const card = document.getElementById('student-stats-card');
+      
+      // Show card
+      card.classList.remove('hidden');
+
+      // Update student info
+      document.getElementById('student-stats-name').textContent = studentName;
+      document.getElementById('student-stats-class').textContent = `Kelas ${className}`;
+
+      // Calculate statistics
+      const total = records.length;
+      const izin = records.filter(r => r.type === 'izin').length;
+      const sakit = records.filter(r => r.type === 'sakit').length;
+      const alfa = records.filter(r => r.type === 'alfa').length;
+
+      // Update stat numbers
+      document.getElementById('student-stat-total').textContent = total;
+      document.getElementById('student-stat-izin').textContent = izin;
+      document.getElementById('student-stat-sakit').textContent = sakit;
+      document.getElementById('student-stat-alfa').textContent = alfa;
+
+      // Calculate percentages
+      const izinPct = total > 0 ? Math.round((izin / total) * 100) : 0;
+      const sakitPct = total > 0 ? Math.round((sakit / total) * 100) : 0;
+      const alfaPct = total > 0 ? Math.round((alfa / total) * 100) : 0;
+
+      document.getElementById('student-stat-izin-pct').textContent = izinPct;
+      document.getElementById('student-stat-sakit-pct').textContent = sakitPct;
+      document.getElementById('student-stat-alfa-pct').textContent = alfaPct;
+
+      // Update progress bar (assuming max ~30 absences is 100%)
+      const maxAbsences = 30;
+      const percentage = Math.min((total / maxAbsences) * 100, 100);
+      document.getElementById('student-stat-bar').style.width = `${percentage}%`;
+      document.getElementById('student-stat-percentage').textContent = `${total} dari ${maxAbsences}`;
+
+      // Scroll to card
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearStudentFilter() {
+      currentStudentFilter = null;
+      
+      // Hide stats card
+      document.getElementById('student-stats-card').classList.add('hidden');
+
+      // Reset dropdowns
+      document.getElementById('student-filter-class').value = '';
+      document.getElementById('student-filter-name').value = '';
+      document.getElementById('student-filter-name').disabled = true;
+      document.getElementById('student-filter-name').innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
+      document.getElementById('apply-student-filter-btn').disabled = true;
+
+      // Reset to all records
+      filteredRecords = [...allRecords];
+      updateHistoryTable();
+
+      showToast('Filter siswa dibersihkan', 'success');
+    }
+
+    // Export Data
+    function exportData() {
+      if (filteredRecords.length === 0) {
+        showToast('Tidak ada data untuk diekspor', 'error');
+        return;
+      }
+
+      let csv = 'Nama Siswa,Kelas,Tanggal,Jenis,Guru Piket,Keterangan\n';
+      filteredRecords.forEach(r => {
+        csv += `"${r.student_name}","${r.class_name}","${r.date}","${r.type}","${r.teacher_name}","${r.description || '-'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `daftar-kehadiran-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      
+      showToast('Data berhasil diekspor!', 'success');
+    }
+
+    // ==========================================
+    // LOGIKA GENERATE QR & LINK
+    // ==========================================
+    document.getElementById('qr-class').addEventListener('change', function() {
+      const selectedClass = this.value;
+      const studentSelect = document.getElementById('qr-student');
+      const btnGenerate = document.getElementById('btn-generate-qr');
+      
+      if (!selectedClass) {
+        studentSelect.disabled = true;
+        studentSelect.innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
+        btnGenerate.disabled = true;
+        return;
+      }
+      
+      const students = studentsByClass[selectedClass];
+      const filterableStudents = students.filter(name => name !== 'NIHIL');
+      
+      studentSelect.disabled = false;
+      studentSelect.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>' + 
+        filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
+    });
+
+    document.getElementById('qr-student').addEventListener('change', function() {
+      document.getElementById('btn-generate-qr').disabled = !this.value;
+    });
+
+    function generateQR() {
+      const cls = document.getElementById('qr-class').value;
+      const name = document.getElementById('qr-student').value;
+      if(!cls || !name) return;
+      
+      // Membentuk Payload URL unik
+      const baseUrl = window.location.origin + window.location.pathname;
+      const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
+      
+      document.getElementById('qr-display-name').textContent = name;
+      document.getElementById('qr-display-class').textContent = `Kelas ${cls}`;
+      document.getElementById('qr-url-link').value = qrUrl;
+      
+      // Menggambar QR Code menggunakan QRious
+      new QRious({
+        element: document.getElementById('qr-canvas'),
+        value: qrUrl,
+        size: 200,
+        level: 'H',
+        foreground: '#1e293b'
+      });
+      
+      document.getElementById('qr-placeholder').classList.add('hidden');
+      document.getElementById('qr-result-container').classList.remove('hidden');
+    }
+
+    function copyQRLink() {
+      const copyText = document.getElementById('qr-url-link');
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      showToast('Link disalin ke clipboard!', 'success');
+    }
+
+    // ==========================================
+    // LOGIKA QR SCANNER
+    // ==========================================
+    function toggleScanner() {
+      const btn = document.getElementById('btn-toggle-scan');
+      const container = document.getElementById('scanner-container');
+      const idleState = document.getElementById('scan-idle-state');
+      
+      if (isScannerRunning) {
+        // Hentikan Kamera
+        if (html5QrcodeScanner) {
+          html5QrcodeScanner.stop().then(() => {
+            isScannerRunning = false;
+            btn.textContent = 'Mulai Kamera Scan';
+            btn.classList.replace('bg-red-600', 'bg-blue-600');
+            btn.classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
+            container.classList.add('hidden');
+            if(!currentScannedStudent) idleState.classList.remove('hidden');
+          }).catch(err => {
+            console.error("Gagal menghentikan scanner", err);
+          });
+        }
+      } else {
+        // Menyalakan Kamera
+        btn.textContent = 'Memulai kamera...';
+        btn.disabled = true;
+        
+        html5QrcodeScanner = new Html5Qrcode("qr-reader");
+        html5QrcodeScanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          onScanSuccess,
+          onScanFailure
+        ).then(() => {
+          isScannerRunning = true;
+          btn.textContent = 'Hentikan Kamera';
+          btn.disabled = false;
+          btn.classList.replace('bg-blue-600', 'bg-red-600');
+          btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
+          container.classList.remove('hidden');
+          idleState.classList.add('hidden');
+          resetScanResult();
+        }).catch(err => {
+          btn.textContent = 'Mulai Kamera Scan';
+          btn.disabled = false;
+          showToast('Kamera tidak tersedia atau izin diblokir browser.', 'error');
+        });
+      }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      if (isScannerRunning) toggleScanner(); // Jeda kamera secara otomatis setelah membaca
+      
+      try {
+        const url = new URL(decodedText);
+        const cls = url.searchParams.get('c');
+        const studentName = url.searchParams.get('s');
+        
+        if (cls && studentName) {
+          processScannedData(cls, studentName);
+        } else {
+          showToast('QR Code bukan berasal dari aplikasi ini.', 'error');
+        }
+      } catch (e) {
+        showToast('Gagal membaca QR. Format tidak sesuai.', 'error');
+      }
+    }
+
+    function onScanFailure(error) {
+      // Fitur ini dibiarkan kosong agar terus mencari QR (Silent Fail)
+    }
+
+    function processScannedData(cls, studentName) {
+      const students = studentsByClass[cls];
+      if (!students || !students.includes(studentName)) {
+        showToast('Data siswa tidak ditemukan / tidak valid.', 'error');
+        return;
+      }
+      
+      currentScannedStudent = { class: cls, name: studentName };
+      
+      document.getElementById('scan-student-name').textContent = studentName;
+      document.getElementById('scan-student-class').textContent = `Kelas ${cls}`;
+      document.getElementById('scan-description').value = '';
+      
+      document.getElementById('scan-result-card').classList.remove('hidden');
+      document.getElementById('scan-idle-state').classList.add('hidden');
+      showToast('Data Siswa Terdeteksi!', 'success');
+    }
+
+    function resetScanResult() {
+      currentScannedStudent = null;
+      document.getElementById('scan-result-card').classList.add('hidden');
+      if (!isScannerRunning) {
+        document.getElementById('scan-idle-state').classList.remove('hidden');
+      }
+    }
+
+    async function submitScannedAbsence(type) {
+      if (!currentScannedStudent) return;
+      
+      const record = {
+        student_name: currentScannedStudent.name,
+        class_name: currentScannedStudent.class,
+        date: new Date().toISOString().split('T')[0],
+        type: type, // 'hadir', 'izin', 'sakit', 'alfa'
+        description: document.getElementById('scan-description').value.trim() || 'Dicatat via Presensi QR',
+        teacher_name: 'Guru Piket (Scanner)',
+        created_at: new Date().toISOString()
+      };
+
+      const result = await window.dataSdk.create(record);
+      
+      if (result.isOk) {
+        showToast(`Berhasil menandai ${currentScannedStudent.name} sebagai ${type.toUpperCase()}`, 'success');
+        resetScanResult();
+        // Otomatis restart scanner agar siap untuk siswa berikutnya
+        setTimeout(toggleScanner, 1000); 
+      } else {
+        showToast('Gagal memproses data.', 'error');
+      }
+    }
+
+    // Mendeteksi link saat dibuka jika siswa membagikan URL-nya
+    function checkUrlParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('scan') === 'true') {
+        const cls = urlParams.get('c');
+        const s = urlParams.get('s');
+        if (cls && s) {
+          switchTab('scan');
+          processScannedData(cls, s);
+          // Bersihkan URL bar agar tidak reload loop
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
+    }
+
+    // Charts
+    function updateCharts() {
+      updateClassChart();
+      updatePieChart();
+    }
+
+    function updateClassChart() {
+      const ctx = document.getElementById('chart-class').getContext('2d');
+      const classes = ['7.1', '7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.4', '9.1', '9.2', '9.3'];
+      
+      const data = classes.map(cls => allRecords.filter(r => r.class_name === cls).length);
+
+      if (chartClass) chartClass.destroy();
+      
+      chartClass = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: classes.map(c => `Kelas ${c}`),
+          datasets: [{
+            label: 'Jumlah Ketidakhadiran',
+            data: data,
+            backgroundColor: '#3b82f6',
+            borderRadius: 6,
+            barThickness: 24
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    function updatePieChart() {
+      const ctx = document.getElementById('chart-pie').getContext('2d');
+      const izin = allRecords.filter(r => r.type === 'izin').length;
+      const sakit = allRecords.filter(r => r.type === 'sakit').length;
+      const alfa = allRecords.filter(r => r.type === 'alfa').length;
+
+      if (chartPie) chartPie.destroy();
+
+      chartPie = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Izin', 'Sakit', 'Alfa'],
+          datasets: [{
+            data: [izin, sakit, alfa],
+            backgroundColor: ['#f59e0b', '#3b82f6', '#ef4444'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Analysis Charts
+    function setAnalysisPeriod(period) {
+      currentPeriod = period;
+      document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+      });
+      document.getElementById(`period-${period}`).classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+      document.getElementById(`period-${period}`).classList.add('bg-blue-600', 'text-white');
+      updateAnalysisCharts();
+    }
+
+    function updateAnalysisCharts() {
+      updateTrendChart();
+      updateGradeChart();
+    }
+
+    function updateTrendChart() {
+      const ctx = document.getElementById('chart-trend').getContext('2d');
+      let labels = [];
+      let izinData = [];
+      let sakitData = [];
+      let alfaData = [];
+
+      const today = new Date();
+      
+      if (currentPeriod === 'daily') {
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          labels.push(date.toLocaleDateString('id-ID', { weekday: 'short' }));
+          
+          const dayRecords = allRecords.filter(r => r.date === dateStr);
+          izinData.push(dayRecords.filter(r => r.type === 'izin').length);
+          sakitData.push(dayRecords.filter(r => r.type === 'sakit').length);
+          alfaData.push(dayRecords.filter(r => r.type === 'alfa').length);
+        }
+      } else if (currentPeriod === 'weekly') {
+        for (let i = 3; i >= 0; i--) {
+          const weekStart = new Date(today);
+          weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekEnd.getDate() + 6);
+          
+          labels.push(`Minggu ${4-i}`);
+          
+          const weekRecords = allRecords.filter(r => {
+            const d = new Date(r.date);
+            return d >= weekStart && d <= weekEnd;
+          });
+          izinData.push(weekRecords.filter(r => r.type === 'izin').length);
+          sakitData.push(weekRecords.filter(r => r.type === 'sakit').length);
+          alfaData.push(weekRecords.filter(r => r.type === 'alfa').length);
+        }
+      } else {
+        for (let i = 5; i >= 0; i--) {
+          const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+          labels.push(month.toLocaleDateString('id-ID', { month: 'short' }));
+          
+          const monthRecords = allRecords.filter(r => {
+            const d = new Date(r.date);
+            return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear();
+          });
+          izinData.push(monthRecords.filter(r => r.type === 'izin').length);
+          sakitData.push(monthRecords.filter(r => r.type === 'sakit').length);
+          alfaData.push(monthRecords.filter(r => r.type === 'alfa').length);
+        }
+      }
+
+      if (chartTrend) chartTrend.destroy();
+
+      chartTrend = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Izin',
+              data: izinData,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Sakit',
+              data: sakitData,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Alfa',
+              data: alfaData,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { usePointStyle: true }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    function updateGradeChart() {
+      const ctx = document.getElementById('chart-grade').getContext('2d');
+      
+      // Count records by grade level (7, 8, 9)
+      const grade7 = allRecords.filter(r => r.class_name.startsWith('7.')).length;
+      const grade8 = allRecords.filter(r => r.class_name.startsWith('8.')).length;
+      const grade9 = allRecords.filter(r => r.class_name.startsWith('9.')).length;
+
+      if (chartGrade) chartGrade.destroy();
+
+      chartGrade = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'],
+          datasets: [{
+            label: 'Jumlah Ketidakhadiran',
+            data: [grade7, grade8, grade9],
+            backgroundColor: ['#8b5cf6', '#06b6d4', '#10b981'],
+            borderRadius: 8,
+            barThickness: 60
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    // Summary Stats
+    function updateSummaryStats() {
+      document.getElementById('summary-total').textContent = allRecords.length;
+      document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length;
+      document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length;
+      document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
+    }
+
+    // Toast Notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastIcon = document.getElementById('toast-icon');
+      const toastMessage = document.getElementById('toast-message');
+
+      toastMessage.textContent = message;
+      
+      if (type === 'success') {
+        toast.className = 'fixed bottom-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg bg-green-600 text-white';
+        toastIcon.textContent = '✓';
+      } else {
+        toast.className = 'fixed bottom-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg bg-red-600 text-white';
+        toastIcon.textContent = '✕';
+      }
+
+      toast.classList.remove('hidden');
+      
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Element SDK Config Change
+    async function onConfigChange(newConfig) {
+      config = { ...config, ...newConfig };
+      
+      document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('school-name').textContent = config.school_name || defaultConfig.school_name;
+    }
+
+    // Bulk Input Functions
+    document.getElementById('bulk-class').addEventListener('change', function() {
+      const selectedClass = this.value;
+      const listContainer = document.getElementById('bulk-student-list');
+      const submitBtn = document.getElementById('bulk-submit-btn');
+
+      if (!selectedClass) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-400">
+            <span class="text-4xl mb-2 block">👆</span>
+            <p>Pilih kelas untuk memulai</p>
+          </div>
+        `;
+        submitBtn.disabled = true;
+        return;
+      }
+
+      const students = studentsByClass[selectedClass];
+      if (!students) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-400">
+            <span class="text-4xl mb-2 block">❌</span>
+            <p>Data siswa tidak ditemukan</p>
+          </div>
+        `;
+        submitBtn.disabled = true;
+        return;
+      }
+
+      submitBtn.disabled = false;
+
+      // Create student checkboxes
+      listContainer.innerHTML = `
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="font-semibold text-slate-800">Daftar Siswa Kelas ${selectedClass} (${students.length} siswa)</h3>
+          <div class="flex gap-2">
+            <button onclick="selectAllStudents()" class="text-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+              ✓ Pilih Semua
+            </button>
+            <button onclick="deselectAllStudents()" class="text-sm px-3 py-1 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
+              ✕ Batal Semua
+            </button>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto scrollbar-thin bg-slate-50 p-4 rounded-xl">
+          ${students.map((student, index) => `
+            <label class="flex items-center gap-3 p-3 ${student === 'NIHIL' ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 hover:border-green-400' : 'bg-white border border-slate-200 hover:border-blue-300'} rounded-lg hover:bg-blue-50 cursor-pointer transition-colors">
+              <input type="checkbox" class="student-checkbox w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500" value="${student}" data-index="${index}" ${student === 'NIHIL' ? 'onchange="handleNihilCheckbox(this)"' : ''}>
+              <span class="text-sm ${student === 'NIHIL' ? 'text-green-700 font-bold' : 'text-slate-700'} flex-1">${student === 'NIHIL' ? '✅ ' + student + ' (Semua Hadir)' : student}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="mt-4 grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Jenis Ketidakhadiran <span id="type-optional-label" class="hidden text-slate-400 font-normal">(Opsional)</span></label>
+            <select id="bulk-type" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 bg-white">
+              <option value="">-- Tidak ada --</option>
+              <option value="izin">📝 Izin</option>
+              <option value="sakit">🏥 Sakit</option>
+              <option value="alfa">❌ Alfa</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Keterangan (opsional)</label>
+            <input type="text" id="bulk-description" placeholder="Tambahkan keterangan..." class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 placeholder-slate-400">
+          </div>
+        </div>
+      `;
+    });
+
+    function handleNihilCheckbox(checkbox) {
+      const typeSelect = document.getElementById('bulk-type');
+      const typeLabel = document.getElementById('type-optional-label');
+      
+      if (checkbox.checked) {
+        // When NIHIL is checked, uncheck all other students
+        document.querySelectorAll('.student-checkbox').forEach(cb => {
+          if (cb.value !== 'NIHIL') {
+            cb.checked = false;
+          }
+        });
+        
+        // Make type optional and show label
+        if (typeLabel) {
+          typeLabel.classList.remove('hidden');
+        }
+        
+        showToast('NIHIL dipilih: Semua siswa hadir. Jenis ketidakhadiran opsional.', 'success');
+      } else {
+        // When NIHIL is unchecked, hide optional label
+        if (typeLabel) {
+          typeLabel.classList.add('hidden');
+        }
+      }
+    }
+
+    // Modify student checkbox listeners to uncheck NIHIL when other students are checked
+    function setupStudentCheckboxListeners() {
+      document.querySelectorAll('.student-checkbox').forEach(cb => {
+        if (cb.value !== 'NIHIL') {
+          cb.addEventListener('change', function() {
+            if (this.checked) {
+              const nihilCheckbox = document.querySelector('.student-checkbox[value="NIHIL"]');
+              if (nihilCheckbox && nihilCheckbox.checked) {
+                nihilCheckbox.checked = false;
+                const typeLabel = document.getElementById('type-optional-label');
+                if (typeLabel) {
+                  typeLabel.classList.add('hidden');
+                }
+              }
+            }
+          });
+        }
+      });
+    }
+
+    function selectAllStudents() {
+      const nihilCheckbox = document.querySelector('.student-checkbox[value="NIHIL"]');
+      document.querySelectorAll('.student-checkbox').forEach(cb => {
+        if (cb.value !== 'NIHIL') {
+          cb.checked = true;
+        }
+      });
+      // Uncheck NIHIL if other students are selected
+      if (nihilCheckbox) {
+        nihilCheckbox.checked = false;
+        const typeLabel = document.getElementById('type-optional-label');
+        if (typeLabel) {
+          typeLabel.classList.add('hidden');
+        }
+      }
+    }
+
+    function deselectAllStudents() {
+      document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
+      const typeLabel = document.getElementById('type-optional-label');
+      if (typeLabel) {
+        typeLabel.classList.add('hidden');
+      }
+    }
+
+    async function submitBulkAbsence() {
+      const selectedClass = document.getElementById('bulk-class').value;
+      const date = document.getElementById('bulk-date').value;
+      const teacher = document.getElementById('bulk-teacher').value.trim();
+      const type = document.getElementById('bulk-type').value;
+      const description = document.getElementById('bulk-description').value.trim();
+
+      if (!selectedClass || !date || !teacher) {
+        showToast('Mohon lengkapi semua field yang diperlukan', 'error');
+        return;
+      }
+
+      const selectedStudents = Array.from(document.querySelectorAll('.student-checkbox:checked'))
+        .map(cb => cb.value);
+
+      if (selectedStudents.length === 0) {
+        showToast('Pilih minimal 1 siswa', 'error');
+        return;
+      }
+
+      // Check if NIHIL is selected
+      const isNihilSelected = selectedStudents.includes('NIHIL');
+
+      if (isNihilSelected) {
+        // If NIHIL is selected and it's the only selection, don't save any data
+        if (selectedStudents.length === 1) {
+          showToast('Data kehadiran NIHIL berhasil dicatat (tidak ada ketidakhadiran)', 'success');
+          resetBulkForm();
+          switchTab('dashboard');
+          return;
+        } else {
+          // If NIHIL is selected with other students, show error
+          showToast('NIHIL tidak dapat dipilih bersamaan dengan siswa lain', 'error');
+          return;
+        }
+      }
+
+      // Validate type for non-NIHIL selections
+      if (!type) {
+        showToast('Pilih jenis ketidakhadiran', 'error');
+        return;
+      }
+
+      // Check limit
+      if (allRecords.length + selectedStudents.length > 999) {
+        showToast(`Batas maksimum tercapai! Hanya bisa menambah ${999 - allRecords.length} data lagi`, 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('bulk-submit-btn');
+      const submitText = document.getElementById('bulk-submit-text');
+      const submitSpinner = document.getElementById('bulk-submit-spinner');
+
+      submitBtn.disabled = true;
+      submitText.textContent = `Menyimpan ${selectedStudents.length} data...`;
+      submitSpinner.classList.remove('hidden');
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const studentName of selectedStudents) {
+        const record = {
+          student_name: studentName,
+          class_name: selectedClass,
+          date: date,
+          type: type,
+          description: description,
+          teacher_name: teacher,
+          created_at: new Date().toISOString()
+        };
+
+        const result = await window.dataSdk.create(record);
+        if (result.isOk) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      }
+
+      submitBtn.disabled = false;
+      submitText.textContent = '💾 Simpan Data Terpilih';
+      submitSpinner.classList.add('hidden');
+
+      if (failCount === 0) {
+        showToast(`Berhasil menyimpan ${successCount} data siswa!`, 'success');
+        resetBulkForm();
+        switchTab('dashboard');
+      } else {
+        showToast(`Berhasil: ${successCount}, Gagal: ${failCount}`, 'error');
+      }
+    }
+
+    function resetBulkForm() {
+      document.getElementById('bulk-class').value = '';
+      document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('bulk-teacher').value = '';
+      document.getElementById('bulk-student-list').innerHTML = `
+        <div class="text-center py-12 text-slate-400">
+          <span class="text-4xl mb-2 block">👆</span>
+          <p>Pilih kelas untuk memulai</p>
+        </div>
+      `;
+      document.getElementById('bulk-submit-btn').disabled = true;
+    }
+
+    // Initialize App
+    async function initApp() {
+      initDate();
+      
+      // Set bulk date to today
+      document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
+
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (cfg) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['app_title', cfg.app_title || defaultConfig.app_title],
+            ['school_name', cfg.school_name || defaultConfig.school_name]
+          ])
+        });
+      }
+
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+
+      // Add filter event listeners
+      document.getElementById('filter-search').addEventListener('input', applyFilters);
+      document.getElementById('filter-date').addEventListener('change', applyFilters);
+      document.getElementById('filter-class').addEventListener('change', applyFilters);
+      document.getElementById('filter-type').addEventListener('change', applyFilters);
+
+      // Cek apakah web dibuka via direct Link QR
+      checkUrlParams();
+    }
+
+    initApp();
+  </script>
+ </body>
+</html>
