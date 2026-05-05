@@ -150,10 +150,37 @@
         display: none;
       }
     }
+
+    /* Styling khusus untuk area Scanner */
+    #qr-reader {
+      border: none !important;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+    #qr-reader video {
+      width: 100% !important;
+      border-radius: 0.75rem;
+      object-fit: cover;
+    }
+    #qr-reader__scan_region img {
+      opacity: 0.3; /* Sedikit transparansi pada kotak scan bawaan library */
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
  </head>
  <body class="h-full bg-slate-50">
+  
+  <!-- Layar Khusus Scan Langsung Siswa (Disembunyikan secara default) -->
+  <div id="student-direct-scan-screen" class="hidden fixed inset-0 bg-slate-50 z-[100] flex-col items-center justify-center p-4">
+   <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 max-w-sm w-full text-center slide-up">
+    <div id="direct-scan-icon" class="flex justify-center mb-6">
+     <div class="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+    </div>
+    <h2 id="direct-scan-title" class="text-2xl font-bold text-slate-800 mb-2">Memproses...</h2>
+    <p id="direct-scan-desc" class="text-slate-500 text-sm">Mencatat kehadiran Anda ke sistem</p>
+   </div>
+  </div>
+
   <div id="app" class="h-full w-full overflow-auto scrollbar-thin"><!-- Header -->
    <header class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
@@ -478,20 +505,26 @@
           <p class="text-sm">Pilih siswa untuk melihat QR Code</p>
          </div>
         </div>
-       </div>
-      </div>
-     </div>
-    </div><!-- Scan Tab -->
+    <!-- Scan Tab -->
     <div id="content-scan" class="tab-content hidden fade-in">
      <div class="max-w-3xl mx-auto">
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 slide-up">
        <div class="flex flex-wrap items-center justify-between mb-6 gap-3">
         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="text-lg">📷</span> Scan Presensi (Kamera)</h2>
-        <button onclick="toggleScanner()" id="btn-toggle-scan" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors w-full sm:w-auto">Mulai Kamera Scan</button>
+        <div class="flex gap-2 w-full sm:w-auto">
+         <button onclick="switchCamera()" id="btn-switch-camera" class="hidden px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors flex-1 sm:flex-auto flex items-center justify-center gap-2">🔄 Tukar Kamera</button>
+         <button onclick="toggleScanner()" id="btn-toggle-scan" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex-1 sm:flex-auto">Mulai Kamera Scan</button>
+        </div>
+       </div>
+
+       <!-- Fitur Alternatif: Unggah Foto QR jika kamera terblokir -->
+       <div class="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+        <label class="block text-sm font-bold text-amber-800 mb-2">📸 Kamera terblokir? Unggah foto QR Code di sini:</label>
+        <input type="file" id="qr-file-input" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-colors cursor-pointer text-slate-600">
        </div>
        
-       <div id="scanner-container" class="hidden overflow-hidden rounded-xl border-4 border-blue-100 bg-black flex items-center justify-center mb-6">
-        <div id="qr-reader" class="w-full max-w-lg"></div>
+       <div id="scanner-container" class="hidden overflow-hidden rounded-xl border-4 border-slate-200 bg-black flex items-center justify-center mb-6 relative">
+        <div id="qr-reader" class="w-full max-w-lg bg-black"></div>
        </div>
 
        <div id="scan-result-card" class="hidden bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5 shadow-sm">
@@ -619,6 +652,7 @@
     let currentStudentFilter = null;
     let html5QrcodeScanner = null;
     let isScannerRunning = false;
+    let currentFacingMode = "environment"; // Default menggunakan kamera belakang
     let currentScannedStudent = null;
     let lastScannedText = "";
     let scanTimeout = null;
@@ -1560,8 +1594,43 @@
     // ==========================================
     // LOGIKA QR SCANNER
     // ==========================================
+    function switchCamera() {
+      if (!isScannerRunning) return;
+      
+      const btnSwitch = document.getElementById('btn-switch-camera');
+      btnSwitch.disabled = true;
+      btnSwitch.innerHTML = '⏳ Menukar...';
+
+      if (html5QrcodeScanner) {
+        // Hentikan sementara untuk mengganti mode kamera
+        html5QrcodeScanner.stop().then(() => {
+          // Tukar antara kamera depan (user) dan belakang (environment)
+          currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+          startScannerWithCurrentMode().then(() => {
+            btnSwitch.disabled = false;
+            btnSwitch.innerHTML = '🔄 Tukar Kamera';
+          });
+        }).catch(err => {
+          console.error("Gagal menghentikan scanner untuk tukar kamera", err);
+          btnSwitch.disabled = false;
+          btnSwitch.innerHTML = '🔄 Tukar Kamera';
+        });
+      }
+    }
+
+    function startScannerWithCurrentMode() {
+      // Kotak scan (qrbox) diatur agar terlihat proporsional di tengah kamera
+      return html5QrcodeScanner.start(
+        { facingMode: currentFacingMode },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        onScanSuccess,
+        onScanFailure
+      );
+    }
+
     function toggleScanner() {
       const btn = document.getElementById('btn-toggle-scan');
+      const btnSwitch = document.getElementById('btn-switch-camera');
       const container = document.getElementById('scanner-container');
       const idleState = document.getElementById('scan-idle-state');
       
@@ -1573,6 +1642,7 @@
             btn.textContent = 'Mulai Kamera Scan';
             btn.classList.replace('bg-red-600', 'bg-blue-600');
             btn.classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
+            btnSwitch.classList.add('hidden');
             container.classList.add('hidden');
             if(!currentScannedStudent) idleState.classList.remove('hidden');
           }).catch(err => {
@@ -1585,17 +1655,13 @@
         btn.disabled = true;
         
         html5QrcodeScanner = new Html5Qrcode("qr-reader");
-        html5QrcodeScanner.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          onScanSuccess,
-          onScanFailure
-        ).then(() => {
+        startScannerWithCurrentMode().then(() => {
           isScannerRunning = true;
           btn.textContent = 'Hentikan Kamera';
           btn.disabled = false;
           btn.classList.replace('bg-blue-600', 'bg-red-600');
           btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
+          btnSwitch.classList.remove('hidden'); // Memunculkan tombol Tukar Kamera
           container.classList.remove('hidden');
           idleState.classList.add('hidden');
           resetScanResult();
@@ -1770,10 +1836,72 @@
         const cls = urlParams.get('c');
         const s = urlParams.get('s');
         if (cls && s) {
-          switchTab('scan');
-          autoSubmitPresence(cls, s);
+          // 1. Sembunyikan antarmuka aplikasi utama
+          document.getElementById('app').style.display = 'none';
+          
+          // 2. Tampilkan Layar Khusus Siswa
+          const screen = document.getElementById('student-direct-scan-screen');
+          screen.classList.remove('hidden');
+          screen.classList.add('flex');
+          
+          // 3. Proses Kehadiran
+          processDirectScan(cls, s);
+          
+          // Bersihkan URL bar agar jika di-refresh tidak mengulang presensi
           window.history.replaceState({}, document.title, window.location.pathname);
         }
+      }
+    }
+
+    // Fungsi Khusus untuk memproses Presensi Langsung dari Layar Siswa
+    async function processDirectScan(cls, studentName) {
+      const iconContainer = document.getElementById('direct-scan-icon');
+      const title = document.getElementById('direct-scan-title');
+      const desc = document.getElementById('direct-scan-desc');
+      
+      const students = studentsByClass[cls];
+      if (!students || !students.includes(studentName)) {
+        iconContainer.innerHTML = '<span class="text-6xl">❌</span>';
+        title.textContent = "Gagal, Coba Lagi";
+        title.className = "text-2xl font-bold text-red-600 mb-2";
+        desc.textContent = "Data QR Code tidak valid.";
+        return;
+      }
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Mencegah presensi ganda
+      const alreadyScanned = allRecords.find(r => r.student_name === studentName && r.class_name === cls && r.date === today && r.type === 'hadir');
+      if (alreadyScanned) {
+        iconContainer.innerHTML = '<span class="text-6xl">⚠️</span>';
+        title.textContent = "Sudah Presensi";
+        title.className = "text-2xl font-bold text-amber-500 mb-2";
+        desc.textContent = `Anda (${studentName}) sudah tercatat hadir hari ini.`;
+        return;
+      }
+
+      const record = {
+        student_name: studentName,
+        class_name: cls,
+        date: today,
+        type: 'hadir', 
+        description: 'Hadir via Scan URL Siswa',
+        teacher_name: 'Sistem QR Otomatis',
+        created_at: new Date().toISOString()
+      };
+
+      const result = await window.dataSdk.create(record);
+      
+      if (result.isOk) {
+        iconContainer.innerHTML = '<span class="text-6xl">✅</span>';
+        title.textContent = "Presensi Berhasil";
+        title.className = "text-2xl font-bold text-green-600 mb-2";
+        desc.textContent = `Kehadiran atas nama ${studentName} kelas ${cls} berhasil dicatat.`;
+      } else {
+        iconContainer.innerHTML = '<span class="text-6xl">❌</span>';
+        title.textContent = "Gagal, Coba Lagi";
+        title.className = "text-2xl font-bold text-red-600 mb-2";
+        desc.textContent = "Gagal terhubung ke database. Silakan scan ulang.";
       }
     }
 
