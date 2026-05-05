@@ -107,8 +107,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
        <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-         <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0 text-white">
-          <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+         <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0 overflow-hidden p-1">
+          <img src="https://imgur.com/bb1V1gO.png" alt="Logo" class="w-full h-full object-contain">
          </div>
          <div class="min-w-0 flex-1">
           <h1 id="app-title" class="text-lg sm:text-xl font-bold tracking-tight truncate">Sistem Presensi Pintar</h1>
@@ -699,7 +699,7 @@
    <footer class="bg-white border-t border-slate-200 mt-12">
     <div class="max-w-7xl mx-auto px-4 py-6">
      <div class="text-center">
-      <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">© 2026 EduApp Presensi. Sistem Terintegrasi Cerdas.</p>
+      <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">© 2026 Noviyalpg Creative. Sistem Presensi Terintegrasi Cerdas.</p>
      </div>
     </div>
    </footer>
@@ -929,7 +929,7 @@
         renderAdminStudentList();
       } else {
         const pass = prompt("Masukkan Password Admin:");
-        if (pass === "iatah" || pass === "rahasia") {
+        if (pass === "#42Ceria") {
           isAdminUnlocked = true;
           showToast("Akses Pengelolaan Terbuka", "success");
           switchTab('admin');
@@ -1182,7 +1182,7 @@
 
     // Modal Edit Data
     function openEditModal(id) {
-      editTargetRecord = allRecords.find(r => r.__backendId === id || r.id === id);
+      editTargetRecord = allRecords.find(r => r.id === id || r.__backendId === id);
       if (!editTargetRecord) return;
 
       document.getElementById('edit-id').value = id;
@@ -1234,7 +1234,7 @@
 
     // Delete Modal
     function openDeleteModal(id) {
-      deleteTargetRecord = allRecords.find(r => r.__backendId === id || r.id === id);
+      deleteTargetRecord = allRecords.find(r => r.id === id || r.__backendId === id);
       document.getElementById('delete-modal').classList.remove('hidden');
     }
 
@@ -2189,43 +2189,104 @@
     // App Init
     async function initApp() {
       initDate();
-      document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
       
-      // Setup Data SDK
-      const GAS_URL = "";
-      if (GAS_URL !== "") {
-        try {
-          const res = await fetch(GAS_URL); const data = await res.json();
-          dataHandler.onDataChanged(Array.isArray(data) ? data : []);
-        } catch (e) { showToast('Koneksi Database GAS Bermasalah', 'error'); }
+      // Set bulk date to today
+      document.getElementById('bulk-date').value = new Date().toISOString().split('T')[0];
 
+      // ========================================================
+      // TAUTKAN URL WEB APP DARI GOOGLE APPS SCRIPT DI BAWAH INI
+      // ========================================================
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbwfOKD7H03pRQZktXDpZ7PPOMfgOks7ld3LOA9_W3ChlLa5JPOVTCvxNrXF-LGSpPgv/exec"; // Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
+
+      if (GAS_URL !== "") {
+        showToast('Menghubungkan ke Database...', 'success');
+        try {
+          // Mengambil data awal dari Spreadsheet
+          const res = await fetch(GAS_URL);
+          const data = await res.json();
+          dataHandler.onDataChanged(Array.isArray(data) ? data : []);
+          showToast('Data berhasil dimuat dari Spreadsheet', 'success');
+        } catch (e) {
+          console.error(e);
+          showToast('Gagal memuat data dari Spreadsheet', 'error');
+        }
+
+        // MENGGANTI FUNGSI LOKAL SDK DENGAN FETCH KE GAS BACKEND
         window.dataSdk = {
           create: async (record) => {
-            record.id = 'id_' + Date.now();
+            record.id = 'id_' + Date.now() + Math.floor(Math.random() * 1000);
             try {
-              const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'create', data: record }) });
-              const r = await res.json(); if (r.isOk) { allRecords.push(record); dataHandler.onDataChanged(allRecords); } return r;
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'create', data: record })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                allRecords.push(record);
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
             } catch (e) { return { isOk: false }; }
           },
           update: async (record) => {
             try {
-              const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'update', data: record }) });
-              const r = await res.json(); if (r.isOk) { const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId)); if (idx > -1) allRecords[idx] = record; dataHandler.onDataChanged(allRecords); } return r;
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'update', data: record })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId));
+                if (idx > -1) allRecords[idx] = record;
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
             } catch (e) { return { isOk: false }; }
           },
           delete: async (record) => {
             try {
-              const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } }) });
-              const r = await res.json(); if (r.isOk) { allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId)); dataHandler.onDataChanged(allRecords); } return r;
+              const res = await fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } })
+              });
+              const r = await res.json();
+              if (r.isOk) {
+                allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId));
+                dataHandler.onDataChanged(allRecords);
+              }
+              return r;
             } catch (e) { return { isOk: false }; }
           }
         };
       } else {
+        // Fallback SDK bawaan memori sementara jika GAS_URL dikosongkan
         if (window.dataSdk) {
           const result = await window.dataSdk.init(dataHandler);
+          if (!result.isOk) {
+            console.error('Failed to initialize data SDK');
+          }
         }
       }
 
+      // Initialize UI SDK 
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (cfg) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['app_title', cfg.app_title || defaultConfig.app_title],
+            ['school_name', cfg.school_name || defaultConfig.school_name]
+          ])
+        });
+      }
+
+      // Add filter event listeners
       document.getElementById('filter-search').addEventListener('input', applyFilters);
       document.getElementById('filter-date').addEventListener('change', applyFilters);
       document.getElementById('filter-class').addEventListener('change', applyFilters);
