@@ -237,6 +237,22 @@
            <h3 class="font-bold text-red-700 flex items-center gap-2 text-lg">⚠️ Daftar Siswa Tidak Hadir (Sesuai Periode Terpilih)</h3>
            <p class="text-sm text-slate-500 mt-1">Siswa yang <strong>belum melakukan presensi / tidak absen</strong> akan dideteksi secara otomatis di sini bersamaan dengan siswa Izin, Sakit, dan Alfa.</p>
        </div>
+
+       <!-- Penambahan Filter Kelas dan Tanggal -->
+       <div class="p-4 bg-white border-b border-slate-100 flex flex-wrap gap-4 items-end">
+           <div>
+               <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Filter Kelas</label>
+               <select id="analysis-filter-class" onchange="updateAbsentAnalysisTable()" class="w-40 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500">
+                   <option value="">Semua Kelas</option>
+               </select>
+           </div>
+           <div>
+               <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Filter Tanggal</label>
+               <input type="date" id="analysis-filter-date" onchange="updateAbsentAnalysisTable()" class="w-40 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500">
+           </div>
+           <button onclick="document.getElementById('analysis-filter-class').value=''; document.getElementById('analysis-filter-date').value=''; updateAbsentAnalysisTable();" class="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Reset</button>
+       </div>
+
        <div class="overflow-x-auto max-h-80 scrollbar-thin">
          <table class="w-full text-left">
             <thead class="bg-white sticky top-0 shadow-sm">
@@ -928,7 +944,8 @@
       const selects = [
         { id: 'bulk-class', defaultText: '-- Kelas --' },
         { id: 'qr-class', defaultText: '-- Kelas --' },
-        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' }
+        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' },
+        { id: 'analysis-filter-class', defaultText: 'Semua Kelas' }
       ];
 
       selects.forEach(selInfo => {
@@ -1219,12 +1236,22 @@
          return a.student_name.localeCompare(b.student_name);
       });
 
-      if (combinedAbsents.length === 0) {
-          container.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-500 font-medium">✨ Seluruh siswa hadir penuh pada periode ini.</td></tr>`;
+      // Menerapkan Filter Kelas dan Tanggal
+      const filterClass = document.getElementById('analysis-filter-class') ? document.getElementById('analysis-filter-class').value : '';
+      const filterDate = document.getElementById('analysis-filter-date') ? document.getElementById('analysis-filter-date').value : '';
+
+      let finalAbsents = combinedAbsents.filter(r => {
+         const matchClass = !filterClass || r.class_name === filterClass;
+         const matchDate = !filterDate || r.date === filterDate;
+         return matchClass && matchDate;
+      });
+
+      if (finalAbsents.length === 0) {
+          container.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-500 font-medium">✨ Seluruh siswa hadir penuh pada periode ini atau tidak ada data yang cocok dengan filter.</td></tr>`;
           return;
       }
 
-      container.innerHTML = combinedAbsents.map(r => `
+      container.innerHTML = finalAbsents.map(r => `
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
               <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
               <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
