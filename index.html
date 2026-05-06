@@ -7,19 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Library untuk Generate QR Code -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-  <!-- Library untuk Memindai QR Code via Kamera -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-  <!-- Library untuk Download ZIP Massal -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
-    body {
-      box-sizing: border-box;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    body { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
     .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: #f8fafc; border-radius: 3px; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -31,26 +25,12 @@
     .pulse-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    /* Mobile Responsive Styles */
     @media (max-width: 640px) {
-      header .flex-col-mobile { flex-direction: column; gap: 0.5rem; }
-      .mobile-text-sm { font-size: 0.875rem; }
       .touch-target { min-height: 44px; min-width: 44px; }
       .mobile-hide { display: none; }
-      .mobile-stack { grid-template-columns: repeat(2, 1fr); }
-      .mobile-full { width: 100%; }
-      .mobile-compact { padding: 0.75rem; }
-      .mobile-heading { font-size: 1.125rem; }
       .tab-scroll { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
       .tab-scroll::-webkit-scrollbar { display: none; }
     }
-
-    @media (max-width: 896px) and (orientation: landscape) {
-      .landscape-flex { display: flex; gap: 1rem; }
-      .landscape-half { flex: 1; min-width: 0; }
-      .landscape-compact { max-height: calc(100vh - 180px); overflow-y: auto; }
-    }
-
     @media (max-width: 768px) {
       table { font-size: 0.813rem; }
       thead th { padding: 0.5rem; font-size: 0.688rem; }
@@ -58,34 +38,12 @@
       .mobile-hide-col { display: none; }
     }
 
-    /* Styling area Scanner */
-    #qr-reader {
-      border: none !important;
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
-    #qr-reader video {
-      width: 100% !important;
-      border-radius: 1rem;
-      object-fit: cover;
-    }
-    #qr-reader__scan_region img {
-      opacity: 0.3;
-    }
-    
-    /* Kartu Statistik Profesional */
-    .stat-card {
-      transition: all 0.3s ease;
-      background: white;
-      border: 1px solid #e2e8f0;
-    }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    }
+    #qr-reader { border: none !important; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+    #qr-reader video { width: 100% !important; border-radius: 1rem; object-fit: cover; }
+    #qr-reader__scan_region img { opacity: 0.3; }
+    .stat-card { transition: all 0.3s ease; background: white; border: 1px solid #e2e8f0; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); }
   </style>
-  <style>@view-transition { navigation: auto; }</style>
  </head>
  <body class="h-full bg-slate-50 text-slate-800">
   
@@ -108,7 +66,6 @@
        <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0 overflow-hidden p-1">
-          <!-- Logo yang ditambahkan -->
           <img src="https://imgur.com/bb1V1gO.png" alt="Logo" class="w-full h-full object-contain">
          </div>
          <div class="min-w-0 flex-1">
@@ -118,7 +75,7 @@
         </div>
         <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
          <button onclick="toggleFullscreen()" id="fullscreen-btn" class="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors touch-target text-slate-300 flex items-center gap-2" title="Toggle Fullscreen">
-          <svg id="fullscreen-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+          <svg id="fullscreen-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
           <span class="hidden sm:inline text-sm font-medium">Layar Penuh</span>
          </button>
          <div class="hidden sm:flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-2 rounded-lg">
@@ -133,27 +90,13 @@
     <!-- Navigation Tabs -->
     <div class="max-w-7xl mx-auto px-2 sm:px-6">
      <nav class="flex gap-2 sm:gap-6 -mb-px overflow-x-auto scrollbar-thin pt-3 tab-scroll">
-      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-3 sm:px-1 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all whitespace-nowrap touch-target"> 
-        📊 <span class="mobile-hide">Dasbor Utama</span><span class="sm:hidden">Dasbor</span> 
-      </button> 
-      <button onclick="switchTab('bulk')" id="tab-bulk" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        ⚡ <span class="mobile-hide">Input Presensi</span><span class="sm:hidden">Input</span> 
-      </button> 
-      <button onclick="switchTab('history')" id="tab-history" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        📋 <span class="mobile-hide">Riwayat Hadir</span><span class="sm:hidden">Data</span> 
-      </button> 
-      <button onclick="switchTab('analysis')" id="tab-analysis" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        📈 Analisis 
-      </button>
-      <button onclick="switchTab('qr')" id="tab-qr" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        💳 <span class="mobile-hide">Kartu QR</span><span class="sm:hidden">QR</span> 
-      </button>
-      <button onclick="switchTab('scan')" id="tab-scan" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        📷 <span class="mobile-hide">Scan Kamera</span><span class="sm:hidden">Scan</span> 
-      </button>
-      <button onclick="checkAdminAccess()" id="tab-admin" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target"> 
-        ⚙️ <span class="mobile-hide">Kelola Siswa</span><span class="sm:hidden">Admin</span> 
-      </button>
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-3 sm:px-1 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all whitespace-nowrap touch-target">📊 <span class="mobile-hide">Dasbor Utama</span><span class="sm:hidden">Dasbor</span></button> 
+      <button onclick="switchTab('bulk')" id="tab-bulk" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">⚡ <span class="mobile-hide">Input Presensi</span><span class="sm:hidden">Input</span></button> 
+      <button onclick="switchTab('absent')" id="tab-absent" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">⚠️ <span class="mobile-hide">Rekap Absen</span><span class="sm:hidden">Absen</span></button> 
+      <button onclick="switchTab('analysis')" id="tab-analysis" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">📈 Analisis</button>
+      <button onclick="switchTab('qr')" id="tab-qr" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">💳 <span class="mobile-hide">Kartu QR</span><span class="sm:hidden">QR</span></button>
+      <button onclick="switchTab('scan')" id="tab-scan" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">📷 <span class="mobile-hide">Scan Kamera</span><span class="sm:hidden">Scan</span></button>
+      <button onclick="checkAdminAccess()" id="tab-admin" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">⚙️ <span class="mobile-hide">Kelola Siswa</span><span class="sm:hidden">Admin</span></button>
      </nav>
     </div>
    </header>
@@ -174,12 +117,9 @@
        </div>
      </div>
      
-     <!-- Stats Cards (Fokus pada Kehadiran) -->
      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
       <div class="stat-card rounded-2xl p-5 border-l-4 border-l-emerald-500 relative overflow-hidden">
-       <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center">
-         <span class="text-3xl opacity-50">✅</span>
-       </div>
+       <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center"><span class="text-3xl opacity-50">✅</span></div>
        <p class="text-sm font-semibold text-slate-500 mb-1">Hadir (Hari Ini)</p>
        <div class="flex items-baseline gap-2">
          <p class="text-3xl sm:text-4xl font-black text-emerald-600" id="stat-hadir">0</p>
@@ -187,43 +127,30 @@
        </div>
       </div>
       <div class="stat-card rounded-2xl p-5 border-l-4 border-l-amber-400 relative overflow-hidden">
-       <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center">
-         <span class="text-3xl opacity-50">📝</span>
-       </div>
+       <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center"><span class="text-3xl opacity-50">📝</span></div>
        <p class="text-sm font-semibold text-slate-500 mb-1">Izin</p>
        <p class="text-3xl sm:text-4xl font-black text-amber-500" id="stat-izin">0</p>
       </div>
       <div class="stat-card rounded-2xl p-5 border-l-4 border-l-blue-500 relative overflow-hidden">
-       <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-         <span class="text-3xl opacity-50">🏥</span>
-       </div>
+       <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center"><span class="text-3xl opacity-50">🏥</span></div>
        <p class="text-sm font-semibold text-slate-500 mb-1">Sakit</p>
        <p class="text-3xl sm:text-4xl font-black text-blue-600" id="stat-sakit">0</p>
       </div>
       <div class="stat-card rounded-2xl p-5 border-l-4 border-l-red-500 relative overflow-hidden">
-       <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-         <span class="text-3xl opacity-50">❌</span>
-       </div>
+       <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-50 rounded-full flex items-center justify-center"><span class="text-3xl opacity-50">❌</span></div>
        <p class="text-sm font-semibold text-slate-500 mb-1">Alfa (Tanpa Keterangan)</p>
        <p class="text-3xl sm:text-4xl font-black text-red-600" id="stat-alfa">0</p>
       </div>
      </div>
 
-     <!-- Charts Row -->
      <div class="grid lg:grid-cols-2 gap-6 mb-8">
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-       <div class="flex justify-between items-center mb-6">
-         <h3 class="font-bold text-slate-800 flex items-center gap-2">📈 Tingkat Kehadiran per Kelas</h3>
-       </div>
-       <div class="h-64">
-        <canvas id="chart-class"></canvas>
-       </div>
+       <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">📈 Tingkat Kehadiran per Kelas</h3>
+       <div class="h-64"><canvas id="chart-class"></canvas></div>
       </div>
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
        <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">🥧 Proporsi Presensi Global</h3>
-       <div class="h-64 flex items-center justify-center relative">
-        <canvas id="chart-pie"></canvas>
-       </div>
+       <div class="h-64 flex items-center justify-center relative"><canvas id="chart-pie"></canvas></div>
       </div>
      </div>
 
@@ -241,7 +168,6 @@
      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between mb-6">
        <h3 class="font-bold text-slate-800 flex items-center gap-2">🕐 Presensi Masuk Terbaru</h3>
-       <button onclick="switchTab('history')" class="text-blue-600 text-sm font-semibold hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"> Lihat Semua Tabel </button>
       </div>
       <div id="recent-records" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto scrollbar-thin">
        <div class="col-span-full text-center py-8 text-slate-400"><span class="text-4xl mb-2 block">📭</span><p>Belum ada yang melakukan presensi hari ini</p></div>
@@ -255,40 +181,33 @@
       <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 slide-up">
        <div class="mb-8 border-b border-slate-100 pb-6">
          <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚡ Input Presensi Massal</h2>
-         <p class="text-slate-500 text-sm mt-1">Gunakan fitur ini untuk menandai kehadiran/ketidakhadiran satu kelas secara cepat jika tidak menggunakan *Scanner*.</p>
+         <p class="text-slate-500 text-sm mt-1">Tandai kehadiran/ketidakhadiran satu kelas secara cepat jika tidak menggunakan Scanner.</p>
        </div>
        
-       <!-- Bulk Form Header -->
        <div class="grid sm:grid-cols-3 gap-5 mb-8">
         <div>
-          <label for="bulk-class" class="block text-sm font-bold text-slate-700 mb-2">Pilih Kelas</label> 
-          <select id="bulk-class" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800 bg-slate-50 font-medium hover:bg-slate-100"> 
-            <option value="">-- Kelas --</option>
-          </select>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Kelas</label> 
+          <select id="bulk-class" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-800 bg-slate-50 font-medium"></select>
         </div>
         <div>
-          <label for="bulk-date" class="block text-sm font-bold text-slate-700 mb-2">Tanggal Presensi</label> 
-          <input type="date" id="bulk-date" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800 bg-slate-50">
+          <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Presensi</label> 
+          <input type="date" id="bulk-date" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-800 bg-slate-50">
         </div>
         <div>
-          <label for="bulk-teacher" class="block text-sm font-bold text-slate-700 mb-2">Nama Guru Piket/Pengajar</label> 
-          <input type="text" id="bulk-teacher" required placeholder="Nama Anda" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800 bg-slate-50 placeholder-slate-400">
+          <label class="block text-sm font-bold text-slate-700 mb-2">Pencatat</label> 
+          <input type="text" id="bulk-teacher" required placeholder="Nama Guru" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-800 bg-slate-50">
         </div>
        </div>
 
-       <!-- Student List -->
        <div id="bulk-student-list" class="mb-8">
         <div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
-         <span class="text-5xl mb-3 block">👇</span>
-         <p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p>
+         <span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p>
         </div>
        </div>
 
-       <!-- Action Buttons -->
        <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-100">
-         <button onclick="submitBulkAbsence()" id="bulk-submit-btn" disabled class="flex-1 bg-blue-600 text-white py-4 px-6 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"> 
+         <button onclick="submitBulkAbsence()" id="bulk-submit-btn" disabled class="flex-1 bg-blue-600 text-white py-4 px-6 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 disabled:opacity-50 transition-all text-lg"> 
            <span id="bulk-submit-text">💾 Simpan Presensi Terpilih</span>
-           <svg id="bulk-submit-spinner" class="hidden w-6 h-6 animate-spin" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
          </button> 
          <button onclick="resetBulkForm()" class="px-6 py-4 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-all"> 🔄 Reset Form </button>
        </div>
@@ -296,140 +215,43 @@
      </div>
     </div>
 
-    <!-- History Tab -->
-    <div id="content-history" class="tab-content hidden fade-in">
-     <!-- Student Individual Filter -->
-     <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
-      <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2 text-lg">👤 Lihat Profil Kehadiran Siswa</h3>
-      <div class="grid sm:grid-cols-2 gap-5">
-       <div>
-         <label class="block text-sm font-bold text-slate-700 mb-2">Kelas Siswa</label> 
-         <select id="student-filter-class" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-slate-50 hover:bg-slate-100 transition-colors"> 
-          <option value="">-- Pilih Kelas --</option> 
-         </select>
-       </div>
-       <div>
-         <label class="block text-sm font-bold text-slate-700 mb-2">Nama Siswa</label> 
-         <select id="student-filter-name" disabled class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-slate-50 disabled:bg-slate-100 disabled:text-slate-400 transition-colors"> <option value="">-- Pilih kelas dulu --</option> </select>
-       </div>
-      </div>
-      <div class="flex gap-3 mt-5">
-        <button onclick="applyStudentFilter()" id="apply-student-filter-btn" disabled class="px-6 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 touch-target"> 🔍 Analisis Siswa </button> 
-        <button onclick="clearStudentFilter()" class="px-6 py-3 border border-slate-300 bg-white text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2 touch-target"> ✕ Hapus Filter </button>
-      </div>
+    <!-- Absent Recap Tab (Siswa yang belum scan / alfa / izin / sakit) -->
+    <div id="content-absent" class="tab-content hidden fade-in">
+      <div class="max-w-5xl mx-auto">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 slide-up">
+          <div class="mb-6 border-b border-slate-100 pb-6">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚠️ Rekap & Deteksi Absen Otomatis</h2>
+            <p class="text-slate-500 text-sm mt-1">Sistem otomatis mencocokkan data "Master Siswa" dengan "Riwayat Hadir". Siswa yang belum memindai QR akan terdeteksi di sini.</p>
+          </div>
 
-      <!-- Student Statistics Card -->
-      <div id="student-stats-card" class="hidden mt-8 bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl text-white">
-       <div class="flex items-start justify-between mb-6">
-        <div>
-         <h4 class="text-2xl font-black mb-1" id="student-stats-name">-</h4>
-         <p class="text-sm text-slate-400 bg-slate-800 px-3 py-1 rounded-full inline-block" id="student-stats-class">-</p>
-        </div>
-        <button onclick="clearStudentFilter()" class="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white" title="Tutup"> ✕ </button>
-       </div>
-       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
-         <p class="text-xs text-emerald-400 mb-1 font-bold">Total Hadir</p>
-         <p class="text-3xl font-black text-emerald-400" id="student-stat-hadir">0</p>
-        </div>
-        <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
-         <p class="text-xs text-amber-400 mb-1 font-bold">Total Izin</p>
-         <p class="text-3xl font-black text-amber-400" id="student-stat-izin">0</p>
-        </div>
-        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-         <p class="text-xs text-blue-400 mb-1 font-bold">Total Sakit</p>
-         <p class="text-3xl font-black text-blue-400" id="student-stat-sakit">0</p>
-        </div>
-        <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-         <p class="text-xs text-red-400 mb-1 font-bold">Total Alfa</p>
-         <p class="text-3xl font-black text-red-400" id="student-stat-alfa">0</p>
-        </div>
-       </div>
-       <div class="bg-slate-800 rounded-xl p-5 border border-slate-700">
-        <p class="text-sm font-bold mb-3 flex items-center gap-2">📊 Rasio Kehadiran (Hadir vs Keseluruhan Data)</p>
-        <div class="flex items-center gap-4">
-         <div class="flex-1 bg-slate-900 rounded-full h-4 overflow-hidden border border-slate-700">
-          <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 rounded-full" id="student-stat-bar" style="width: 0%"></div>
-         </div>
-         <span class="text-xl font-black text-emerald-400" id="student-stat-percentage">0%</span>
-        </div>
-       </div>
-      </div>
-     </div>
+          <div class="grid sm:grid-cols-2 gap-5 mb-6">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">1. Pilih Kelas</label>
+              <select id="absent-class-select" onchange="renderAbsentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white"></select>
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">2. Pilih Tanggal</label>
+              <input type="date" id="absent-date" onchange="renderAbsentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
+            </div>
+          </div>
 
-     <!-- Regular Filters -->
-     <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-       <div>
-         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cari Nama</label> 
-         <input type="text" id="filter-search" placeholder="Ketik..." class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50">
-       </div>
-       <div>
-         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tanggal</label> 
-         <input type="date" id="filter-date" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50">
-       </div>
-       <div>
-         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Filter Kelas</label> 
-         <select id="filter-class" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50"> <option value="">Semua</option> </select>
-       </div>
-       <div>
-         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label> 
-         <select id="filter-type" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50"> <option value="">Semua Status</option> <option value="hadir">✅ Hadir</option> <option value="izin">📝 Izin</option> <option value="sakit">🏥 Sakit</option> <option value="alfa">❌ Alfa</option> </select>
-       </div>
-      </div>
-      <div class="flex gap-3 mt-5">
-        <button onclick="applyFilters()" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors touch-target"> Terapkan </button> 
-        <button onclick="clearFilters()" class="px-5 py-2.5 border border-slate-300 bg-white text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors touch-target"> Reset </button>
-      </div>
-     </div>
+          <div id="absent-stats" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6"></div>
 
-     <!-- Data Table -->
-     <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4 bg-slate-50">
-        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Tabel Master Presensi</h3>
-        <div class="flex gap-2 w-full sm:w-auto">
-          <button onclick="toggleAlfaRecap()" class="flex-1 sm:flex-auto px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">❌ <span class="hidden sm:inline">Rekap Alfa</span></button>
-          <button onclick="exportData()" class="flex-1 sm:flex-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">📥 <span class="hidden sm:inline">Download CSV</span></button>
+          <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <div class="bg-slate-50 p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h3 class="font-bold text-slate-700 text-lg">📋 Daftar Siswa Tidak Hadir</h3>
+              <button id="btn-auto-alfa" onclick="processAutoAlfa()" class="hidden px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors shadow-md shadow-red-500/20">
+                Jadikan Alfa (Belum Presensi)
+              </button>
+            </div>
+            <div id="absent-student-list" class="max-h-[500px] overflow-y-auto bg-white p-4"></div>
+          </div>
         </div>
       </div>
-      
-      <!-- Rekap Alfa Card -->
-      <div id="alfa-recap-card" class="hidden bg-slate-50 border-b border-slate-200 p-5">
-        <div class="flex items-center justify-between mb-4">
-          <h4 class="font-bold text-red-700 text-lg">📑 Rekapan Siswa Alfa (Sesuai Filter)</h4>
-          <button onclick="toggleAlfaRecap()" class="text-slate-500 hover:text-slate-700 text-sm font-bold">Tutup Rekap</button>
-        </div>
-        <div id="alfa-recap-content"></div>
-      </div>
-
-      <div class="overflow-x-auto">
-       <table class="w-full text-left">
-        <thead class="bg-slate-100/50">
-         <tr>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa / Ket.</th>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider mobile-hide-col">Waktu Presensi</th>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status Presensi</th>
-          <th class="px-4 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider mobile-hide-col">Pencatat</th>
-          <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Opsi</th>
-         </tr>
-        </thead>
-        <tbody id="history-table" class="divide-y divide-slate-100">
-         <tr>
-          <td colspan="6" class="px-4 py-16 text-center text-slate-400 bg-white"><span class="text-4xl mb-3 block">📭</span> <p class="font-medium">Belum ada data presensi yang masuk</p></td>
-         </tr>
-        </tbody>
-       </table>
-      </div>
-      <div class="p-4 bg-slate-50 text-right">
-        <span id="record-count" class="text-sm font-bold text-slate-500 bg-slate-200 px-3 py-1.5 rounded-lg">0 baris data</span>
-      </div>
-     </div>
     </div>
 
     <!-- Analysis Tab -->
     <div id="content-analysis" class="tab-content hidden fade-in">
-     <!-- Period Selector -->
      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6 flex flex-wrap items-center justify-between gap-4">
        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📈 Analisis Tren Kehadiran</h3>
        <div class="flex bg-slate-100 p-1 rounded-xl">
@@ -439,44 +261,33 @@
        </div>
      </div>
 
-     <!-- Analysis Charts -->
      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
        <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">📊 Grafik Pergerakan Hadir vs Absen</h3>
-       <div class="h-80">
-        <canvas id="chart-trend"></canvas>
-       </div>
+       <div class="h-80"><canvas id="chart-trend"></canvas></div>
      </div>
      
      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
        <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">🏫 Komparasi Total Kehadiran Antar Tingkat</h3>
-       <div class="h-72">
-        <canvas id="chart-grade"></canvas>
-       </div>
+       <div class="h-72"><canvas id="chart-grade"></canvas></div>
      </div>
 
-     <!-- Summary Stats -->
      <div class="bg-slate-900 rounded-3xl p-6 shadow-xl border border-slate-800 text-white">
       <h3 class="font-bold text-white mb-6 flex items-center gap-2 text-lg">💡 Rekap Akumulasi Seluruh Waktu</h3>
       <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4" id="summary-stats">
        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total Data</p>
-        <p class="text-3xl font-black text-white" id="summary-total">0</p>
+        <p class="text-xs font-bold text-slate-400 uppercase mb-2">Total Data</p><p class="text-3xl font-black" id="summary-total">0</p>
        </div>
        <div class="bg-emerald-500/10 rounded-2xl p-5 border border-emerald-500/20">
-        <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Total Hadir</p>
-        <p class="text-3xl font-black text-emerald-400" id="summary-hadir">0</p>
+        <p class="text-xs font-bold text-emerald-400 uppercase mb-2">Total Hadir</p><p class="text-3xl font-black text-emerald-400" id="summary-hadir">0</p>
        </div>
        <div class="bg-amber-500/10 rounded-2xl p-5 border border-amber-500/20">
-        <p class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Total Izin</p>
-        <p class="text-3xl font-black text-amber-400" id="summary-izin">0</p>
+        <p class="text-xs font-bold text-amber-400 uppercase mb-2">Total Izin</p><p class="text-3xl font-black text-amber-400" id="summary-izin">0</p>
        </div>
        <div class="bg-blue-500/10 rounded-2xl p-5 border border-blue-500/20">
-        <p class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Total Sakit</p>
-        <p class="text-3xl font-black text-blue-400" id="summary-sakit">0</p>
+        <p class="text-xs font-bold text-blue-400 uppercase mb-2">Total Sakit</p><p class="text-3xl font-black text-blue-400" id="summary-sakit">0</p>
        </div>
        <div class="bg-red-500/10 rounded-2xl p-5 border border-red-500/20">
-        <p class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Total Alfa</p>
-        <p class="text-3xl font-black text-red-400" id="summary-alfa">0</p>
+        <p class="text-xs font-bold text-red-400 uppercase mb-2">Total Alfa</p><p class="text-3xl font-black text-red-400" id="summary-alfa">0</p>
        </div>
       </div>
      </div>
@@ -492,52 +303,39 @@
          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
            <label class="block text-sm font-bold text-slate-700 mb-3">1. Pilih Kelas</label>
            <div class="flex gap-3">
-            <select id="qr-class" class="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 transition-colors">
-             <option value="">-- Kelas --</option>
-            </select>
-            <button onclick="downloadBulkQR()" id="btn-bulk-qr" disabled title="Download QR Satu Kelas (ZIP)" class="px-5 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-bold text-sm shadow-md">
+            <select id="qr-class" class="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50"></select>
+            <button onclick="downloadBulkQR()" id="btn-bulk-qr" disabled title="Download QR Satu Kelas (ZIP)" class="px-5 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 transition-colors flex items-center gap-2 font-bold text-sm shadow-md">
               📥 <span class="hidden sm:inline">ZIP Sekelas</span>
             </button>
            </div>
          </div>
          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
           <label class="block text-sm font-bold text-slate-700 mb-3">2. Pilih Siswa (Untuk Cek Individual)</label>
-          <select id="qr-student" disabled class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400 font-medium transition-colors">
-           <option value="">-- Menunggu Kelas --</option>
-          </select>
+          <select id="qr-student" disabled class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400 font-medium"></select>
          </div>
-         <button onclick="generateQR()" id="btn-generate-qr" disabled class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed text-lg">
-          Mulai Render QR
-         </button>
+         <button onclick="generateQR()" id="btn-generate-qr" disabled class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 disabled:opacity-50 text-lg">Mulai Render QR</button>
         </div>
 
         <div class="flex flex-col items-center justify-center p-8 bg-slate-100 border-2 border-dashed border-slate-300 rounded-3xl min-h-[400px] relative">
          <div id="qr-result-container" class="hidden flex flex-col items-center w-full">
           <div class="bg-white p-5 rounded-2xl shadow-xl border border-slate-100 mb-6 flex flex-col items-center w-full max-w-[280px] transform transition-transform hover:scale-105">
-           <div class="w-full bg-blue-600 text-white text-center py-2 rounded-t-lg -mt-5 -mx-5 w-[calc(100%+40px)] mb-4 font-black tracking-wider text-sm">
-              KARTU PRESENSI
-           </div>
+           <div class="w-full bg-blue-600 text-white text-center py-2 rounded-t-lg -mt-5 -mx-5 w-[calc(100%+40px)] mb-4 font-black tracking-wider text-sm">KARTU PRESENSI</div>
            <h3 class="font-bold text-slate-800 text-lg mb-1 text-center truncate w-full px-2" id="qr-display-name">Nama</h3>
            <p class="text-sm font-medium text-slate-500 mb-4 text-center bg-slate-100 px-3 py-1 rounded-full" id="qr-display-class">Kelas</p>
-           <div class="p-2 border-4 border-slate-100 rounded-xl mb-4 bg-white">
-             <canvas id="qr-canvas" class="mx-auto"></canvas>
-           </div>
-           <button onclick="downloadSingleQR()" class="w-full px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20">
-            📥 Simpan PNG
-           </button>
+           <div class="p-2 border-4 border-slate-100 rounded-xl mb-4 bg-white"><canvas id="qr-canvas" class="mx-auto"></canvas></div>
+           <button onclick="downloadSingleQR()" class="w-full px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20">📥 Simpan PNG</button>
           </div>
           <div class="w-full max-w-sm space-y-2">
            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Tautan Pintar (Direct Link)</label>
            <div class="flex gap-2">
-            <input type="text" id="qr-url-link" readonly class="flex-1 px-4 py-3 text-xs border border-slate-300 rounded-xl bg-white text-slate-600 font-medium focus:outline-none focus:border-blue-500">
-            <button onclick="copyQRLink()" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-colors shadow-md">Salin</button>
+            <input type="text" id="qr-url-link" readonly class="flex-1 px-4 py-3 text-xs border border-slate-300 rounded-xl bg-white text-slate-600 font-medium">
+            <button onclick="copyQRLink()" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold shadow-md">Salin</button>
            </div>
           </div>
          </div>
          <div id="qr-placeholder" class="text-center text-slate-400 absolute">
           <span class="text-6xl mb-4 block opacity-50">🪪</span>
-          <p class="font-medium text-lg">Area Tampil Kartu</p>
-          <p class="text-sm">Pilih siswa untuk merender QR</p>
+          <p class="font-medium text-lg">Area Tampil Kartu</p><p class="text-sm">Pilih siswa untuk merender QR</p>
          </div>
         </div>
        </div>
@@ -555,18 +353,17 @@
           <p class="text-slate-500 text-sm mt-1">Sorotkan QR Siswa ke kamera, presensi "Hadir" akan dicatat otomatis.</p>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
-         <button onclick="switchCamera()" id="btn-switch-camera" class="hidden px-5 py-3 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2 border border-slate-300">🔄 Balik Kamera</button>
+         <button onclick="switchCamera()" id="btn-switch-camera" class="hidden px-5 py-3 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-colors border border-slate-300">🔄 Balik Kamera</button>
          <button onclick="toggleScanner()" id="btn-toggle-scan" class="px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30">Mulai Scan Sekarang</button>
         </div>
        </div>
 
-       <!-- Fitur Alternatif: Unggah Foto QR jika kamera terblokir -->
        <div class="mb-8 p-5 bg-amber-50 rounded-2xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <p class="text-sm font-bold text-amber-800">📸 Opsi File Gambar</p>
           <p class="text-xs text-amber-600">Gunakan jika kamera terblokir oleh browser</p>
         </div>
-        <input type="file" id="qr-file-input" accept="image/*" class="w-full sm:w-auto text-sm file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white file:text-amber-700 file:shadow-sm hover:file:bg-amber-100 transition-colors cursor-pointer text-slate-600">
+        <input type="file" id="qr-file-input" accept="image/*" class="w-full sm:w-auto text-sm file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white file:text-amber-700 file:shadow-sm hover:file:bg-amber-100 cursor-pointer">
        </div>
        
        <div id="scanner-container" class="hidden overflow-hidden rounded-3xl border-8 border-slate-100 bg-slate-900 flex items-center justify-center mb-8 relative shadow-inner">
@@ -582,17 +379,17 @@
           <p class="text-slate-500 font-bold bg-slate-100 inline-block px-3 py-1 rounded-lg" id="scan-student-class">-</p>
          </div>
          <div id="scan-status-badge"></div>
-         <button onclick="resetScanResult()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold touch-target hidden" id="close-scan-btn">✕</button>
+         <button onclick="resetScanResult()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold hidden" id="close-scan-btn">✕</button>
         </div>
         
         <div id="manual-scan-actions" class="space-y-5 hidden relative z-10 bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-4">
          <div>
           <label class="block text-sm font-bold text-slate-700 mb-3">Konfirmasi Manual Kehadiran:</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-           <button onclick="submitScannedAbsence('hadir')" class="py-3 bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl font-bold hover:bg-emerald-200 transition-colors shadow-sm">✅ Hadir</button>
-           <button onclick="submitScannedAbsence('izin')" class="py-3 bg-amber-100 text-amber-700 border border-amber-200 rounded-xl font-bold hover:bg-amber-200 transition-colors shadow-sm">📝 Izin</button>
-           <button onclick="submitScannedAbsence('sakit')" class="py-3 bg-blue-100 text-blue-700 border border-blue-200 rounded-xl font-bold hover:bg-blue-200 transition-colors shadow-sm">🏥 Sakit</button>
-           <button onclick="submitScannedAbsence('alfa')" class="py-3 bg-red-100 text-red-700 border border-red-200 rounded-xl font-bold hover:bg-red-200 transition-colors shadow-sm">❌ Alfa</button>
+           <button onclick="submitScannedAbsence('hadir')" class="py-3 bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl font-bold hover:bg-emerald-200 shadow-sm">✅ Hadir</button>
+           <button onclick="submitScannedAbsence('izin')" class="py-3 bg-amber-100 text-amber-700 border border-amber-200 rounded-xl font-bold hover:bg-amber-200 shadow-sm">📝 Izin</button>
+           <button onclick="submitScannedAbsence('sakit')" class="py-3 bg-blue-100 text-blue-700 border border-blue-200 rounded-xl font-bold hover:bg-blue-200 shadow-sm">🏥 Sakit</button>
+           <button onclick="submitScannedAbsence('alfa')" class="py-3 bg-red-100 text-red-700 border border-red-200 rounded-xl font-bold hover:bg-red-200 shadow-sm">❌ Alfa</button>
           </div>
          </div>
          <div>
@@ -621,47 +418,37 @@
        </div>
        
        <div class="grid lg:grid-cols-3 gap-6">
-        <!-- Kolom Kiri: Manajemen Kelas & Input -->
         <div class="lg:col-span-1 space-y-6">
          
-         <!-- Manajemen Kelas -->
          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
           <label class="block text-sm font-bold text-slate-700 mb-2">Pilih / Kelola Kelas</label>
-          <select id="admin-class-select" onchange="renderAdminStudentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 transition-colors mb-3">
-            <option value="">-- Pilih Kelas --</option>
-          </select>
+          <select id="admin-class-select" onchange="renderAdminStudentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white font-medium hover:bg-slate-50 mb-3"></select>
           <div class="flex gap-2">
-            <button onclick="promptAddClass()" class="flex-1 py-2 text-xs font-bold bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg transition-colors">➕ Tambah</button>
-            <button onclick="promptRenameClass()" class="flex-1 py-2 text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-lg transition-colors">✏️ Edit</button>
-            <button onclick="promptDeleteClass()" class="flex-1 py-2 text-xs font-bold bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors">🗑️ Hapus</button>
+            <button onclick="promptAddClass()" class="flex-1 py-2 text-xs font-bold bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg">➕ Tambah</button>
+            <button onclick="promptRenameClass()" class="flex-1 py-2 text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-lg">✏️ Edit</button>
+            <button onclick="promptDeleteClass()" class="flex-1 py-2 text-xs font-bold bg-red-100 text-red-700 hover:bg-red-200 rounded-lg">🗑️ Hapus</button>
           </div>
          </div>
          
-         <!-- Tambah Siswa Tunggal -->
          <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
           <label class="block text-sm font-bold text-blue-900 mb-2">Input Siswa Tunggal</label>
           <input type="text" id="admin-new-student" placeholder="Nama Lengkap Siswa" class="w-full px-4 py-3 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 mb-3 bg-white font-medium text-sm">
-          <button onclick="addStudent()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all text-sm">Tambah Siswa</button>
+          <button onclick="addStudent()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md text-sm">Tambah Siswa</button>
          </div>
 
-         <!-- Input Massal -->
          <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
           <label class="block text-sm font-bold text-emerald-900 mb-2">Input Massal (Banyak Siswa)</label>
           <p class="text-xs text-emerald-700 mb-2">Ketik/Paste daftar nama siswa (pisahkan dengan enter):</p>
           <textarea id="admin-bulk-students" rows="4" placeholder="Siswa A&#10;Siswa B&#10;Siswa C..." class="w-full px-4 py-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 mb-3 bg-white font-medium text-sm resize-none"></textarea>
-          <button onclick="addBulkStudents()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-500/20 transition-all text-sm">Tambah Massal</button>
+          <button onclick="addBulkStudents()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md text-sm">Tambah Massal</button>
          </div>
-
         </div>
 
-        <!-- Kolom Kanan: Daftar Siswa -->
         <div class="lg:col-span-2">
          <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 h-full min-h-[600px] flex flex-col">
           <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
             <h3 class="font-bold text-slate-700">Daftar Siswa Kelas Terpilih</h3>
-            <button onclick="deleteAllStudentsInClass()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-              🗑️ Hapus Massal (Semua)
-            </button>
+            <button onclick="deleteAllStudentsInClass()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg flex items-center gap-1">🗑️ Hapus Massal (Semua)</button>
           </div>
           <div id="admin-student-list" class="flex-1 overflow-y-auto scrollbar-thin pr-2">
             <div class="text-center py-16 text-slate-400">
@@ -678,49 +465,6 @@
     </div>
 
    </main>
-
-   <!-- Edit Modal -->
-   <div id="edit-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
-    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90%] overflow-y-auto shadow-2xl slide-up">
-     <div class="p-6 sm:p-8">
-      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-       <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">✏️ Edit Presensi</h3>
-       <button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500 font-bold"> ✕ </button>
-      </div>
-      <form id="edit-form" class="space-y-5"><input type="hidden" id="edit-id">
-       <div><label class="block text-sm font-bold text-slate-700 mb-2">Nama Siswa</label> <input type="text" id="edit-student-name" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-slate-50 font-medium text-slate-800"></div>
-       <div class="grid grid-cols-2 gap-4">
-         <div><label class="block text-sm font-bold text-slate-700 mb-2">Kelas</label> <select id="edit-class-name" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-slate-50 font-medium"> <option value="7.1">7.1</option> <option value="7.2">7.2</option> <option value="7.3">7.3</option> <option value="7.4">7.4</option> <option value="8.1">8.1</option> <option value="8.2">8.2</option> <option value="8.3">8.3</option> <option value="8.4">8.4</option> <option value="9.1">9.1</option> <option value="9.2">9.2</option> <option value="9.3">9.3</option> </select></div>
-         <div><label class="block text-sm font-bold text-slate-700 mb-2">Tanggal</label> <input type="date" id="edit-date" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-slate-50 font-medium"></div>
-       </div>
-       <div><label class="block text-sm font-bold text-slate-700 mb-2">Status Presensi</label> <select id="edit-type" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white font-bold"> <option value="hadir" class="text-emerald-600">✅ Hadir</option> <option value="izin" class="text-amber-600">📝 Izin</option> <option value="sakit" class="text-blue-600">🏥 Sakit</option> <option value="alfa" class="text-red-600">❌ Alfa</option> </select></div>
-       <div><label class="block text-sm font-bold text-slate-700 mb-2">Pencatat (Guru)</label> <input type="text" id="edit-teacher" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white font-medium"></div>
-       <div><label class="block text-sm font-bold text-slate-700 mb-2">Keterangan Opsional</label> <textarea id="edit-description" rows="2" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 resize-none bg-white font-medium"></textarea></div>
-       
-       <div class="flex gap-3 pt-4 border-t border-slate-100">
-         <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-4 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors"> Batal </button>
-         <button type="submit" id="edit-submit-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"> 💾 Simpan Pembaruan </button> 
-       </div>
-      </form>
-     </div>
-    </div>
-   </div>
-
-   <!-- Delete Confirmation Modal -->
-   <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl slide-up">
-     <div class="text-center">
-      <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-red-100"><span class="text-4xl">🗑️</span></div>
-      <h3 class="text-2xl font-black text-slate-800 mb-2">Hapus Baris?</h3>
-      <p class="text-slate-500 text-sm mb-6 font-medium">Data riwayat presensi yang dihapus tidak dapat dipulihkan kembali ke tabel.</p>
-      
-      <div class="flex gap-3 mt-4">
-        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3.5 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors"> Batal </button> 
-        <button type="button" id="confirm-delete-btn" class="flex-1 px-4 py-3.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"> Ya, Hapus </button>
-      </div>
-     </div>
-    </div>
-   </div>
 
    <!-- Toast Notification -->
    <div id="toast" class="hidden fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3">
@@ -739,7 +483,7 @@
   </div>
 
   <script>
-    // App State
+    // === App State Variables ===
     let allRecords = [];
     let filteredRecords = [];
     let deleteTargetRecord = null;
@@ -756,166 +500,30 @@
     let currentScannedStudent = null;
     let lastScannedText = "";
     let scanTimeout = null;
+    
+    // Set for race condition prevention
+    let processingScans = new Set();
+    let pendingAutoAlfaStudents = [];
+    let isAdminUnlocked = false;
 
-    // Track in-progress scans to prevent immediate race conditions
-    const processingScans = new Set();
+    // === Global Utility Functions ===
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastIcon = document.getElementById('toast-icon');
+      const toastMessage = document.getElementById('toast-message');
 
-    // Default Data
-    const defaultStudentsByClass = {
-      '7.1': [
-        'NIHIL',
-        'A. Nurul Mutiarah', 'Adelia Difitri', 'Ahmad Maulana Yusuf', 'Atikah Salsabilla', 
-        'Bhayu Shetiawan', 'Devi Eka Safitri', 'Erlangga Dwi Irawan', 'Givan Dwie Abian', 
-        'Ilyas Samsul', 'Inayah Septianah', 'Kenzi Prasetio', 'Laili Dwi Khiar. H', 
-        'M Muiidzan Zaki Sfiyan', 'M. Nabil Nopriyansyah', 'M.Ardiyansa', 'M.Rama Dhanu', 
-        'M.Rizal', 'Muhammad Adam Khoiru', 'Muhammad Fuzi', 'Muhammad Nur Ramadhan', 
-        'Nasyila Maghfirotul Afalla', 'Nova Haryani', 'Putri Rahaf Abdul Naser', 'Rakka Al-Fathir', 
-        'Rizky Novia Azzahra', 'Silva Deswita H', 'Siti Hafidzoh', 'Syafikah Nawwarah', 
-        'Vitalia Charisa Putri', 'Wieni Dwi Anggraeni', 'Yusuf Juriansyah'
-      ],
-      '8.1': [
-        'NIHIL',
-        'ABU HANIFAH AR-RAYHAN', 'AISYARINI RUSWANDI', 'ALBI AL FARIZI', 'AMELLA NUR HUSNAH',
-        'ANNISA TRI RAHMADANI', 'ANNISAH', 'ARYANA FEBRA SABILA', 'ASYIFA',
-        'CAHYA NOVITA PUTRI', 'CHANTIO RAFFA MAULANA', 'FATTAN AQILA PRANAJA', 'GELORA FLORRA INESIA',
-        'LUTHFIYAH AL VARRETA', 'M ALFARAS', 'M SAMAN AL KAMAL', 'M. FHAKRI FHAQI',
-        'M. NAZZARULLAH FAJAR AKBAR', 'M. Yogi Syah Putra', 'NABILA VITA LIA', 'NAIRA SYIFA WANDIRA',
-        'NURIZA GUSTIANI PUTRI', 'RAFASHA NICHO ATHMAJA', 'RAYEN PUTRA PERATAMA', 'RIZKY RIDHO SYAPUTRA',
-        'SAFFA PUTRI AMELIA', 'SEFA LIYANA PURNAMA', 'SITI NUR AENI', 'SITI SARNAH',
-        'SYAFIK ABIABDILLAH', 'SYHID SEPTIADI', 'TIARA ANGGITA SARI', 'VILA SATIRA'
-      ],
-      '7.2': [
-        'NIHIL',
-        'Adliyan Viki Wijaya', 'Al Faqih', 'Alika Putri', 'Amelia Safitri', 
-        'Aniqah Hanun Azalia', 'Aqila Cinta Ramadhan', 'Aulia Puteri Zulhijjah', 'Candra Maulana Rajata', 
-        'Dewi Widiyah', 'Fadli Muhammad Yusuf', 'Hibnu Targiansyah', 'Iswatul Nur Al-Liyah', 
-        'Lisda Amelia', 'M Aji Saputra', 'M Tora Hidayat', 'M. Rafi', 
-        'M.Arfan Pratama', 'M.Rendi', 'M.Satrio Arifin', 'Muhammad Al Faisal', 
-        'Muhammad Indra Herlangga', 'Muhammad Ridho Wijaya', 'Nazwa Al Mukarromah', 'Nurul Afifah Addini', 
-        'Refi Yana', 'Rizki Harvierdi Pratama', 'Sapirah', 'Shiva Nijwa', 
-        'Siti Kaesa Al Husna', 'Tanisa Oktaviani', 'Windi Lestari', 'Zidane Hatim Al-Habib'
-      ],
-      '7.3': [
-        'NIHIL',
-        'Ahmad Luthfi Zaidan', 'Albi Alkhalifi', 'Alika Safitri', 'Amora Al Adhwa Ananda', 
-        'Arjun Rahman Saputra', 'Cika Juliana', 'Diajeng Ayu Santosa', 'Gibran Ibni Al-Habshi', 
-        'Jassica Kristabel', 'Jihad Abdillah', 'M Alif Julian Syah', 'M. Indra Saputra', 
-        'M. Khoirul', 'M. Rezeque Caesar Khemiz', 'M.Arka Saputra', 'M.Rian Maulana', 
-        'Medina Humaira', 'Muhamad Davi', 'Muhammad Desta Mahardhika', 'Muhammad Khanif', 
-        'Muhammmad Fikri', 'Nazwa Safitri', 'Putri Anisya', 'Restu Ali Diansah', 
-        'Rindi Yani Alika', 'Rizky Pratama Yunus', 'Sevani Nurkholifah', 'Siti Ayu Maulina Anam', 
-        'Siti Hanifah Anggraeini', 'Siti Syakila', 'Tiara Anggraeni', 'Zaskia Rahmadani'
-      ],
-      '7.4': [
-        'NIHIL',
-        'Anisa Febriyanti', 'Arkan Maulana Yusuf', 'Asifa Aulia', 'Azkar Mahvin', 
-        'Cindy Lestari', 'Desta Marchell Pratama', 'Dimas Satrio', 'Feni Yuanita Sari', 
-        'Jihan Sofiyah Azizah', 'Joshua Andrian', 'Kynaya Vitaloka Afriyani', 'M Khoirul Hubay', 
-        'M. Melfiaro Rakyan Firman', 'M.Alfarizy', 'M.Farhan Elkadi', 'M.Ridho Rhomadon', 
-        'Mikayla Ramadhani', 'Muhamad Lutfi', 'Muhammad Faqih', 'Muhammad Nasir', 
-        'Neynah Anjayani', 'Putri Nayra', 'Raditiya Sulaiman', 'Risti Andini', 
-        'Sandi Drajat', 'Sinta Wati', 'Siti Ainurrohmah', 'Siti Cahaya Kamila', 
-        'Siti Zahrah', 'Viky Agustiyan Ramadhani', 'Yoga Saputra', 'Zahra Aqilah Putri'
-      ],
-      '8.2': [
-        'NIHIL',
-        'ALISA KANZA RINA', 'AMELIA AZZAHRA', 'ASHILA SANDRA', 'AULIA', 'DIMAS ADITYA RIZKI', 
-        'EKA SYAPUTRA', 'ERIK HARTAWAN', 'FARDAN ABDILLAH', 'HAFIDZH ALJABAR', 'HOIRUL PRATAMA', 
-        'IKHWAN UBADILAH', 'IRHAM EFFENDI', 'M ARDIAN ILHAM', 'M MARYAN', 'M. JHAFA MAULANA', 
-        'M. RIZKI ALVARO', 'M. VALENTINO', 'M. WILDAN AL-FARIZI', 'M. YUSUF RAMLAN', 
-        'MUHAMAD YAVIS ALGHIFARI', 'MUHAMMAD AFANDY MAULANA', 'MUHAMMAD FADHIL AKNI FEBRIAN', 
-        'MUHAMMAD FARIZ AL-KHATAM', 'MUHAMMAD RIZKI FATUWLOH', 'RAIHAN SAPUTRA', 
-        'RIMBUN AZMA PUTRI SABILA', 'SATRIA ABDURROHIM', 'TRI SUNARYO', 'VIOLA WINDRIA', 
-        'WAWAN SAPUTRA', 'ZHUANDIKA TRI CAHAYADI'
-      ],
-      '8.3': [
-        'NIHIL',
-        'A. MUHAMMAD TAUFIK HIDAYAT', 'ADE IRMA AULIA', 'ADELIA RAMADHANI', 'AHMAD AKBAR',
-        'AJENG PARAMITA', 'ALVIERO AGRA', 'ALYA FEBRIYANI', 'BAGASKORO SAPUTRA',
-        'FANDY HEZA HAIKAL', 'FARDEN PERMANA PUTRA', 'ILHAM', 'KARINA',
-        'KAYLA SYAVANA', 'KHOIRUL NIZAM', 'LAODIA FADHILA AZAHRA', 'M. ALIF SAHAN',
-        'M. DEFRAN ARIZKI', 'M. FADHIL AL AZZAM', 'M. IRWANSYAH', 'M. MIFTAH FARID',
-        'M. REPAN', 'M. RIZKI', 'M.ADZAN', 'MUHAMMAD FADLU',
-        'MUHAMMAD FIKRI MAULANA', 'MUHAMMAD ZAKI AMDIANSYAH', 'NAZWA PUTRI JAMILAH', 'NURISA APRILIA',
-        'RANDIKA', 'RASTIA PUTRI', 'VANIA DWI TADZKIRA'
-      ],
-      '8.4': [
-        'NIHIL',
-        'ABDULA SIDIK', 'AFIKAH BACHRI', 'AGHIS ZULHAQ MAULANA', 'ALIF NUR ROHMAN', 
-        'ALISYAH PUTRI RAMADHANI', 'AMELIA', 'ARUMI FATMAWATI', 'AZZAHRA DEWI PUTRI', 
-        'CAHAYA PUTRI', 'DIKA RIZKI', 'ELVAISHA SAIFA', 'JUWITA RAHMADANTI', 
-        'KENZO SEBASTIAN RAMADHAN', 'KEYLA ZALIYA', 'KIRANA ANGGRAENI', 'LEVI AMANDA', 
-        'M ABDUL FATTAH', 'M. RANGGA SAPUTRA', 'MAULA MIFTAHUR RISKYA', 
-        'MUHAMAD ARYADHILLA ALISLAMY', 'MUHAMMAD ARDABILLI', 'MUHAMMAD AZHAR GUNAWAN', 
-        'MUHAMMAD KEYZA ALFARIZI', 'NAYSIFA AULIA', 'PUTRI NAISILAH', 'SAHARA AULIA', 
-        'SILVANA AZZARA OKTAVIANI', 'TOMI PUTRA RAMADHAN', 'TRI OKTA WULANDARI', 
-        'VITA LIA', 'ZAFIR FADILLAH AZKA', 'WENDI EKA PUTRA'
-      ],
-      '9.1': [
-        'NIHIL',
-        'ALIF BILALDI AL HABSY', 'ARIEA PUTRI SWASTIKANING NUGROHO', 'BELLA RAMADHANI', 
-        'CITRA IMELDA TIARA SYAHRINI', 'ERICK SUSANTO', 'FITRI AULIA', 'FITRI WULANDARI', 
-        'GIZKA PUTRI APRILIA', 'HALWA RENITA', 'HERLIN DAMARWULAN', 'LELA ADELIA', 
-        'M RYAN SYAFARI NUR', 'M. ARIPKA DUTAMA', 'M. RAMADHAN AL GHAFFAR', 'M.AKBAR RAJABIE', 
-        'MELISA SAFARIAH', 'NATASYA DEWI', 'NOLI AULIA', 'NUR RIZKI KAMILA HS', 
-        'NUR ZAKILAH PADILAH', 'NURAINI', 'NUR\'AINI', 'NURUL AQILA SYARAFAH', 
-        'RISKA PURNAMA SARI', 'ROSDIANA', 'SALSABILLA ARIANA', 'SYAHRANI PUTRI', 
-        'TANIA PUTRI NURYANTO', 'VIKA DAMAYANTI', 'ZAHIRA'
-      ],
-      '9.2': [
-        'NIHIL',
-        'A. ROYANI', 'A.GIBRAN ANAFRI', 'DWIKA APRILIA', 'EDO VERNANDO', 'FATIA DESKANIA PUTRI', 
-        'GALANG ESTRADA PUTRA IRAWAN', 'HANDIKA PRATAMA', 'IBRAHIM WICAKSONO', 'INDRI YANI', 
-        'KHIARA JAUZA ZAHIR', 'M. ALDI SAPUTRA', 'M. ANAS MUQODASH', 'M. BAGUS MAULANA', 
-        'M. NASRUDIN', 'M. RIVALDI SAPUTRA', 'MAULIYA ISMAYANTI', 'MUHAMAD HABIBIE', 
-        'MUHAMMAD FARDAN AL DUSLAN', 'MUHAMMAD HUSEN', 'MUHAMMAD TAUFIQ QURAHMAN', 
-        'NAUFAL FATHAN HIDAYAH', 'NAURA', 'RENGGA DUWI TABRANI', 'REZZA DEWA AGUSTA', 
-        'SADEWA PRATAMA', 'SAFITRA INDRIYANI', 'SUDIRA WIJAYA', 'VIRGINIA AGUSTIN'
-      ],
-      '9.3': [
-        'NIHIL',
-        'AFRIYANSAH', 'AHMAD ALFA IBRAHIM', 'AHMAD ANWAR', 'AHMAD MUFRODI', 'ANDI BAOMA NUANSA', 
-        'ANDRE SETIAWAN PRATAMA', 'BAYYU GHONI', 'BULAN JUHAYIRAH', 'DEDE WILYARDI', 
-        'HAERUL ALDI SAPUTRA', 'ILHAMUSSALIM', 'IRFAN SETIAWAN', 'KHAIRULLAH', 'M. NASRUDIN', 
-        'M. RIFKI MAULANA', 'M.ARKHAN PRATAMA', 'M.FAZRIEL FAHREZY', 'M.SANDI PRATAMA', 
-        'MUHAMAD HABIBI ILHAM', 'MUHAMMAD  AXL DEALOVA', 'MURFID HADI', 'NURUL ASRAFA', 
-        'OMAN SAPUTRA', 'PAJA FAUZAN', 'PARIS PRAKASA', 'PUTRA ARYA PRIANTO', 
-        'RENO ADRIANSYAH', 'REZA MANDALA PUTRA', 'RIFANDI', 'SADEWA PRATAMA', 'YUSUF HIDAYAT'
-      ]
-    };
-
-    // Load Student Data dynamically from LocalStorage if exists
-    let studentsByClass = { ...defaultStudentsByClass };
-    const savedStudents = localStorage.getItem('studentsByClass');
-    if (savedStudents) {
-      try {
-        studentsByClass = JSON.parse(savedStudents);
-      } catch (e) { console.error("Gagal meload data siswa", e); }
-    }
-
-    function saveStudentsToLocal() {
-      localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
-    }
-
-    // Calculate Total Base Students
-    function getTotalStudents() {
-      let total = 0;
-      for (let cls in studentsByClass) {
-        total += studentsByClass[cls].filter(s => s !== 'NIHIL').length;
+      toastMessage.textContent = message;
+      if (type === 'success') {
+        toast.className = 'fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3 bg-emerald-600 text-white';
+        toastIcon.textContent = '✓';
+      } else {
+        toast.className = 'fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3 bg-red-600 text-white';
+        toastIcon.textContent = '✕';
       }
-      return total;
+
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 3000);
     }
-
-    // Default Config
-    const defaultConfig = {
-      app_title: 'Daftar Kehadiran Siswa',
-      school_name: 'SMP Negeri 42 B. Lampung',
-      primary_color: '#2563eb',
-      secondary_color: '#4f46e5',
-      accent_color: '#0ea5e9'
-    };
-
-    let config = { ...defaultConfig };
 
     function getLocalISODate() {
       const now = new Date();
@@ -924,106 +532,97 @@
       return localDate.toISOString().split('T')[0];
     }
 
-    // CEK DATA GANDA: Secara absolut menolak entry dengan nama dan tanggal persis di dalam memori
     function isDuplicatePresence(studentName, date) {
       return allRecords.some(r => r.student_name === studentName && r.date === date);
     }
 
-    // Initialize Date
+    // === Student Data ===
+    const defaultStudentsByClass = {
+      '7.1': ['NIHIL', 'A. Nurul Mutiarah', 'Adelia Difitri', 'Ahmad Maulana Yusuf', 'Atikah Salsabilla', 'Bhayu Shetiawan', 'Devi Eka Safitri', 'Erlangga Dwi Irawan', 'Givan Dwie Abian', 'Ilyas Samsul', 'Inayah Septianah', 'Kenzi Prasetio', 'Laili Dwi Khiar. H', 'M Muiidzan Zaki Sfiyan', 'M. Nabil Nopriyansyah', 'M.Ardiyansa', 'M.Rama Dhanu', 'M.Rizal', 'Muhammad Adam Khoiru', 'Muhammad Fuzi', 'Muhammad Nur Ramadhan', 'Nasyila Maghfirotul Afalla', 'Nova Haryani', 'Putri Rahaf Abdul Naser', 'Rakka Al-Fathir', 'Rizky Novia Azzahra', 'Silva Deswita H', 'Siti Hafidzoh', 'Syafikah Nawwarah', 'Vitalia Charisa Putri', 'Wieni Dwi Anggraeni', 'Yusuf Juriansyah'],
+      '8.1': ['NIHIL', 'ABU HANIFAH AR-RAYHAN', 'AISYARINI RUSWANDI', 'ALBI AL FARIZI', 'AMELLA NUR HUSNAH', 'ANNISA TRI RAHMADANI', 'ANNISAH', 'ARYANA FEBRA SABILA', 'ASYIFA', 'CAHYA NOVITA PUTRI', 'CHANTIO RAFFA MAULANA', 'FATTAN AQILA PRANAJA', 'GELORA FLORRA INESIA', 'LUTHFIYAH AL VARRETA', 'M ALFARAS', 'M SAMAN AL KAMAL', 'M. FHAKRI FHAQI', 'M. NAZZARULLAH FAJAR AKBAR', 'M. Yogi Syah Putra', 'NABILA VITA LIA', 'NAIRA SYIFA WANDIRA', 'NURIZA GUSTIANI PUTRI', 'RAFASHA NICHO ATHMAJA', 'RAYEN PUTRA PERATAMA', 'RIZKY RIDHO SYAPUTRA', 'SAFFA PUTRI AMELIA', 'SEFA LIYANA PURNAMA', 'SITI NUR AENI', 'SITI SARNAH', 'SYAFIK ABIABDILLAH', 'SYHID SEPTIADI', 'TIARA ANGGITA SARI', 'VILA SATIRA'],
+      '7.2': ['NIHIL', 'Adliyan Viki Wijaya', 'Al Faqih', 'Alika Putri', 'Amelia Safitri', 'Aniqah Hanun Azalia', 'Aqila Cinta Ramadhan', 'Aulia Puteri Zulhijjah', 'Candra Maulana Rajata', 'Dewi Widiyah', 'Fadli Muhammad Yusuf', 'Hibnu Targiansyah', 'Iswatul Nur Al-Liyah', 'Lisda Amelia', 'M Aji Saputra', 'M Tora Hidayat', 'M. Rafi', 'M.Arfan Pratama', 'M.Rendi', 'M.Satrio Arifin', 'Muhammad Al Faisal', 'Muhammad Indra Herlangga', 'Muhammad Ridho Wijaya', 'Nazwa Al Mukarromah', 'Nurul Afifah Addini', 'Refi Yana', 'Rizki Harvierdi Pratama', 'Sapirah', 'Shiva Nijwa', 'Siti Kaesa Al Husna', 'Tanisa Oktaviani', 'Windi Lestari', 'Zidane Hatim Al-Habib'],
+      '7.3': ['NIHIL', 'Ahmad Luthfi Zaidan', 'Albi Alkhalifi', 'Alika Safitri', 'Amora Al Adhwa Ananda', 'Arjun Rahman Saputra', 'Cika Juliana', 'Diajeng Ayu Santosa', 'Gibran Ibni Al-Habshi', 'Jassica Kristabel', 'Jihad Abdillah', 'M Alif Julian Syah', 'M. Indra Saputra', 'M. Khoirul', 'M. Rezeque Caesar Khemiz', 'M.Arka Saputra', 'M.Rian Maulana', 'Medina Humaira', 'Muhamad Davi', 'Muhammad Desta Mahardhika', 'Muhammad Khanif', 'Muhammmad Fikri', 'Nazwa Safitri', 'Putri Anisya', 'Restu Ali Diansah', 'Rindi Yani Alika', 'Rizky Pratama Yunus', 'Sevani Nurkholifah', 'Siti Ayu Maulina Anam', 'Siti Hanifah Anggraeini', 'Siti Syakila', 'Tiara Anggraeni', 'Zaskia Rahmadani'],
+      '7.4': ['NIHIL', 'Anisa Febriyanti', 'Arkan Maulana Yusuf', 'Asifa Aulia', 'Azkar Mahvin', 'Cindy Lestari', 'Desta Marchell Pratama', 'Dimas Satrio', 'Feni Yuanita Sari', 'Jihan Sofiyah Azizah', 'Joshua Andrian', 'Kynaya Vitaloka Afriyani', 'M Khoirul Hubay', 'M. Melfiaro Rakyan Firman', 'M.Alfarizy', 'M.Farhan Elkadi', 'M.Ridho Rhomadon', 'Mikayla Ramadhani', 'Muhamad Lutfi', 'Muhammad Faqih', 'Muhammad Nasir', 'Neynah Anjayani', 'Putri Nayra', 'Raditiya Sulaiman', 'Risti Andini', 'Sandi Drajat', 'Sinta Wati', 'Siti Ainurrohmah', 'Siti Cahaya Kamila', 'Siti Zahrah', 'Viky Agustiyan Ramadhani', 'Yoga Saputra', 'Zahra Aqilah Putri'],
+      '8.2': ['NIHIL', 'ALISA KANZA RINA', 'AMELIA AZZAHRA', 'ASHILA SANDRA', 'AULIA', 'DIMAS ADITYA RIZKI', 'EKA SYAPUTRA', 'ERIK HARTAWAN', 'FARDAN ABDILLAH', 'HAFIDZH ALJABAR', 'HOIRUL PRATAMA', 'IKHWAN UBADILAH', 'IRHAM EFFENDI', 'M ARDIAN ILHAM', 'M MARYAN', 'M. JHAFA MAULANA', 'M. RIZKI ALVARO', 'M. VALENTINO', 'M. WILDAN AL-FARIZI', 'M. YUSUF RAMLAN', 'MUHAMAD YAVIS ALGHIFARI', 'MUHAMMAD AFANDY MAULANA', 'MUHAMMAD FADHIL AKNI FEBRIAN', 'MUHAMMAD FARIZ AL-KHATAM', 'MUHAMMAD RIZKI FATUWLOH', 'RAIHAN SAPUTRA', 'RIMBUN AZMA PUTRI SABILA', 'SATRIA ABDURROHIM', 'TRI SUNARYO', 'VIOLA WINDRIA', 'WAWAN SAPUTRA', 'ZHUANDIKA TRI CAHAYADI'],
+      '8.3': ['NIHIL', 'A. MUHAMMAD TAUFIK HIDAYAT', 'ADE IRMA AULIA', 'ADELIA RAMADHANI', 'AHMAD AKBAR', 'AJENG PARAMITA', 'ALVIERO AGRA', 'ALYA FEBRIYANI', 'BAGASKORO SAPUTRA', 'FANDY HEZA HAIKAL', 'FARDEN PERMANA PUTRA', 'ILHAM', 'KARINA', 'KAYLA SYAVANA', 'KHOIRUL NIZAM', 'LAODIA FADHILA AZAHRA', 'M. ALIF SAHAN', 'M. DEFRAN ARIZKI', 'M. FADHIL AL AZZAM', 'M. IRWANSYAH', 'M. MIFTAH FARID', 'M. REPAN', 'M. RIZKI', 'M.ADZAN', 'MUHAMMAD FADLU', 'MUHAMMAD FIKRI MAULANA', 'MUHAMMAD ZAKI AMDIANSYAH', 'NAZWA PUTRI JAMILAH', 'NURISA APRILIA', 'RANDIKA', 'RASTIA PUTRI', 'VANIA DWI TADZKIRA'],
+      '8.4': ['NIHIL', 'ABDULA SIDIK', 'AFIKAH BACHRI', 'AGHIS ZULHAQ MAULANA', 'ALIF NUR ROHMAN', 'ALISYAH PUTRI RAMADHANI', 'AMELIA', 'ARUMI FATMAWATI', 'AZZAHRA DEWI PUTRI', 'CAHAYA PUTRI', 'DIKA RIZKI', 'ELVAISHA SAIFA', 'JUWITA RAHMADANTI', 'KENZO SEBASTIAN RAMADHAN', 'KEYLA ZALIYA', 'KIRANA ANGGRAENI', 'LEVI AMANDA', 'M ABDUL FATTAH', 'M. RANGGA SAPUTRA', 'MAULA MIFTAHUR RISKYA', 'MUHAMAD ARYADHILLA ALISLAMY', 'MUHAMMAD ARDABILLI', 'MUHAMMAD AZHAR GUNAWAN', 'MUHAMMAD KEYZA ALFARIZI', 'NAYSIFA AULIA', 'PUTRI NAISILAH', 'SAHARA AULIA', 'SILVANA AZZARA OKTAVIANI', 'TOMI PUTRA RAMADHAN', 'TRI OKTA WULANDARI', 'VITA LIA', 'ZAFIR FADILLAH AZKA', 'WENDI EKA PUTRA'],
+      '9.1': ['NIHIL', 'ALIF BILALDI AL HABSY', 'ARIEA PUTRI SWASTIKANING NUGROHO', 'BELLA RAMADHANI', 'CITRA IMELDA TIARA SYAHRINI', 'ERICK SUSANTO', 'FITRI AULIA', 'FITRI WULANDARI', 'GIZKA PUTRI APRILIA', 'HALWA RENITA', 'HERLIN DAMARWULAN', 'LELA ADELIA', 'M RYAN SYAFARI NUR', 'M. ARIPKA DUTAMA', 'M. RAMADHAN AL GHAFFAR', 'M.AKBAR RAJABIE', 'MELISA SAFARIAH', 'NATASYA DEWI', 'NOLI AULIA', 'NUR RIZKI KAMILA HS', 'NUR ZAKILAH PADILAH', 'NURAINI', 'NUR\'AINI', 'NURUL AQILA SYARAFAH', 'RISKA PURNAMA SARI', 'ROSDIANA', 'SALSABILLA ARIANA', 'SYAHRANI PUTRI', 'TANIA PUTRI NURYANTO', 'VIKA DAMAYANTI', 'ZAHIRA'],
+      '9.2': ['NIHIL', 'A. ROYANI', 'A.GIBRAN ANAFRI', 'DWIKA APRILIA', 'EDO VERNANDO', 'FATIA DESKANIA PUTRI', 'GALANG ESTRADA PUTRA IRAWAN', 'HANDIKA PRATAMA', 'IBRAHIM WICAKSONO', 'INDRI YANI', 'KHIARA JAUZA ZAHIR', 'M. ALDI SAPUTRA', 'M. ANAS MUQODASH', 'M. BAGUS MAULANA', 'M. NASRUDIN', 'M. RIVALDI SAPUTRA', 'MAULIYA ISMAYANTI', 'MUHAMAD HABIBIE', 'MUHAMMAD FARDAN AL DUSLAN', 'MUHAMMAD HUSEN', 'MUHAMMAD TAUFIQ QURAHMAN', 'NAUFAL FATHAN HIDAYAH', 'NAURA', 'RENGGA DUWI TABRANI', 'REZZA DEWA AGUSTA', 'SADEWA PRATAMA', 'SAFITRA INDRIYANI', 'SUDIRA WIJAYA', 'VIRGINIA AGUSTIN'],
+      '9.3': ['NIHIL', 'AFRIYANSAH', 'AHMAD ALFA IBRAHIM', 'AHMAD ANWAR', 'AHMAD MUFRODI', 'ANDI BAOMA NUANSA', 'ANDRE SETIAWAN PRATAMA', 'BAYYU GHONI', 'BULAN JUHAYIRAH', 'DEDE WILYARDI', 'HAERUL ALDI SAPUTRA', 'ILHAMUSSALIM', 'IRFAN SETIAWAN', 'KHAIRULLAH', 'M. NASRUDIN', 'M. RIFKI MAULANA', 'M.ARKHAN PRATAMA', 'M.FAZRIEL FAHREZY', 'M.SANDI PRATAMA', 'MUHAMAD HABIBI ILHAM', 'MUHAMMAD  AXL DEALOVA', 'MURFID HADI', 'NURUL ASRAFA', 'OMAN SAPUTRA', 'PAJA FAUZAN', 'PARIS PRAKASA', 'PUTRA ARYA PRIANTO', 'RENO ADRIANSYAH', 'REZA MANDALA PUTRA', 'RIFANDI', 'SADEWA PRATAMA', 'YUSUF HIDAYAT']
+    };
+
+    let studentsByClass = { ...defaultStudentsByClass };
+    const savedStudents = localStorage.getItem('studentsByClass');
+    if (savedStudents) {
+      try { studentsByClass = JSON.parse(savedStudents); } catch (e) { console.error(e); }
+    }
+
+    function saveStudentsToLocal() { localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass)); }
+    function getTotalStudents() {
+      let total = 0;
+      for (let cls in studentsByClass) { total += studentsByClass[cls].filter(s => s !== 'NIHIL').length; }
+      return total;
+    }
+
+    const defaultConfig = { app_title: 'Sistem Presensi Pintar', school_name: 'SMP Negeri 42 B. Lampung' };
+
+    // === UI & Interaction ===
     function initDate() {
       const today = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', options);
+      document.getElementById('current-date').textContent = today.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('total-populasi').textContent = getTotalStudents() + " Siswa";
     }
 
-    // Fullscreen Toggle
     function toggleFullscreen() {
-      const elem = document.documentElement;
-      
       if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen().catch(err => {
-            console.warn(`Akses fullscreen ditolak: ${err.message}`);
-          });
-        }
+        document.documentElement.requestFullscreen().catch(err => console.warn(err));
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen().catch(err => console.warn(err));
-        }
+        document.exitFullscreen().catch(err => console.warn(err));
       }
     }
 
-    document.addEventListener('fullscreenchange', () => {
-      const icon = document.getElementById('fullscreen-icon');
-      if (!document.fullscreenElement) {
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>';
-      } else {
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9H4m0 0v5m0-5l5 5M15 15h5m0 0v-5m0 5l-5-5"></path>';
-      }
-    });
-
-    // Admin Access Management
-    let isAdminUnlocked = false;
-
     function checkAdminAccess() {
       if (isAdminUnlocked) {
-        switchTab('admin');
-        renderAdminStudentList();
+        switchTab('admin'); renderAdminStudentList();
       } else {
         const pass = prompt("Masukkan Password Admin:");
         if (pass === "#42Ceria") {
           isAdminUnlocked = true;
           showToast("Akses Pengelolaan Terbuka", "success");
-          switchTab('admin');
-          renderAdminStudentList();
+          switchTab('admin'); renderAdminStudentList();
         } else if (pass !== null) {
           showToast("Password Salah!", "error");
         }
       }
     }
 
-    // Tab Switching
     function switchTab(tabName) {
-      if (tabName !== 'scan' && isScannerRunning) {
-        toggleScanner(); 
-      }
-
+      if (tabName !== 'scan' && isScannerRunning) toggleScanner(); 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => {
         el.classList.remove('active', 'border-blue-600', 'text-blue-600', 'font-bold');
         el.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:border-slate-300', 'font-semibold');
       });
-      
       document.getElementById(`content-${tabName}`).classList.remove('hidden');
       const activeTab = document.getElementById(`tab-${tabName}`);
       if (activeTab) {
         activeTab.classList.add('active', 'border-blue-600', 'text-blue-600', 'font-bold');
         activeTab.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-800', 'hover:border-slate-300', 'font-semibold');
       }
-
-      if (tabName === 'analysis') {
-        setTimeout(() => { updateAnalysisCharts(); }, 100);
-      }
+      if (tabName === 'analysis') setTimeout(() => { updateAnalysisCharts(); }, 100);
     }
 
-    // Data Handler
     const dataHandler = {
       onDataChanged(data) {
         allRecords = data;
-        filteredRecords = [...data];
-        updateDashboard();
-        updateHistoryTable();
-        updateCharts();
-        updateSummaryStats();
+        updateDashboard(); updateCharts(); updateSummaryStats();
       }
     };
 
-    // Update Dashboard Stats
+    // === Dashboard & History Tables ===
     function updateDashboard() {
       const today = getLocalISODate();
       const todayRecords = allRecords.filter(r => r.date === today);
-      
       const totalSiswaAktif = getTotalStudents();
       
       const hadirToday = todayRecords.filter(r => r.type === 'hadir').length;
@@ -1043,489 +642,380 @@
 
       const recentContainer = document.getElementById('recent-records');
       if (todayRecords.length === 0) {
-        recentContainer.innerHTML = `
-          <div class="col-span-full text-center py-12 text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
-            <span class="text-5xl mb-3 block opacity-50">📭</span>
-            <p class="font-bold text-lg text-slate-500">Belum ada yang melakukan presensi hari ini</p>
-          </div>
-        `;
+        recentContainer.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl"><span class="text-5xl mb-3 block opacity-50">📭</span><p class="font-bold text-lg text-slate-500">Belum ada yang melakukan presensi hari ini</p></div>`;
       } else {
         const sorted = [...todayRecords].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         recentContainer.innerHTML = sorted.slice(0, 6).map(record => `
           <div class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-inner ${getTypeColor(record.type)}">
-              ${getTypeIcon(record.type)}
-            </div>
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-inner ${getTypeColor(record.type)}">${getTypeIcon(record.type)}</div>
             <div class="flex-1 min-w-0">
               <p class="font-black text-slate-800 truncate mb-0.5">${record.student_name}</p>
               <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kelas ${record.class_name} • ${record.created_at ? new Date(record.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-'} WIB</p>
             </div>
-            <span class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider ${getTypeBadgeClass(record.type)}">
-              ${record.type}
-            </span>
+            <span class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider ${getTypeBadgeClass(record.type)}">${record.type}</span>
           </div>
         `).join('');
       }
     }
 
-    // Update Daily Statistics
     function updateDailyStatistics() {
       const container = document.getElementById('daily-stats-container');
-      
       const recordsByDate = {};
       allRecords.forEach(record => {
-        if (!recordsByDate[record.date]) {
-          recordsByDate[record.date] = { hadir: 0, izin: 0, sakit: 0, alfa: 0, total: 0 };
-        }
+        if (!recordsByDate[record.date]) recordsByDate[record.date] = { hadir: 0, izin: 0, sakit: 0, alfa: 0, total: 0 };
         recordsByDate[record.date][record.type]++;
         recordsByDate[record.date].total++;
       });
-
       const sortedDates = Object.keys(recordsByDate).sort((a, b) => new Date(b) - new Date(a));
 
       if (sortedDates.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-8 text-slate-400 w-full border-2 border-dashed border-slate-100 rounded-2xl">
-            <span class="text-4xl mb-2 block opacity-50">📊</span>
-            <p class="font-bold">Belum ada rekapan per hari</p>
-          </div>
-        `;
+        container.innerHTML = `<div class="text-center py-8 text-slate-400 w-full border-2 border-dashed border-slate-100 rounded-2xl"><span class="text-4xl mb-2 block opacity-50">📊</span><p class="font-bold">Belum ada rekapan per hari</p></div>`;
         return;
       }
-
-      const displayDates = sortedDates.slice(0, 7);
-      
-      container.innerHTML = displayDates.map(dateStr => {
-        const stats = recordsByDate[dateStr];
-        const date = new Date(dateStr);
+      container.innerHTML = sortedDates.slice(0, 7).map(dateStr => {
+        const stats = recordsByDate[dateStr]; const date = new Date(dateStr);
         const dayName = date.toLocaleDateString('id-ID', { weekday: 'short' });
         const dateDisplay = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
         const isToday = dateStr === getLocalISODate();
-
         return `
-          <div class="flex-shrink-0 w-64 bg-white rounded-2xl p-5 border shadow-sm ${isToday ? 'border-blue-400 ring-4 ring-blue-50' : 'border-slate-200'} transition-all hover:-translate-y-1">
+          <div class="flex-shrink-0 w-64 bg-white rounded-2xl p-5 border shadow-sm ${isToday ? 'border-blue-400 ring-4 ring-blue-50' : 'border-slate-200'} hover:-translate-y-1 transition-all">
             <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-              <div>
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">${dayName}</p>
-                <p class="text-base font-black text-slate-800">${dateDisplay}</p>
-              </div>
+              <div><p class="text-xs font-black text-slate-400 uppercase tracking-widest">${dayName}</p><p class="text-base font-black text-slate-800">${dateDisplay}</p></div>
               ${isToday ? '<span class="text-[10px] bg-blue-600 text-white px-2.5 py-1 rounded-md font-bold uppercase tracking-wider shadow-sm">HARI INI</span>' : ''}
             </div>
-            
             <div class="grid grid-cols-2 gap-2 mb-3">
-               <div class="bg-emerald-50 rounded-xl p-3 flex flex-col justify-center border border-emerald-100/50">
-                 <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Hadir</span>
-                 <span class="text-2xl font-black text-emerald-700 leading-none">${stats.hadir}</span>
-               </div>
-               <div class="bg-amber-50 rounded-xl p-3 flex flex-col justify-center border border-amber-100/50">
-                 <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Izin</span>
-                 <span class="text-2xl font-black text-amber-700 leading-none">${stats.izin}</span>
-               </div>
-               <div class="bg-blue-50 rounded-xl p-3 flex flex-col justify-center border border-blue-100/50">
-                 <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Sakit</span>
-                 <span class="text-2xl font-black text-blue-700 leading-none">${stats.sakit}</span>
-               </div>
-               <div class="bg-red-50 rounded-xl p-3 flex flex-col justify-center border border-red-100/50">
-                 <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">Alfa</span>
-                 <span class="text-2xl font-black text-red-700 leading-none">${stats.alfa}</span>
-               </div>
+               <div class="bg-emerald-50 rounded-xl p-3 flex flex-col justify-center border border-emerald-100/50"><span class="text-[10px] font-bold text-emerald-600 uppercase mb-1">Hadir</span><span class="text-2xl font-black text-emerald-700 leading-none">${stats.hadir}</span></div>
+               <div class="bg-amber-50 rounded-xl p-3 flex flex-col justify-center border border-amber-100/50"><span class="text-[10px] font-bold text-amber-600 uppercase mb-1">Izin</span><span class="text-2xl font-black text-amber-700 leading-none">${stats.izin}</span></div>
+               <div class="bg-blue-50 rounded-xl p-3 flex flex-col justify-center border border-blue-100/50"><span class="text-[10px] font-bold text-blue-600 uppercase mb-1">Sakit</span><span class="text-2xl font-black text-blue-700 leading-none">${stats.sakit}</span></div>
+               <div class="bg-red-50 rounded-xl p-3 flex flex-col justify-center border border-red-100/50"><span class="text-[10px] font-bold text-red-600 uppercase mb-1">Alfa</span><span class="text-2xl font-black text-red-700 leading-none">${stats.alfa}</span></div>
             </div>
-            <div class="bg-slate-800 text-white rounded-xl px-4 py-2 flex justify-between items-center">
-               <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Entri</span>
-               <span class="text-base font-black">${stats.total}</span>
-            </div>
+            <div class="bg-slate-800 text-white rounded-xl px-4 py-2 flex justify-between items-center"><span class="text-xs font-bold uppercase text-slate-300">Entri</span><span class="text-base font-black">${stats.total}</span></div>
           </div>
         `;
       }).join('');
     }
 
-    function getTypeIcon(type) {
-      switch(type) {
-        case 'hadir': return '✅';
-        case 'izin': return '📝';
-        case 'sakit': return '🏥';
-        case 'alfa': return '❌';
-        default: return '📋';
-      }
-    }
+    function getTypeIcon(type) { return { 'hadir': '✅', 'izin': '📝', 'sakit': '🏥', 'alfa': '❌' }[type] || '📋'; }
+    function getTypeColor(type) { return { 'hadir': 'bg-emerald-100 border-emerald-200 border', 'izin': 'bg-amber-100 border-amber-200 border', 'sakit': 'bg-blue-100 border-blue-200 border', 'alfa': 'bg-red-100 border-red-200 border' }[type] || 'bg-slate-100 border-slate-200 border'; }
+    function getTypeBadgeClass(type) { return { 'hadir': 'bg-emerald-50 text-emerald-600 border-emerald-200', 'izin': 'bg-amber-50 text-amber-600 border-amber-200', 'sakit': 'bg-blue-50 text-blue-600 border-blue-200', 'alfa': 'bg-red-50 text-red-600 border-red-200' }[type] || 'bg-slate-50 text-slate-600 border-slate-200'; }
 
-    function getTypeColor(type) {
-      switch(type) {
-        case 'hadir': return 'bg-emerald-100 border-emerald-200 border';
-        case 'izin': return 'bg-amber-100 border-amber-200 border';
-        case 'sakit': return 'bg-blue-100 border-blue-200 border';
-        case 'alfa': return 'bg-red-100 border-red-200 border';
-        default: return 'bg-slate-100 border-slate-200 border';
-      }
-    }
+    function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); }
 
-    function getTypeBadgeClass(type) {
-      switch(type) {
-        case 'hadir': return 'bg-emerald-50 text-emerald-600 border border-emerald-200';
-        case 'izin': return 'bg-amber-50 text-amber-600 border border-amber-200';
-        case 'sakit': return 'bg-blue-50 text-blue-600 border border-blue-200';
-        case 'alfa': return 'bg-red-50 text-red-600 border border-red-200';
-        default: return 'bg-slate-50 text-slate-600 border border-slate-200';
-      }
-    }
+    // === Absent Recap Logic ===
+    function renderAbsentList() {
+      const cls = document.getElementById('absent-class-select').value;
+      const date = document.getElementById('absent-date').value;
+      const listContainer = document.getElementById('absent-student-list');
+      const statsContainer = document.getElementById('absent-stats');
+      const btnAutoAlfa = document.getElementById('btn-auto-alfa');
+      pendingAutoAlfaStudents = [];
 
-    // Update History Table
-    function updateHistoryTable() {
-      const tbody = document.getElementById('history-table');
-      const recordCount = document.getElementById('record-count');
-      
-      recordCount.textContent = `${filteredRecords.length} baris data ditemukan`;
-
-      if (filteredRecords.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="6" class="px-4 py-16 text-center text-slate-400 bg-white">
-              <span class="text-5xl mb-3 block opacity-50">📭</span>
-              <p class="font-bold text-lg text-slate-500">Pencarian tidak menemukan data presensi</p>
-            </td>
-          </tr>
-        `;
-        return;
+      if (!cls || !date) {
+        listContainer.innerHTML = '<div class="text-center py-16 text-slate-400"><span class="text-5xl mb-3 block opacity-50">👆</span><p class="font-medium text-lg">Pilih kelas dan tanggal untuk memuat data deteksi</p></div>';
+        statsContainer.classList.add('hidden'); btnAutoAlfa.classList.add('hidden'); return;
       }
 
-      const sorted = [...filteredRecords].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
+      const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
+      if (students.length === 0) { listContainer.innerHTML = '<p class="text-center text-slate-500 py-4 font-bold">Tidak ada data siswa di kelas ini.</p>'; statsContainer.classList.add('hidden'); btnAutoAlfa.classList.add('hidden'); return; }
 
-      tbody.innerHTML = sorted.map(record => {
-        const timeStr = record.created_at ? new Date(record.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-';
-        return `
-        <tr class="hover:bg-slate-50 transition-colors bg-white border-b border-slate-100">
-          <td class="px-4 py-4">
-            <div class="font-black text-slate-800 text-sm tracking-wide">${record.student_name}</div>
-            ${record.description ? `<div class="text-xs font-semibold text-slate-400 mt-1 max-w-[200px] truncate" title="${record.description}">📌 ${record.description}</div>` : ''}
-          </td>
-          <td class="px-4 py-4 text-slate-600 text-sm font-bold">${record.class_name}</td>
-          <td class="px-4 py-4 text-slate-500 text-sm font-medium mobile-hide-col">
-            ${formatDate(record.date)}
-            <br><span class="text-xs text-slate-400 font-bold">${timeStr} WIB</span>
-          </td>
-          <td class="px-4 py-4">
-            <span class="px-3 py-1.5 rounded-lg text-xs font-black tracking-wider uppercase inline-flex items-center gap-1.5 ${getTypeBadgeClass(record.type)}">
-              ${getTypeIcon(record.type)} <span class="hidden sm:inline">${record.type}</span>
-            </span>
-          </td>
-          <td class="px-4 py-4 text-slate-500 text-xs font-bold uppercase tracking-wider mobile-hide-col">${record.teacher_name}</td>
-          <td class="px-4 py-4 text-center">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="openEditModal('${record.__backendId || record.id}')" class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors touch-target" title="Edit Baris">
-                ✏️
-              </button>
-              <button onclick="openDeleteModal('${record.__backendId || record.id}')" class="p-2 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-colors touch-target" title="Hapus Baris">
-                🗑️
-              </button>
-            </div>
-          </td>
-        </tr>
-      `}).join('');
-    }
+      const recordsForDateClass = allRecords.filter(r => r.date === date && r.class_name === cls);
+      let absentList = [];
+      let stats = { izin: 0, sakit: 0, alfa_tercatat: 0, belum_presensi: 0 };
 
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-    }
-
-    // Modal Edit Data
-    function openEditModal(id) {
-      editTargetRecord = allRecords.find(r => r.id === id || r.__backendId === id);
-      if (!editTargetRecord) return;
-
-      document.getElementById('edit-id').value = id;
-      document.getElementById('edit-student-name').value = editTargetRecord.student_name;
-      document.getElementById('edit-class-name').value = editTargetRecord.class_name;
-      document.getElementById('edit-date').value = editTargetRecord.date;
-      document.getElementById('edit-type').value = editTargetRecord.type;
-      document.getElementById('edit-teacher').value = editTargetRecord.teacher_name;
-      document.getElementById('edit-description').value = editTargetRecord.description || '';
-
-      document.getElementById('edit-modal').classList.remove('hidden');
-    }
-
-    function closeEditModal() {
-      document.getElementById('edit-modal').classList.add('hidden');
-      editTargetRecord = null;
-    }
-
-    document.getElementById('edit-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!editTargetRecord) return;
-
-      const editBtn = document.getElementById('edit-submit-btn');
-      editBtn.disabled = true;
-      editBtn.innerHTML = '⏳ Memproses...';
-
-      const updatedRecord = {
-        ...editTargetRecord,
-        student_name: document.getElementById('edit-student-name').value.trim(),
-        class_name: document.getElementById('edit-class-name').value,
-        date: document.getElementById('edit-date').value,
-        type: document.getElementById('edit-type').value,
-        description: document.getElementById('edit-description').value.trim(),
-        teacher_name: document.getElementById('edit-teacher').value.trim()
-      };
-
-      const result = await window.dataSdk.update(updatedRecord);
-
-      editBtn.disabled = false;
-      editBtn.innerHTML = '💾 Simpan Pembaruan';
-
-      if (result.isOk) {
-        showToast('Presensi berhasil diperbarui!', 'success');
-        closeEditModal();
-      } else {
-        showToast('Gagal terhubung ke database. Coba lagi.', 'error');
-      }
-    });
-
-    // Delete Modal
-    function openDeleteModal(id) {
-      deleteTargetRecord = allRecords.find(r => r.id === id || r.__backendId === id);
-      document.getElementById('delete-modal').classList.remove('hidden');
-    }
-
-    function closeDeleteModal() {
-      document.getElementById('delete-modal').classList.add('hidden');
-      deleteTargetRecord = null;
-    }
-
-    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-      if (!deleteTargetRecord) return;
-
-      const confirmBtn = document.getElementById('confirm-delete-btn');
-      confirmBtn.disabled = true;
-      confirmBtn.innerHTML = '⏳ Menghapus...';
-
-      const result = await window.dataSdk.delete(deleteTargetRecord);
-
-      confirmBtn.disabled = false;
-      confirmBtn.innerHTML = 'Ya, Hapus';
-
-      if (result.isOk) {
-        showToast('Baris data berhasil dihapus permanen!', 'success');
-        closeDeleteModal();
-      } else {
-        showToast('Gagal menghapus data ke database.', 'error');
-      }
-    });
-
-    // Filters
-    function applyFilters() {
-      const search = document.getElementById('filter-search').value.toLowerCase();
-      const date = document.getElementById('filter-date').value;
-      const classFilter = document.getElementById('filter-class').value;
-      const typeFilter = document.getElementById('filter-type').value;
-
-      filteredRecords = allRecords.filter(record => {
-        const matchSearch = !search || 
-          String(record.student_name || '').toLowerCase().includes(search) || 
-          String(record.class_name || '').toLowerCase().includes(search);
-        const matchDate = !date || record.date === date;
-        const matchClass = !classFilter || String(record.class_name) === String(classFilter);
-        const matchType = !typeFilter || record.type === typeFilter;
-
-        return matchSearch && matchDate && matchClass && matchType;
+      students.forEach(student => {
+        const record = recordsForDateClass.find(r => r.student_name === student);
+        if (record) {
+          if (record.type !== 'hadir') {
+            absentList.push({ name: student, status: record.type, desc: record.description });
+            if(record.type === 'izin') stats.izin++; if(record.type === 'sakit') stats.sakit++; if(record.type === 'alfa') stats.alfa_tercatat++;
+          }
+        } else {
+          absentList.push({ name: student, status: 'belum presensi', desc: 'Sistem tidak mendeteksi data (Kosong)' });
+          stats.belum_presensi++; pendingAutoAlfaStudents.push(student);
+        }
       });
 
-      updateHistoryTable();
-      if (!document.getElementById('alfa-recap-card').classList.contains('hidden')) {
-        renderAlfaRecap();
+      statsContainer.classList.remove('hidden');
+      statsContainer.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center"><p class="text-xs text-amber-700 font-bold uppercase mb-1">📝 Izin</p><p class="text-2xl font-black text-amber-600">${stats.izin}</p></div><div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center"><p class="text-xs text-blue-700 font-bold uppercase mb-1">🏥 Sakit</p><p class="text-2xl font-black text-blue-600">${stats.sakit}</p></div><div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center"><p class="text-xs text-red-700 font-bold uppercase mb-1">❌ Alfa (Tercatat)</p><p class="text-2xl font-black text-red-600">${stats.alfa_tercatat}</p></div><div class="bg-slate-100 border border-slate-300 rounded-xl p-3 text-center shadow-inner"><p class="text-xs text-slate-600 font-bold uppercase mb-1">⚠️ Belum Presensi</p><p class="text-2xl font-black text-slate-700">${stats.belum_presensi}</p></div>`;
+
+      if (stats.belum_presensi > 0) { btnAutoAlfa.classList.remove('hidden'); btnAutoAlfa.textContent = `Jadikan Alfa Semua (${stats.belum_presensi} Siswa)`; } else { btnAutoAlfa.classList.add('hidden'); }
+      if (absentList.length === 0) { listContainer.innerHTML = '<div class="text-center py-12 text-emerald-500"><span class="text-4xl mb-2 block">🎉</span><p class="font-black text-xl">Luar Biasa!</p><p class="font-medium text-slate-600">Seluruh siswa di kelas ini terekam "Hadir".</p></div>'; return; }
+      
+      absentList.sort((a, b) => a.name.localeCompare(b.name));
+      listContainer.innerHTML = `<ul class="divide-y divide-slate-100">${absentList.map(item => `
+        <li class="py-4 flex justify-between items-center px-2 hover:bg-slate-50 transition-colors">
+          <div><p class="font-bold text-slate-800 text-sm">${item.name}</p><p class="text-xs text-slate-500 mt-0.5">${item.desc || '-'}</p></div>
+          <div><span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-dashed ${getAbsentBadgeClass(item.status)}">${formatAbsentStatus(item.status)}</span></div>
+        </li>`).join('')}</ul>`;
+    }
+    
+    function getAbsentBadgeClass(status) { return { 'izin': 'bg-amber-50 text-amber-700 border-amber-300', 'sakit': 'bg-blue-50 text-blue-700 border-blue-300', 'alfa': 'bg-red-50 text-red-700 border-red-300' }[status] || 'bg-slate-100 text-slate-600 border-slate-400'; }
+    function formatAbsentStatus(status) { return { 'izin': '📝 Izin', 'sakit': '🏥 Sakit', 'alfa': '❌ Alfa' }[status] || '⚠️ Belum Scan/Input'; }
+
+    async function processAutoAlfa() {
+      const cls = document.getElementById('absent-class-select').value; const date = document.getElementById('absent-date').value;
+      if (pendingAutoAlfaStudents.length === 0) return;
+      if (!confirm(`Yakin ingin menetapkan status ALFA kepada ${pendingAutoAlfaStudents.length} siswa yang belum presensi tersebut?`)) return;
+
+      const btnAutoAlfa = document.getElementById('btn-auto-alfa');
+      btnAutoAlfa.disabled = true; btnAutoAlfa.textContent = 'Memproses...';
+
+      let success = 0, fail = 0; let pendingOptimisticRecords = [];
+      for (const name of pendingAutoAlfaStudents) {
+        if (isDuplicatePresence(name, date)) continue;
+        const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: name, class_name: cls, date: date, type: 'alfa', description: 'Otomatis: Siswa tidak melakukan scan / tidak diinput', teacher_name: 'Sistem Deteksi', created_at: new Date().toISOString() };
+        allRecords.push(record); pendingOptimisticRecords.push(record); success++;
       }
+      dataHandler.onDataChanged(allRecords); 
+
+      for (const record of pendingOptimisticRecords) {
+        const result = await window.dataSdk.create(record);
+        if (!result.isOk) { fail++; success--; allRecords = allRecords.filter(r => r.id !== record.id); }
+      }
+      if(fail > 0) dataHandler.onDataChanged(allRecords);
+
+      btnAutoAlfa.disabled = false; renderAbsentList();
+      if (fail === 0) { showToast(`Berhasil menetapkan ${success} siswa sebagai Alfa.`, 'success'); } else { showToast(`Selesai dengan ${fail} gagal terhubung ke server.`, 'error'); }
     }
 
-    function clearFilters() {
-      document.getElementById('filter-search').value = '';
-      document.getElementById('filter-date').value = '';
-      document.getElementById('filter-class').value = '';
-      document.getElementById('filter-type').value = '';
-      filteredRecords = [...allRecords];
-      updateHistoryTable();
-      if (!document.getElementById('alfa-recap-card').classList.contains('hidden')) {
-        renderAlfaRecap();
-      }
+    // === Charts ===
+    function updateCharts() {
+      const ctxClass = document.getElementById('chart-class').getContext('2d');
+      const classes = ['7.1', '7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.4', '9.1', '9.2', '9.3'];
+      const dataHadir = classes.map(cls => allRecords.filter(r => String(r.class_name) === cls && r.type === 'hadir').length);
+      if (chartClass) chartClass.destroy();
+      chartClass = new Chart(ctxClass, { type: 'bar', data: { labels: classes.map(c => `Kls ${c}`), datasets: [{ label: 'Total Hadir', data: dataHadir, backgroundColor: '#10b981', borderRadius: 8, barThickness: 'flex', maxBarThickness: 40 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1, font: { weight: 'bold' } } } } } });
+
+      const ctxPie = document.getElementById('chart-pie').getContext('2d');
+      const hadir = allRecords.filter(r => r.type === 'hadir').length, izin = allRecords.filter(r => r.type === 'izin').length, sakit = allRecords.filter(r => r.type === 'sakit').length, alfa = allRecords.filter(r => r.type === 'alfa').length;
+      if (chartPie) chartPie.destroy();
+      chartPie = new Chart(ctxPie, { type: 'doughnut', data: { labels: ['Hadir', 'Izin', 'Sakit', 'Alfa'], datasets: [{ data: [hadir, izin, sakit, alfa], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 2, borderColor: '#ffffff', hoverOffset: 10 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { padding: 20, usePointStyle: true, font: { weight: 'bold' } } } } } });
     }
 
-    // Toggle dan Render Rekap Alfa
-    function toggleAlfaRecap() {
-      const card = document.getElementById('alfa-recap-card');
-      if(card.classList.contains('hidden')) {
-        card.classList.remove('hidden');
-        renderAlfaRecap();
+    function setAnalysisPeriod(period) {
+      currentPeriod = period;
+      document.querySelectorAll('.period-btn').forEach(btn => { btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm'); btn.classList.add('text-slate-500', 'hover:text-slate-800'); });
+      document.getElementById(`period-${period}`).classList.remove('text-slate-500', 'hover:text-slate-800'); document.getElementById(`period-${period}`).classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+      updateAnalysisCharts();
+    }
+
+    function updateAnalysisCharts() {
+      const ctxTrend = document.getElementById('chart-trend').getContext('2d');
+      let labels = [], hadirData = [], absenData = []; 
+      const today = new Date();
+      if (currentPeriod === 'daily') {
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today); date.setDate(date.getDate() - i); const dateStr = date.toISOString().split('T')[0];
+          labels.push(date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+          const dayRecords = allRecords.filter(r => r.date === dateStr);
+          hadirData.push(dayRecords.filter(r => r.type === 'hadir').length); absenData.push(dayRecords.filter(r => r.type !== 'hadir').length);
+        }
+      } else if (currentPeriod === 'weekly') {
+        for (let i = 3; i >= 0; i--) {
+          const weekStart = new Date(today); weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
+          const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+          labels.push(`Minggu ${4-i}`);
+          const weekRecords = allRecords.filter(r => { const d = new Date(r.date); return d >= weekStart && d <= weekEnd; });
+          hadirData.push(weekRecords.filter(r => r.type === 'hadir').length); absenData.push(weekRecords.filter(r => r.type !== 'hadir').length);
+        }
       } else {
-        card.classList.add('hidden');
+        for (let i = 5; i >= 0; i--) {
+          const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+          labels.push(month.toLocaleDateString('id-ID', { month: 'short' }));
+          const monthRecords = allRecords.filter(r => { const d = new Date(r.date); return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear(); });
+          hadirData.push(monthRecords.filter(r => r.type === 'hadir').length); absenData.push(monthRecords.filter(r => r.type !== 'hadir').length);
+        }
+      }
+      if (chartTrend) chartTrend.destroy();
+      chartTrend = new Chart(ctxTrend, { type: 'line', data: { labels: labels, datasets: [{ label: 'Hadir', data: hadirData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: true, borderWidth: 3 }, { label: 'Tidak Hadir (I/S/A)', data: absenData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.05)', tension: 0.4, fill: true, borderWidth: 3, borderDash: [5, 5] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { weight: 'bold' } } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
+
+      const ctxGrade = document.getElementById('chart-grade').getContext('2d');
+      const grade7 = allRecords.filter(r => String(r.class_name || '').startsWith('7.') && r.type === 'hadir').length, grade8 = allRecords.filter(r => String(r.class_name || '').startsWith('8.') && r.type === 'hadir').length, grade9 = allRecords.filter(r => String(r.class_name || '').startsWith('9.') && r.type === 'hadir').length;
+      if (chartGrade) chartGrade.destroy();
+      chartGrade = new Chart(ctxGrade, { type: 'bar', data: { labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'], datasets: [{ label: 'Total Hadir Aktual', data: [grade7, grade8, grade9], backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4'], borderRadius: 12, barThickness: 'flex', maxBarThickness: 60 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
+    }
+
+    function updateSummaryStats() {
+      document.getElementById('summary-total').textContent = allRecords.length; document.getElementById('summary-hadir').textContent = allRecords.filter(r => r.type === 'hadir').length; document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length; document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length; document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
+    }
+
+    // === Generator QR & Zip ===
+    document.getElementById('qr-class').addEventListener('change', function() {
+      const selectedClass = this.value; const studentSelect = document.getElementById('qr-student'); const btnGenerate = document.getElementById('btn-generate-qr'); const btnBulk = document.getElementById('btn-bulk-qr');
+      if (!selectedClass) { studentSelect.disabled = true; studentSelect.innerHTML = '<option value="">-- Menunggu Kelas --</option>'; btnGenerate.disabled = true; btnBulk.disabled = true; return; }
+      const filterableStudents = studentsByClass[selectedClass].filter(name => name !== 'NIHIL');
+      studentSelect.disabled = false; studentSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>' + filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
+      btnBulk.disabled = filterableStudents.length === 0;
+    });
+
+    document.getElementById('qr-student').addEventListener('change', function() { document.getElementById('btn-generate-qr').disabled = !this.value; });
+
+    function generateQR() {
+      const cls = document.getElementById('qr-class').value, name = document.getElementById('qr-student').value; if(!cls || !name) return;
+      const baseUrl = window.location.origin + window.location.pathname; const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
+      document.getElementById('qr-display-name').textContent = name; document.getElementById('qr-display-class').textContent = `Kelas ${cls}`; document.getElementById('qr-url-link').value = qrUrl;
+      new QRious({ element: document.getElementById('qr-canvas'), value: qrUrl, size: 220, level: 'H', foreground: '#0f172a' });
+      document.getElementById('qr-placeholder').classList.add('hidden'); document.getElementById('qr-result-container').classList.remove('hidden');
+    }
+
+    function copyQRLink() {
+      const copyText = document.getElementById('qr-url-link'); copyText.select(); copyText.setSelectionRange(0, 99999); document.execCommand("copy"); showToast('Tautan Presensi berhasil disalin.', 'success');
+    }
+
+    function createQRCardCanvas(name, cls, qrUrl) {
+      const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 560; const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 4; ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+      ctx.fillStyle = '#2563eb'; ctx.fillRect(0, 0, canvas.width, 80); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('KARTU PRESENSI PINTAR', 200, 48);
+      const qrCanvas = document.createElement('canvas'); new QRious({ element: qrCanvas, value: qrUrl, size: 260, level: 'H', foreground: '#0f172a' });
+      ctx.fillStyle = '#f8fafc'; ctx.fillRoundRect = function(x, y, w, h, r) { this.beginPath(); this.moveTo(x + r, y); this.lineTo(x + w - r, y); this.quadraticCurveTo(x + w, y, x + w, y + r); this.lineTo(x + w, y + h - r); this.quadraticCurveTo(x + w, y + h, x + w - r, y + h); this.lineTo(x + r, y + h); this.quadraticCurveTo(x, y + h, x, y + h - r); this.lineTo(x, y + r); this.quadraticCurveTo(x, y, x + r, y); this.closePath(); this.fill(); }
+      ctx.fillRoundRect(50, 110, 300, 300, 20); ctx.drawImage(qrCanvas, 70, 130, 260, 260);
+      ctx.fillStyle = '#0f172a'; ctx.font = '900 22px "Plus Jakarta Sans", sans-serif'; ctx.fillText(name, 200, 450, 360); ctx.fillStyle = '#64748b'; ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif'; ctx.fillText(`KELAS ${cls}`, 200, 485);
+      ctx.fillStyle = '#94a3b8'; ctx.font = '13px "Plus Jakarta Sans", sans-serif'; ctx.fillText('Sorot ke Scanner Guru / Buka via Tautan', 200, 530);
+      return canvas;
+    }
+
+    function downloadSingleQR() {
+      const cls = document.getElementById('qr-class').value, name = document.getElementById('qr-student').value; if(!cls || !name) return;
+      const baseUrl = window.location.origin + window.location.pathname; const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
+      const cardCanvas = createQRCardCanvas(name, cls, qrUrl); const link = document.createElement('a'); link.download = `ID_Presensi_${name.replace(/[^a-z0-9]/gi, '_')}_${cls}.png`; link.href = cardCanvas.toDataURL('image/png'); link.click();
+    }
+
+    async function downloadBulkQR() {
+      const cls = document.getElementById('qr-class').value; if (!cls) return; const students = studentsByClass[cls].filter(name => name !== 'NIHIL'); if (students.length === 0) return;
+      const btn = document.getElementById('btn-bulk-qr'); const originalHTML = btn.innerHTML; btn.disabled = true; btn.innerHTML = '⏳ Merender ZIP...';
+      try {
+        const zip = new JSZip(); const baseUrl = window.location.origin + window.location.pathname; const folder = zip.folder(`Kartu_QR_Kelas_${cls}`);
+        for (const name of students) { const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`; const cardCanvas = createQRCardCanvas(name, cls, qrUrl); const dataUrl = cardCanvas.toDataURL('image/png'); const base64Data = dataUrl.replace(/^data:image\/(png|jpg);base64,/, ""); folder.file(`QR_${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`, base64Data, {base64: true}); }
+        const content = await zip.generateAsync({type: "blob"}); const link = document.createElement('a'); link.href = URL.createObjectURL(content); link.download = `Paket_Kartu_QR_Kelas_${cls}.zip`; link.click();
+        showToast(`ZIP Berisi ${students.length} Kartu Kelas ${cls} Berhasil Diunduh!`, 'success');
+      } catch (error) { showToast('Gagal memproses file ZIP', 'error'); } finally { btn.disabled = false; btn.innerHTML = originalHTML; }
+    }
+
+    // === QR SCANNER & CAMERA ===
+    function switchCamera() {
+      if (!isScannerRunning) return; const btnSwitch = document.getElementById('btn-switch-camera'); btnSwitch.disabled = true; btnSwitch.innerHTML = '⏳ Proses...';
+      if (html5QrcodeScanner) { html5QrcodeScanner.stop().then(() => { currentFacingMode = currentFacingMode === "environment" ? "user" : "environment"; startScannerWithCurrentMode().then(() => { btnSwitch.disabled = false; btnSwitch.innerHTML = '🔄 Balik Kamera'; }); }).catch(() => { btnSwitch.disabled = false; btnSwitch.innerHTML = '🔄 Balik Kamera'; }); }
+    }
+
+    function startScannerWithCurrentMode() { return html5QrcodeScanner.start( { facingMode: currentFacingMode }, { fps: 12, qrbox: { width: 280, height: 280 } }, onScanSuccess, () => {} ); }
+
+    function toggleScanner() {
+      const btn = document.getElementById('btn-toggle-scan'), btnSwitch = document.getElementById('btn-switch-camera'), container = document.getElementById('scanner-container'), idleState = document.getElementById('scan-idle-state');
+      if (isScannerRunning) {
+        if (html5QrcodeScanner) { html5QrcodeScanner.stop().then(() => { isScannerRunning = false; btn.textContent = 'Mulai Scan Sekarang'; btn.classList.replace('bg-red-600', 'bg-blue-600'); btn.classList.replace('hover:bg-red-700', 'hover:bg-blue-700'); btnSwitch.classList.add('hidden'); container.classList.add('hidden'); if(!currentScannedStudent) idleState.classList.remove('hidden'); }); }
+      } else {
+        btn.textContent = 'Menyalakan Lensa...'; btn.disabled = true; html5QrcodeScanner = new Html5Qrcode("qr-reader");
+        startScannerWithCurrentMode().then(() => { isScannerRunning = true; btn.textContent = 'Matikan Lensa'; btn.disabled = false; btn.classList.replace('bg-blue-600', 'bg-red-600'); btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-700'); btnSwitch.classList.remove('hidden'); container.classList.remove('hidden'); idleState.classList.add('hidden'); resetScanResult(); }).catch(err => { btn.textContent = 'Mulai Scan Sekarang'; btn.disabled = false; showToast('Izin kamera ditolak browser. Gunakan opsi unggah gambar.', 'error'); });
       }
     }
 
-    function renderAlfaRecap() {
-      const alfaRecords = filteredRecords.filter(r => r.type === 'alfa');
-      const container = document.getElementById('alfa-recap-content');
-      
-      if (alfaRecords.length === 0) {
-        container.innerHTML = '<div class="text-center py-6 text-slate-400"><p class="font-medium text-lg">✨ Tidak ada data Alfa pada filter ini.</p></div>';
-        return;
-      }
+    function playBeep() {
+      try { const audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.value = 900; gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.1); } catch (e) {}
+    }
 
-      // Kelompokkan berdasarkan kelas
-      const grouped = {};
-      alfaRecords.forEach(r => {
-        if(!grouped[r.class_name]) grouped[r.class_name] = [];
-        grouped[r.class_name].push(r);
-      });
+    function onScanSuccess(decodedText) {
+      if (!isScannerRunning) return; if (decodedText === lastScannedText) return; lastScannedText = decodedText; clearTimeout(scanTimeout); scanTimeout = setTimeout(() => { lastScannedText = ""; }, 2500);
+      try { const url = new URL(decodedText); const cls = url.searchParams.get('c'); const sName = url.searchParams.get('s'); if (cls && sName) { playBeep(); autoSubmitPresence(cls, sName); } else { showToast('Format QR Code tidak dikenali oleh sistem ini.', 'error'); } } catch (e) { showToast('Format QR Invalid.', 'error'); }
+    }
 
-      // Urutkan kelas (7.1, 7.2, dll)
-      const sortedClasses = Object.keys(grouped).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
-      
-      let html = '<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">';
-      sortedClasses.forEach(cls => {
-        // Urutkan siswa berdasarkan abjad A-Z dalam tiap kelas
-        const students = grouped[cls].sort((a, b) => a.student_name.localeCompare(b.student_name));
-        
-        html += `
-        <div class="bg-white border border-red-200 rounded-2xl overflow-hidden shadow-sm">
-            <div class="bg-red-50 px-4 py-3 border-b border-red-100 flex justify-between items-center">
-                <h4 class="font-bold text-red-800">Kelas ${cls}</h4>
-                <span class="bg-red-100 text-red-600 text-xs font-black px-2 py-1 rounded-lg">${students.length} Siswa</span>
-            </div>
-            <ul class="divide-y divide-slate-100 max-h-60 overflow-y-auto scrollbar-thin">
-                ${students.map(s => {
-                  const timeStr = s.created_at ? new Date(s.created_at).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' WIB' : '';
-                  return `
-                    <li class="px-4 py-3 flex justify-between items-center hover:bg-slate-50 transition-colors">
-                        <span class="text-sm font-bold text-slate-700">${s.student_name}</span>
-                        <div class="text-right">
-                            <span class="block text-xs font-bold text-slate-500">${formatDate(s.date)}</span>
-                            <span class="block text-[10px] font-medium text-slate-400">${timeStr}</span>
-                        </div>
-                    </li>
-                  `;
-                }).join('')}
-            </ul>
+    async function autoSubmitPresence(cls, studentName) {
+      const students = studentsByClass[cls]; if (!students || !students.includes(studentName)) { showToast('Identitas siswa ditolak sistem.', 'error'); return; }
+      const today = getLocalISODate(); const lockKey = `${studentName}-${today}`;
+      if (processingScans.has(lockKey) || isDuplicatePresence(studentName, today)) { showToast('Gagal: Presensi Anda sudah tercatat hari ini.', 'error'); showScanCard(cls, studentName, 'GAGAL (SUDAH PRESENSI)', 'bg-red-100', 'text-red-700'); return; }
+      processingScans.add(lockKey); currentScannedStudent = { class: cls, name: studentName };
+      const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: studentName, class_name: cls, date: today, type: 'hadir', description: 'Kehadiran Tervalidasi QR', teacher_name: 'System Scanner', created_at: new Date().toISOString() };
+      allRecords.push(record); dataHandler.onDataChanged(allRecords); showToast('Sukses Merekam Kehadiran!', 'success'); showScanCard(cls, studentName, 'TERVERIFIKASI HADIR', 'bg-emerald-100', 'text-emerald-700');
+      const result = await window.dataSdk.create(record); processingScans.delete(lockKey);
+      if (!result.isOk) { allRecords = allRecords.filter(r => r.id !== record.id); dataHandler.onDataChanged(allRecords); showToast('Masalah koneksi database. Presensi ditarik mundur.', 'error'); }
+    }
+
+    function showScanCard(cls, studentName, statusText, bgClass, textClass) {
+      document.getElementById('scan-student-name').textContent = studentName; document.getElementById('scan-student-class').textContent = `KELAS ${cls}`;
+      const card = document.getElementById('scan-result-card'); card.classList.remove('hidden'); document.getElementById('scan-idle-state').classList.add('hidden'); document.getElementById('manual-scan-actions').classList.add('hidden'); document.getElementById('close-scan-btn').classList.add('hidden');
+      document.getElementById('scan-status-badge').innerHTML = `<span class="px-4 py-2 rounded-xl text-sm font-black tracking-widest ${bgClass} ${textClass}">✅ ${statusText}</span>`;
+      if (isScannerRunning) { setTimeout(() => { card.classList.add('hidden'); if (isScannerRunning) document.getElementById('scan-idle-state').classList.remove('hidden'); }, 2200); }
+    }
+
+    function resetScanResult() { currentScannedStudent = null; document.getElementById('scan-result-card').classList.add('hidden'); if (!isScannerRunning) document.getElementById('scan-idle-state').classList.remove('hidden'); }
+
+    document.getElementById('qr-file-input').addEventListener('change', function(e) {
+      if (e.target.files.length === 0) return; const file = e.target.files[0]; const h5qr = new Html5Qrcode("qr-reader"); showToast('Memindai piksel gambar...', 'success');
+      h5qr.scanFile(file, true).then(decodedText => { isScannerRunning = true; onScanSuccess(decodedText); isScannerRunning = false; e.target.value = ''; }).catch(() => { showToast('Gagal: QR tidak terdeteksi pada gambar.', 'error'); e.target.value = ''; });
+    });
+
+    // === Mass Bulk Entry ===
+    document.getElementById('bulk-class').addEventListener('change', function() {
+      const selectedClass = this.value; const listContainer = document.getElementById('bulk-student-list'); const submitBtn = document.getElementById('bulk-submit-btn');
+      if (!selectedClass) { listContainer.innerHTML = `<div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50"><span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p></div>`; submitBtn.disabled = true; return; }
+      const students = studentsByClass[selectedClass]; submitBtn.disabled = false;
+      listContainer.innerHTML = `
+        <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-4"><h3 class="font-bold text-slate-800 text-lg">Daftar Induk Kelas ${selectedClass} <span class="text-sm font-medium text-slate-500">(${students.length} Orang)</span></h3><div class="flex gap-2"><button onclick="selectAllStudents()" class="text-xs font-bold uppercase tracking-wider px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"> ✓ Cek Semua </button><button onclick="deselectAllStudents()" class="text-xs font-bold uppercase tracking-wider px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"> ✕ Batal </button></div></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto scrollbar-thin bg-slate-50/50 p-2 rounded-xl">
+          ${students.map((student) => `<label class="flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md cursor-pointer transition-all"><input type="checkbox" class="student-checkbox w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500" value="${student}" ${student === 'NIHIL' ? 'onchange="handleNihilCheckbox(this)"' : ''}><span class="text-sm font-bold ${student === 'NIHIL' ? 'text-emerald-600' : 'text-slate-700'} flex-1">${student === 'NIHIL' ? '🎯 CENTANG NIHIL (Semua Siswa Terdata Hadir)' : student}</span></label>`).join('')}
         </div>
-        `;
-      });
-      html += '</div>';
-      container.innerHTML = html;
-    }
-
-    // Student Individual Filter Functions
-    document.getElementById('student-filter-class').addEventListener('change', function() {
-      const selectedClass = this.value;
-      const nameSelect = document.getElementById('student-filter-name');
-      const applyBtn = document.getElementById('apply-student-filter-btn');
-
-      if (!selectedClass) {
-        nameSelect.disabled = true;
-        nameSelect.innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
-        applyBtn.disabled = true;
-        return;
-      }
-
-      const students = studentsByClass[selectedClass];
-      if (!students) {
-        nameSelect.disabled = true;
-        nameSelect.innerHTML = '<option value="">-- Data tidak ada --</option>';
-        applyBtn.disabled = true;
-        return;
-      }
-
-      const filterableStudents = students.filter(name => name !== 'NIHIL');
-      nameSelect.disabled = false;
-      nameSelect.innerHTML = '<option value="">-- Pilih Nama --</option>' + 
-        filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
-      applyBtn.disabled = true;
+        <div class="mt-6 grid sm:grid-cols-3 gap-5 bg-blue-50 p-5 rounded-2xl border border-blue-100">
+          <div><label class="block text-sm font-bold text-slate-700 mb-2">Tetapkan Status</label><select id="bulk-type" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 font-bold bg-white"><option value="hadir" class="text-emerald-600">✅ Hadir</option><option value="izin" class="text-amber-600">📝 Izin</option><option value="sakit" class="text-blue-600">🏥 Sakit</option><option value="alfa" class="text-red-600">❌ Alfa</option></select></div>
+          <div class="sm:col-span-2"><label class="block text-sm font-bold text-slate-700 mb-2">Beri Keterangan (Pilihan)</label><input type="text" id="bulk-description" placeholder="Ketikan deskripsi yang relevan..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white placeholder-slate-400 font-medium"></div>
+        </div>`;
     });
 
-    document.getElementById('student-filter-name').addEventListener('change', function() {
-      const applyBtn = document.getElementById('apply-student-filter-btn');
-      applyBtn.disabled = !this.value;
-    });
+    function handleNihilCheckbox(checkbox) { if (checkbox.checked) { document.querySelectorAll('.student-checkbox').forEach(cb => { if (cb.value !== 'NIHIL') cb.checked = false; }); document.getElementById('bulk-type').value = 'hadir'; showToast('Mode NIHIL Otomatis: Akan menyimpan status HADIR untuk satu kelas penuh.', 'success'); } }
+    function selectAllStudents() { document.querySelectorAll('.student-checkbox').forEach(cb => { if (cb.value !== 'NIHIL') cb.checked = true; else cb.checked = false; }); }
+    function deselectAllStudents() { document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false); }
 
-    function applyStudentFilter() {
-      const selectedClass = document.getElementById('student-filter-class').value;
-      const selectedStudent = document.getElementById('student-filter-name').value;
+    async function submitBulkAbsence() {
+      const cls = document.getElementById('bulk-class').value, date = document.getElementById('bulk-date').value, teacher = document.getElementById('bulk-teacher').value.trim(), type = document.getElementById('bulk-type').value, desc = document.getElementById('bulk-description').value.trim();
+      if (!cls || !date || !teacher || !type) return showToast('Lengkapi parameter input wajib.', 'error');
+      let selected = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
+      if (selected.length === 0) return showToast('Centang minimal satu siswa.', 'error');
+      if (selected.includes('NIHIL')) selected = studentsByClass[cls].filter(s => s !== 'NIHIL');
 
-      if (!selectedClass || !selectedStudent) {
-        showToast('Pilih detail siswa terlebih dahulu', 'error');
-        return;
+      const btn = document.getElementById('bulk-submit-btn'), txt = document.getElementById('bulk-submit-text');
+      btn.disabled = true; txt.textContent = `Memproses ke Database (${selected.length})...`;
+      
+      let success = 0, fail = 0, skipped = 0; let pendingOptimisticRecords = [];
+      for (const name of selected) {
+        if (isDuplicatePresence(name, date)) { skipped++; continue; }
+        const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: name, class_name: cls, date: date, type: type, description: desc, teacher_name: teacher, created_at: new Date().toISOString() };
+        allRecords.push(record); pendingOptimisticRecords.push(record); success++;
       }
-
-      currentStudentFilter = { class: selectedClass, name: selectedStudent };
-
-      const studentRecords = allRecords.filter(r => r.class_name === selectedClass && r.student_name === selectedStudent);
-      updateStudentStatsCard(selectedStudent, selectedClass, studentRecords);
-
-      filteredRecords = studentRecords;
-      updateHistoryTable();
-
-      document.getElementById('filter-search').value = '';
-      document.getElementById('filter-date').value = '';
-      document.getElementById('filter-class').value = '';
-      document.getElementById('filter-type').value = '';
-
-      showToast(`Menampilkan Analisis: ${selectedStudent}`, 'success');
-    }
-
-    function updateStudentStatsCard(studentName, className, records) {
-      const card = document.getElementById('student-stats-card');
-      card.classList.remove('hidden');
-
-      document.getElementById('student-stats-name').textContent = studentName;
-      document.getElementById('student-stats-class').textContent = `Kelas ${className}`;
-
-      const total = records.length;
-      const hadir = records.filter(r => r.type === 'hadir').length;
-      const izin = records.filter(r => r.type === 'izin').length;
-      const sakit = records.filter(r => r.type === 'sakit').length;
-      const alfa = records.filter(r => r.type === 'alfa').length;
-
-      document.getElementById('student-stat-hadir').textContent = hadir;
-      document.getElementById('student-stat-izin').textContent = izin;
-      document.getElementById('student-stat-sakit').textContent = sakit;
-      document.getElementById('student-stat-alfa').textContent = alfa;
-
-      const percentage = total > 0 ? Math.round((hadir / total) * 100) : 0;
-      document.getElementById('student-stat-bar').style.width = `${percentage}%`;
-      document.getElementById('student-stat-percentage').textContent = `${percentage}%`;
-
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function clearStudentFilter() {
-      currentStudentFilter = null;
-      document.getElementById('student-stats-card').classList.add('hidden');
-      document.getElementById('student-filter-class').value = '';
-      document.getElementById('student-filter-name').value = '';
-      document.getElementById('student-filter-name').disabled = true;
-      document.getElementById('student-filter-name').innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
-      document.getElementById('apply-student-filter-btn').disabled = true;
-
-      filteredRecords = [...allRecords];
-      updateHistoryTable();
-    }
-
-    // Export Data
-    function exportData() {
-      if (filteredRecords.length === 0) {
-        showToast('Tabel kosong, tidak ada yang dapat didownload.', 'error');
-        return;
+      dataHandler.onDataChanged(allRecords); 
+      for (const record of pendingOptimisticRecords) {
+        const result = await window.dataSdk.create(record);
+        if (!result.isOk) { fail++; success--; allRecords = allRecords.filter(r => r.id !== record.id); }
       }
+      if(fail > 0) dataHandler.onDataChanged(allRecords);
+      btn.disabled = false; txt.textContent = '💾 Simpan Presensi Terpilih';
+      if (skipped > 0) showToast(`Tersimpan: ${success}, Gagal: ${fail}, Dilewati (Data Ganda): ${skipped}`, 'success');
+      else if (fail === 0) showToast(`Sempurna! ${success} presensi berhasil didata.`, 'success'); 
+      else showToast(`Partial: ${success} masuk, ${fail} gagal jaringan.`, 'error');
+      switchTab('dashboard'); resetBulkForm();
+    }
 
-      let csv = 'Nama Siswa,Kelas,Tanggal,Waktu,Jenis Presensi,Guru Pencatat,Keterangan Tambahan\n';
-      filteredRecords.forEach(r => {
-        const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-';
-        csv += `"${r.student_name}","${r.class_name}","${r.date}","${timeStr}","${r.type.toUpperCase()}","${r.teacher_name}","${r.description || '-'}"\n`;
+    function resetBulkForm() { document.getElementById('bulk-class').value = ''; document.getElementById('bulk-date').value = getLocalISODate(); document.getElementById('bulk-student-list').innerHTML = `<div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50"><span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p></div>`; document.getElementById('bulk-submit-btn').disabled = true; }
+
+    // === Admin Logic ===
+    function populateClassSelects() {
+      const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+      const selects = [
+        { id: 'bulk-class', defaultText: '-- Kelas --' },
+        { id: 'edit-class-name', defaultText: '-- Kelas --' },
+        { id: 'qr-class', defaultText: '-- Kelas --' },
+        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' },
+        { id: 'absent-class-select', defaultText: '-- Pilih Kelas --' }
+      ];
+
+      selects.forEach(selInfo => {
+        const sel = document.getElementById(selInfo.id);
+        if (!sel) return;
+        const currentVal = sel.value;
+        sel.innerHTML = `<option value="">${selInfo.defaultText}</option>` +
+          classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        // Pertahankan opsi yang sedang dipilih (jika kelas tersebut masih ada)
+        if (classes.includes(currentVal)) sel.value = currentVal;
       });
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `Data_Presensi_${new Date().toISOString().split('T')[0]}.csv`;
-      link.click();
     }
 
-    // Admin Student Mutasi/Baru Logic
     function renderAdminStudentList() {
       const cls = document.getElementById('admin-class-select').value;
       const listContainer = document.getElementById('admin-student-list');
@@ -1590,29 +1080,6 @@
         initDate(); // Refresh total count
         showToast(`${name} berhasil dihapus dari daftar kelas.`, "success");
       }
-    }
-
-    // PENAMBAHAN FITUR MANAJEMEN KELAS & INPUT/HAPUS MASSAL
-    function populateClassSelects() {
-      const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
-      const selects = [
-        { id: 'bulk-class', defaultText: '-- Kelas --' },
-        { id: 'student-filter-class', defaultText: '-- Pilih Kelas --' },
-        { id: 'filter-class', defaultText: 'Semua Kelas' },
-        { id: 'edit-class-name', defaultText: '-- Kelas --' },
-        { id: 'qr-class', defaultText: '-- Kelas --' },
-        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' }
-      ];
-
-      selects.forEach(selInfo => {
-        const sel = document.getElementById(selInfo.id);
-        if (!sel) return;
-        const currentVal = sel.value;
-        sel.innerHTML = `<option value="">${selInfo.defaultText}</option>` +
-          classes.map(c => `<option value="${c}">${c}</option>`).join('');
-        // Pertahankan opsi yang sedang dipilih (jika kelas tersebut masih ada)
-        if (classes.includes(currentVal)) sel.value = currentVal;
-      });
     }
 
     function promptAddClass() {
@@ -1716,874 +1183,63 @@
       }
     }
 
-    // Charts Visualization
-    function updateCharts() {
-      updateClassChart();
-      updatePieChart();
-    }
-
-    function updateClassChart() {
-      const ctx = document.getElementById('chart-class').getContext('2d');
-      const classes = ['7.1', '7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.4', '9.1', '9.2', '9.3'];
-      
-      const dataHadir = classes.map(cls => allRecords.filter(r => String(r.class_name) === cls && r.type === 'hadir').length);
-
-      if (chartClass) chartClass.destroy();
-      
-      chartClass = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: classes.map(c => `Kls ${c}`),
-          datasets: [{
-            label: 'Total Hadir',
-            data: dataHadir,
-            backgroundColor: '#10b981', // Emerald 500
-            borderRadius: 8,
-            barThickness: 'flex',
-            maxBarThickness: 40
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1, font: { weight: 'bold' } } }
-          }
-        }
-      });
-    }
-
-    function updatePieChart() {
-      const ctx = document.getElementById('chart-pie').getContext('2d');
-      const hadir = allRecords.filter(r => r.type === 'hadir').length;
-      const izin = allRecords.filter(r => r.type === 'izin').length;
-      const sakit = allRecords.filter(r => r.type === 'sakit').length;
-      const alfa = allRecords.filter(r => r.type === 'alfa').length;
-
-      if (chartPie) chartPie.destroy();
-
-      chartPie = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Hadir', 'Izin', 'Sakit', 'Alfa'],
-          datasets: [{
-            data: [hadir, izin, sakit, alfa],
-            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
-            borderWidth: 2,
-            borderColor: '#ffffff',
-            hoverOffset: 10
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
-          plugins: {
-            legend: { position: 'right', labels: { padding: 20, usePointStyle: true, font: { weight: 'bold' } } }
-          }
-        }
-      });
-    }
-
-    function setAnalysisPeriod(period) {
-      currentPeriod = period;
-      document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-        btn.classList.add('text-slate-500', 'hover:text-slate-800');
-      });
-      document.getElementById(`period-${period}`).classList.remove('text-slate-500', 'hover:text-slate-800');
-      document.getElementById(`period-${period}`).classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-      updateAnalysisCharts();
-    }
-
-    function updateAnalysisCharts() {
-      updateTrendChart();
-      updateGradeChart();
-    }
-
-    function updateTrendChart() {
-      const ctx = document.getElementById('chart-trend').getContext('2d');
-      let labels = [];
-      let hadirData = [];
-      let absenData = []; // Gabungan Izin, Sakit, Alfa
-
-      const today = new Date();
-      
-      if (currentPeriod === 'daily') {
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(today);
-          date.setDate(date.getDate() - i);
-          const dateStr = date.toISOString().split('T')[0];
-          labels.push(date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
-          
-          const dayRecords = allRecords.filter(r => r.date === dateStr);
-          hadirData.push(dayRecords.filter(r => r.type === 'hadir').length);
-          absenData.push(dayRecords.filter(r => r.type !== 'hadir').length);
-        }
-      } else if (currentPeriod === 'weekly') {
-        for (let i = 3; i >= 0; i--) {
-          const weekStart = new Date(today);
-          weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
-          const weekEnd = new Date(weekStart);
-          weekEnd.setDate(weekEnd.getDate() + 6);
-          
-          labels.push(`Minggu ${4-i}`);
-          
-          const weekRecords = allRecords.filter(r => {
-            const d = new Date(r.date);
-            return d >= weekStart && d <= weekEnd;
-          });
-          hadirData.push(weekRecords.filter(r => r.type === 'hadir').length);
-          absenData.push(weekRecords.filter(r => r.type !== 'hadir').length);
-        }
-      } else {
-        for (let i = 5; i >= 0; i--) {
-          const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
-          labels.push(month.toLocaleDateString('id-ID', { month: 'short' }));
-          
-          const monthRecords = allRecords.filter(r => {
-            const d = new Date(r.date);
-            return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear();
-          });
-          hadirData.push(monthRecords.filter(r => r.type === 'hadir').length);
-          absenData.push(monthRecords.filter(r => r.type !== 'hadir').length);
-        }
-      }
-
-      if (chartTrend) chartTrend.destroy();
-
-      chartTrend = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Hadir',
-              data: hadirData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              tension: 0.4,
-              fill: true,
-              borderWidth: 3
-            },
-            {
-              label: 'Tidak Hadir (I/S/A)',
-              data: absenData,
-              borderColor: '#f43f5e',
-              backgroundColor: 'rgba(244, 63, 94, 0.05)',
-              tension: 0.4,
-              fill: true,
-              borderWidth: 3,
-              borderDash: [5, 5]
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { usePointStyle: true, font: { weight: 'bold' } } }
-          },
-          scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
-          }
-        }
-      });
-    }
-
-    function updateGradeChart() {
-      const ctx = document.getElementById('chart-grade').getContext('2d');
-      
-      const grade7 = allRecords.filter(r => String(r.class_name || '').startsWith('7.') && r.type === 'hadir').length;
-      const grade8 = allRecords.filter(r => String(r.class_name || '').startsWith('8.') && r.type === 'hadir').length;
-      const grade9 = allRecords.filter(r => String(r.class_name || '').startsWith('9.') && r.type === 'hadir').length;
-
-      if (chartGrade) chartGrade.destroy();
-
-      chartGrade = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'],
-          datasets: [{
-            label: 'Total Hadir Aktual',
-            data: [grade7, grade8, grade9],
-            backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4'],
-            borderRadius: 12,
-            barThickness: 'flex',
-            maxBarThickness: 60
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
-          }
-        }
-      });
-    }
-
-    function updateSummaryStats() {
-      document.getElementById('summary-total').textContent = allRecords.length;
-      document.getElementById('summary-hadir').textContent = allRecords.filter(r => r.type === 'hadir').length;
-      document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length;
-      document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length;
-      document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
-    }
-
-    // Toast Notification
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      const toastIcon = document.getElementById('toast-icon');
-      const toastMessage = document.getElementById('toast-message');
-
-      toastMessage.textContent = message;
-      
-      if (type === 'success') {
-        toast.className = 'fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3 bg-emerald-600 text-white';
-        toastIcon.textContent = '✓';
-      } else {
-        toast.className = 'fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3 bg-red-600 text-white';
-        toastIcon.textContent = '✕';
-      }
-
-      toast.classList.remove('hidden');
-      
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3000);
-    }
-
-    // Generator QR & Zip
-    document.getElementById('qr-class').addEventListener('change', function() {
-      const selectedClass = this.value;
-      const studentSelect = document.getElementById('qr-student');
-      const btnGenerate = document.getElementById('btn-generate-qr');
-      const btnBulk = document.getElementById('btn-bulk-qr');
-      
-      if (!selectedClass) {
-        studentSelect.disabled = true;
-        studentSelect.innerHTML = '<option value="">-- Menunggu Kelas --</option>';
-        btnGenerate.disabled = true;
-        btnBulk.disabled = true;
-        return;
-      }
-      
-      const students = studentsByClass[selectedClass];
-      const filterableStudents = students.filter(name => name !== 'NIHIL');
-      
-      studentSelect.disabled = false;
-      studentSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
-        filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
-        
-      btnBulk.disabled = filterableStudents.length === 0;
-    });
-
-    document.getElementById('qr-student').addEventListener('change', function() {
-      document.getElementById('btn-generate-qr').disabled = !this.value;
-    });
-
-    function generateQR() {
-      const cls = document.getElementById('qr-class').value;
-      const name = document.getElementById('qr-student').value;
-      if(!cls || !name) return;
-      
-      const baseUrl = window.location.origin + window.location.pathname;
-      const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
-      
-      document.getElementById('qr-display-name').textContent = name;
-      document.getElementById('qr-display-class').textContent = `Kelas ${cls}`;
-      document.getElementById('qr-url-link').value = qrUrl;
-      
-      new QRious({ element: document.getElementById('qr-canvas'), value: qrUrl, size: 220, level: 'H', foreground: '#0f172a' });
-      
-      document.getElementById('qr-placeholder').classList.add('hidden');
-      document.getElementById('qr-result-container').classList.remove('hidden');
-    }
-
-    function copyQRLink() {
-      const copyText = document.getElementById('qr-url-link');
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      showToast('Tautan Presensi berhasil disalin.', 'success');
-    }
-
-    function createQRCardCanvas(name, cls, qrUrl) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 400;
-      canvas.height = 560;
-      const ctx = canvas.getContext('2d');
-
-      // Base
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
-
-      // Header Premium Blue
-      ctx.fillStyle = '#2563eb';
-      ctx.fillRect(0, 0, canvas.width, 80);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('KARTU PRESENSI PINTAR', 200, 48);
-
-      // QR Code Box
-      const qrCanvas = document.createElement('canvas');
-      new QRious({ element: qrCanvas, value: qrUrl, size: 260, level: 'H', foreground: '#0f172a' });
-      
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRoundRect = function(x, y, w, h, r) {
-        this.beginPath();
-        this.moveTo(x + r, y);
-        this.lineTo(x + w - r, y);
-        this.quadraticCurveTo(x + w, y, x + w, y + r);
-        this.lineTo(x + w, y + h - r);
-        this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        this.lineTo(x + r, y + h);
-        this.quadraticCurveTo(x, y + h, x, y + h - r);
-        this.lineTo(x, y + r);
-        this.quadraticCurveTo(x, y, x + r, y);
-        this.closePath();
-        this.fill();
-      }
-      ctx.fillRoundRect(50, 110, 300, 300, 20);
-      ctx.drawImage(qrCanvas, 70, 130, 260, 260);
-
-      // Name & Class
-      ctx.fillStyle = '#0f172a';
-      ctx.font = '900 22px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText(name, 200, 450, 360);
-      ctx.fillStyle = '#64748b';
-      ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText(`KELAS ${cls}`, 200, 485);
-      
-      // Footer String
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '13px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText('Sorot ke Scanner Guru / Buka via Tautan', 200, 530);
-
-      return canvas;
-    }
-
-    function downloadSingleQR() {
-      const cls = document.getElementById('qr-class').value;
-      const name = document.getElementById('qr-student').value;
-      if(!cls || !name) return;
-
-      const baseUrl = window.location.origin + window.location.pathname;
-      const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
-      const cardCanvas = createQRCardCanvas(name, cls, qrUrl);
-      
-      const link = document.createElement('a');
-      link.download = `ID_Presensi_${name.replace(/[^a-z0-9]/gi, '_')}_${cls}.png`;
-      link.href = cardCanvas.toDataURL('image/png');
-      link.click();
-    }
-
-    async function downloadBulkQR() {
-      const cls = document.getElementById('qr-class').value;
-      if (!cls) return;
-      const students = studentsByClass[cls].filter(name => name !== 'NIHIL');
-      if (students.length === 0) return;
-
-      const btn = document.getElementById('btn-bulk-qr');
-      const originalHTML = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '⏳ Merender ZIP...';
-
-      try {
-        const zip = new JSZip();
-        const baseUrl = window.location.origin + window.location.pathname;
-        const folder = zip.folder(`Kartu_QR_Kelas_${cls}`);
-
-        for (const name of students) {
-          const qrUrl = `${baseUrl}?scan=true&c=${encodeURIComponent(cls)}&s=${encodeURIComponent(name)}`;
-          const cardCanvas = createQRCardCanvas(name, cls, qrUrl);
-          const dataUrl = cardCanvas.toDataURL('image/png');
-          const base64Data = dataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
-          folder.file(`QR_${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`, base64Data, {base64: true});
-        }
-
-        const content = await zip.generateAsync({type: "blob"});
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(content);
-        link.download = `Paket_Kartu_QR_Kelas_${cls}.zip`;
-        link.click();
-        showToast(`ZIP Berisi ${students.length} Kartu Kelas ${cls} Berhasil Diunduh!`, 'success');
-      } catch (error) { showToast('Gagal memproses file ZIP', 'error'); } 
-      finally { btn.disabled = false; btn.innerHTML = originalHTML; }
-    }
-
-    // QR SCANNER & CAMERA
-
-    function switchCamera() {
-      if (!isScannerRunning) return;
-      const btnSwitch = document.getElementById('btn-switch-camera');
-      btnSwitch.disabled = true;
-      btnSwitch.innerHTML = '⏳ Proses...';
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-          currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
-          startScannerWithCurrentMode().then(() => {
-            btnSwitch.disabled = false;
-            btnSwitch.innerHTML = '🔄 Balik Kamera';
-          });
-        }).catch(() => { btnSwitch.disabled = false; btnSwitch.innerHTML = '🔄 Balik Kamera'; });
-      }
-    }
-
-    function startScannerWithCurrentMode() {
-      return html5QrcodeScanner.start(
-        { facingMode: currentFacingMode },
-        { fps: 12, qrbox: { width: 280, height: 280 } },
-        onScanSuccess,
-        () => {}
-      );
-    }
-
-    function toggleScanner() {
-      const btn = document.getElementById('btn-toggle-scan');
-      const btnSwitch = document.getElementById('btn-switch-camera');
-      const container = document.getElementById('scanner-container');
-      const idleState = document.getElementById('scan-idle-state');
-      
-      if (isScannerRunning) {
-        if (html5QrcodeScanner) {
-          html5QrcodeScanner.stop().then(() => {
-            isScannerRunning = false;
-            btn.textContent = 'Mulai Scan Sekarang';
-            btn.classList.replace('bg-red-600', 'bg-blue-600');
-            btn.classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
-            btnSwitch.classList.add('hidden');
-            container.classList.add('hidden');
-            if(!currentScannedStudent) idleState.classList.remove('hidden');
-          });
-        }
-      } else {
-        btn.textContent = 'Menyalakan Lensa...';
-        btn.disabled = true;
-        html5QrcodeScanner = new Html5Qrcode("qr-reader");
-        startScannerWithCurrentMode().then(() => {
-          isScannerRunning = true;
-          btn.textContent = 'Matikan Lensa';
-          btn.disabled = false;
-          btn.classList.replace('bg-blue-600', 'bg-red-600');
-          btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
-          btnSwitch.classList.remove('hidden');
-          container.classList.remove('hidden');
-          idleState.classList.add('hidden');
-          resetScanResult();
-        }).catch(err => {
-          btn.textContent = 'Mulai Scan Sekarang';
-          btn.disabled = false;
-          showToast('Izin kamera ditolak browser. Gunakan opsi unggah gambar.', 'error');
-        });
-      }
-    }
-
-    function playBeep() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = 'sine'; osc.frequency.value = 900;
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.1);
-      } catch (e) {}
-    }
-
-    function onScanSuccess(decodedText) {
-      if (!isScannerRunning) return;
-      if (decodedText === lastScannedText) return;
-      lastScannedText = decodedText;
-      clearTimeout(scanTimeout);
-      scanTimeout = setTimeout(() => { lastScannedText = ""; }, 2500);
-      
-      try {
-        const url = new URL(decodedText);
-        const cls = url.searchParams.get('c');
-        const sName = url.searchParams.get('s');
-        if (cls && sName) { playBeep(); autoSubmitPresence(cls, sName); } 
-        else { showToast('Format QR Code tidak dikenali oleh sistem ini.', 'error'); }
-      } catch (e) { showToast('Format QR Invalid.', 'error'); }
-    }
-
-    async function autoSubmitPresence(cls, studentName) {
-      const students = studentsByClass[cls];
-      if (!students || !students.includes(studentName)) {
-        showToast('Identitas siswa ditolak sistem.', 'error'); return;
-      }
-      
-      const today = getLocalISODate();
-      const lockKey = `${studentName}-${today}`;
-      
-      // CEK GANDA + CEK RACE CONDITION LOKAL
-      if (processingScans.has(lockKey) || isDuplicatePresence(studentName, today)) {
-        showToast('Gagal: Presensi Anda sudah tercatat hari ini.', 'error');
-        showScanCard(cls, studentName, 'GAGAL (SUDAH PRESENSI)', 'bg-red-100', 'text-red-700');
-        return;
-      }
-
-      // Kunci proses untuk siswa ini
-      processingScans.add(lockKey);
-      currentScannedStudent = { class: cls, name: studentName };
-
-      const record = { 
-        id: 'id_' + Date.now() + Math.floor(Math.random()*1000), // Pre-assign ID
-        student_name: studentName, 
-        class_name: cls, 
-        date: today, 
-        type: 'hadir', 
-        description: 'Kehadiran Tervalidasi QR', 
-        teacher_name: 'System Scanner', 
-        created_at: new Date().toISOString() 
-      };
-      
-      // OPTIMISTIC UPDATE: Langsung update grafik, dashboard dan riwayat secara realtime 0 detik
-      allRecords.push(record);
-      dataHandler.onDataChanged(allRecords);
-      showToast('Sukses Merekam Kehadiran!', 'success');
-      showScanCard(cls, studentName, 'TERVERIFIKASI HADIR', 'bg-emerald-100', 'text-emerald-700');
-
-      // Tembakkan ke database background
-      const result = await window.dataSdk.create(record);
-      processingScans.delete(lockKey); // Lepas kunci
-      
-      if (!result.isOk) { 
-        // Tarik mundur (Rollback) jika DB putus / error
-        allRecords = allRecords.filter(r => r.id !== record.id);
-        dataHandler.onDataChanged(allRecords);
-        showToast('Masalah koneksi database. Presensi ditarik mundur.', 'error'); 
-      }
-    }
-
-    function showScanCard(cls, studentName, statusText, bgClass, textClass) {
-      document.getElementById('scan-student-name').textContent = studentName;
-      document.getElementById('scan-student-class').textContent = `KELAS ${cls}`;
-      
-      const card = document.getElementById('scan-result-card');
-      card.classList.remove('hidden');
-      document.getElementById('scan-idle-state').classList.add('hidden');
-      document.getElementById('manual-scan-actions').classList.add('hidden');
-      document.getElementById('close-scan-btn').classList.add('hidden');
-      
-      document.getElementById('scan-status-badge').innerHTML = `<span class="px-4 py-2 rounded-xl text-sm font-black tracking-widest ${bgClass} ${textClass}">✅ ${statusText}</span>`;
-      
-      if (isScannerRunning) {
-        setTimeout(() => {
-          card.classList.add('hidden');
-          if (isScannerRunning) document.getElementById('scan-idle-state').classList.remove('hidden');
-        }, 2200);
-      }
-    }
-
-    function resetScanResult() {
-      currentScannedStudent = null;
-      document.getElementById('scan-result-card').classList.add('hidden');
-      if (!isScannerRunning) document.getElementById('scan-idle-state').classList.remove('hidden');
-    }
-
-    document.getElementById('qr-file-input').addEventListener('change', function(e) {
-      if (e.target.files.length === 0) return;
-      const file = e.target.files[0];
-      const h5qr = new Html5Qrcode("qr-reader");
-      showToast('Memindai piksel gambar...', 'success');
-      h5qr.scanFile(file, true).then(decodedText => {
-           isScannerRunning = true; onScanSuccess(decodedText); isScannerRunning = false;
-           e.target.value = '';
-      }).catch(() => { showToast('Gagal: QR tidak terdeteksi pada gambar.', 'error'); e.target.value = ''; });
-    });
-
-    // Mass Bulk Entry
-    document.getElementById('bulk-class').addEventListener('change', function() {
-      const selectedClass = this.value;
-      const listContainer = document.getElementById('bulk-student-list');
-      const submitBtn = document.getElementById('bulk-submit-btn');
-
-      if (!selectedClass) {
-        listContainer.innerHTML = `<div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50"><span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p></div>`;
-        submitBtn.disabled = true; return;
-      }
-
-      const students = studentsByClass[selectedClass];
-      submitBtn.disabled = false;
-      listContainer.innerHTML = `
-        <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
-          <h3 class="font-bold text-slate-800 text-lg">Daftar Induk Kelas ${selectedClass} <span class="text-sm font-medium text-slate-500">(${students.length} Orang)</span></h3>
-          <div class="flex gap-2">
-            <button onclick="selectAllStudents()" class="text-xs font-bold uppercase tracking-wider px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"> ✓ Cek Semua </button>
-            <button onclick="deselectAllStudents()" class="text-xs font-bold uppercase tracking-wider px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"> ✕ Batal </button>
-          </div>
-        </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto scrollbar-thin bg-slate-50/50 p-2 rounded-xl">
-          ${students.map((student, idx) => `
-            <label class="flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md cursor-pointer transition-all">
-              <input type="checkbox" class="student-checkbox w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500" value="${student}" ${student === 'NIHIL' ? 'onchange="handleNihilCheckbox(this)"' : ''}>
-              <span class="text-sm font-bold ${student === 'NIHIL' ? 'text-emerald-600' : 'text-slate-700'} flex-1">${student === 'NIHIL' ? '🎯 CENTANG NIHIL (Semua Siswa Terdata Hadir)' : student}</span>
-            </label>
-          `).join('')}
-        </div>
-        <div class="mt-6 grid sm:grid-cols-3 gap-5 bg-blue-50 p-5 rounded-2xl border border-blue-100">
-          <div>
-            <label class="block text-sm font-bold text-slate-700 mb-2">Tetapkan Status</label>
-            <select id="bulk-type" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 font-bold bg-white">
-              <option value="hadir" class="text-emerald-600">✅ Hadir</option>
-              <option value="izin" class="text-amber-600">📝 Izin</option>
-              <option value="sakit" class="text-blue-600">🏥 Sakit</option>
-              <option value="alfa" class="text-red-600">❌ Alfa</option>
-            </select>
-          </div>
-          <div class="sm:col-span-2">
-            <label class="block text-sm font-bold text-slate-700 mb-2">Beri Keterangan (Pilihan)</label>
-            <input type="text" id="bulk-description" placeholder="Ketikan deskripsi yang relevan..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white placeholder-slate-400 font-medium">
-          </div>
-        </div>
-      `;
-    });
-
-    function handleNihilCheckbox(checkbox) {
-      if (checkbox.checked) {
-        document.querySelectorAll('.student-checkbox').forEach(cb => { if (cb.value !== 'NIHIL') cb.checked = false; });
-        document.getElementById('bulk-type').value = 'hadir';
-        showToast('Mode NIHIL Otomatis: Akan menyimpan status HADIR untuk satu kelas penuh.', 'success');
-      }
-    }
-
-    function selectAllStudents() {
-      document.querySelectorAll('.student-checkbox').forEach(cb => { if (cb.value !== 'NIHIL') cb.checked = true; else cb.checked = false; });
-    }
-    function deselectAllStudents() { document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false); }
-
-    async function submitBulkAbsence() {
-      const cls = document.getElementById('bulk-class').value;
-      const date = document.getElementById('bulk-date').value;
-      const teacher = document.getElementById('bulk-teacher').value.trim();
-      const type = document.getElementById('bulk-type').value;
-      const desc = document.getElementById('bulk-description').value.trim();
-
-      if (!cls || !date || !teacher || !type) { showToast('Lengkapi parameter input wajib.', 'error'); return; }
-
-      let selected = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
-      if (selected.length === 0) { showToast('Centang minimal satu siswa.', 'error'); return; }
-
-      if (selected.includes('NIHIL')) {
-        selected = studentsByClass[cls].filter(s => s !== 'NIHIL');
-      }
-
-      const btn = document.getElementById('bulk-submit-btn');
-      const txt = document.getElementById('bulk-submit-text');
-      const spin = document.getElementById('bulk-submit-spinner');
-
-      btn.disabled = true; txt.textContent = `Memproses ke Database (${selected.length})...`; spin.classList.remove('hidden');
-
-      let success = 0, fail = 0, skipped = 0;
-      let pendingOptimisticRecords = [];
-      
-      for (const name of selected) {
-        if (isDuplicatePresence(name, date)) {
-          skipped++;
-          continue; 
-        }
-
-        const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: name, class_name: cls, date: date, type: type, description: desc, teacher_name: teacher, created_at: new Date().toISOString() };
-        
-        allRecords.push(record); // Optimistic Update massal
-        pendingOptimisticRecords.push(record);
-        success++;
-      }
-      
-      dataHandler.onDataChanged(allRecords); // Segera tampilkan di grafik
-
-      // Tembak massal ke server (asynchronous di latar belakang)
-      for (const record of pendingOptimisticRecords) {
-        const result = await window.dataSdk.create(record);
-        if (!result.isOk) {
-            fail++;
-            success--;
-            allRecords = allRecords.filter(r => r.id !== record.id); // Rollback yg gagal
-        }
-      }
-
-      if(fail > 0) dataHandler.onDataChanged(allRecords);
-
-      btn.disabled = false; txt.textContent = '💾 Simpan Presensi Terpilih'; spin.classList.add('hidden');
-      
-      if (skipped > 0) {
-        showToast(`Tersimpan: ${success}, Gagal: ${fail}, Dilewati (Data Ganda): ${skipped}`, 'success');
-      } else if (fail === 0) { 
-        showToast(`Sempurna! ${success} presensi berhasil didata.`, 'success'); 
-      } else { 
-        showToast(`Partial: ${success} masuk, ${fail} gagal jaringan.`, 'error'); 
-      }
-      
-      switchTab('dashboard'); resetBulkForm();
-    }
-
-    function resetBulkForm() {
-      document.getElementById('bulk-class').value = '';
-      document.getElementById('bulk-date').value = getLocalISODate();
-      document.getElementById('bulk-student-list').innerHTML = `<div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50"><span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p></div>`;
-      document.getElementById('bulk-submit-btn').disabled = true;
-    }
-
-    // Direct Web Link Handler (Student Side View)
+    // === Direct Scan Logic ===
     function checkUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('scan') === 'true') {
         const cls = urlParams.get('c'); const s = urlParams.get('s');
         if (cls && s) {
-          document.getElementById('app').style.display = 'none';
-          const screen = document.getElementById('student-direct-scan-screen');
-          screen.classList.remove('hidden'); screen.classList.add('flex');
-          setTimeout(() => { processDirectScan(cls, s); }, 800);
-          window.history.replaceState({}, document.title, window.location.pathname);
+          document.getElementById('app').style.display = 'none'; const screen = document.getElementById('student-direct-scan-screen'); screen.classList.remove('hidden'); screen.classList.add('flex');
+          setTimeout(() => { processDirectScan(cls, s); }, 800); window.history.replaceState({}, document.title, window.location.pathname);
         }
       }
     }
 
     async function processDirectScan(cls, studentName) {
-      const icon = document.getElementById('direct-scan-icon');
-      const title = document.getElementById('direct-scan-title');
-      const desc = document.getElementById('direct-scan-desc');
+      const icon = document.getElementById('direct-scan-icon'), title = document.getElementById('direct-scan-title'), desc = document.getElementById('direct-scan-desc'), students = studentsByClass[cls];
+      if (!students || !students.includes(studentName)) { icon.innerHTML = '<span class="text-6xl">❌</span>'; title.textContent = "Data Invalid"; title.className = "text-3xl font-black text-red-600 mb-2"; desc.textContent = "QR Code yang dipindai bukan bagian dari sistem sekolah ini."; return; }
       
-      const students = studentsByClass[cls];
-      if (!students || !students.includes(studentName)) {
-        icon.innerHTML = '<span class="text-6xl">❌</span>'; title.textContent = "Data Invalid"; title.className = "text-3xl font-black text-red-600 mb-2"; desc.textContent = "QR Code yang dipindai bukan bagian dari sistem sekolah ini."; return;
-      }
-      
-      const today = getLocalISODate();
-      const lockKey = `${studentName}-${today}`;
-      
-      if (processingScans.has(lockKey) || isDuplicatePresence(studentName, today)) {
-        icon.innerHTML = '<span class="text-6xl">⚠️</span>'; title.textContent = "Gagal (Sudah Presensi)"; title.className = "text-3xl font-black text-amber-500 mb-2"; desc.textContent = `Kehadiran Anda (${studentName}) sudah masuk database untuk hari ini. Tidak perlu scan lagi.`; return;
-      }
+      const today = getLocalISODate(); const lockKey = `${studentName}-${today}`;
+      if (processingScans.has(lockKey) || isDuplicatePresence(studentName, today)) { icon.innerHTML = '<span class="text-6xl">⚠️</span>'; title.textContent = "Gagal (Sudah Presensi)"; title.className = "text-3xl font-black text-amber-500 mb-2"; desc.textContent = `Kehadiran Anda (${studentName}) sudah masuk database untuk hari ini. Tidak perlu scan lagi.`; return; }
       
       processingScans.add(lockKey);
-
       const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: studentName, class_name: cls, date: today, type: 'hadir', description: 'Hadir via Scan URL Siswa', teacher_name: 'Verifikasi Otomatis', created_at: new Date().toISOString() };
-      
-      allRecords.push(record);
-      dataHandler.onDataChanged(allRecords); // Optimistic UI Update untuk admin yg lg pantau
+      allRecords.push(record); dataHandler.onDataChanged(allRecords); 
 
-      const result = await window.dataSdk.create(record);
-      processingScans.delete(lockKey);
-
-      if (result.isOk) {
-        icon.innerHTML = '<span class="text-6xl">✅</span>'; title.textContent = "Presensi Berhasil"; title.className = "text-3xl font-black text-emerald-600 mb-2"; desc.textContent = `Kerja bagus, ${studentName}! Kehadiran Anda hari ini telah diverifikasi.`;
-      } else {
-        allRecords = allRecords.filter(r => r.id !== record.id);
-        dataHandler.onDataChanged(allRecords);
-        icon.innerHTML = '<span class="text-6xl">📡</span>'; title.textContent = "Koneksi Terputus"; title.className = "text-3xl font-black text-slate-800 mb-2"; desc.textContent = "Gagal menjangkau server awan. Cek internet Anda lalu scan ulang.";
-      }
+      const result = await window.dataSdk.create(record); processingScans.delete(lockKey);
+      if (result.isOk) { icon.innerHTML = '<span class="text-6xl">✅</span>'; title.textContent = "Presensi Berhasil"; title.className = "text-3xl font-black text-emerald-600 mb-2"; desc.textContent = `Kerja bagus, ${studentName}! Kehadiran Anda hari ini telah diverifikasi.`; } 
+      else { allRecords = allRecords.filter(r => r.id !== record.id); dataHandler.onDataChanged(allRecords); icon.innerHTML = '<span class="text-6xl">📡</span>'; title.textContent = "Koneksi Terputus"; title.className = "text-3xl font-black text-slate-800 mb-2"; desc.textContent = "Gagal menjangkau server awan. Cek internet Anda lalu scan ulang."; }
     }
 
-    // App Init
+    // === Initialization ===
     async function initApp() {
-      // Pastikan dropdown kelas menyesuaikan data dari memory
-      populateClassSelects();
-      
-      initDate();
-      document.getElementById('bulk-date').value = getLocalISODate();
+      populateClassSelects(); initDate();
+      if(document.getElementById('bulk-date')) document.getElementById('bulk-date').value = getLocalISODate();
+      if(document.getElementById('absent-date')) document.getElementById('absent-date').value = getLocalISODate();
 
-      // ========================================================
-      // TAUTKAN URL WEB APP DARI GOOGLE APPS SCRIPT DI BAWAH INI
-      // ========================================================
-      const GAS_URL = ""; 
+      // GAS Backend URL
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbwfOKD7H03pRQZktXDpZ7PPOMfgOks7ld3LOA9_W3ChlLa5JPOVTCvxNrXF-LGSpPgv/exec"; 
 
       if (GAS_URL !== "") {
-        showToast('Menghubungkan ke Database...', 'success');
+        showToast('Menghubungkan ke Database Cloud...', 'success');
         try {
-          const res = await fetch(GAS_URL);
-          const data = await res.json();
+          const res = await fetch(GAS_URL); const data = await res.json();
           dataHandler.onDataChanged(Array.isArray(data) ? data : []);
-          showToast('Data berhasil dimuat dari Spreadsheet', 'success');
-        } catch (e) {
-          console.error(e);
-          showToast('Gagal memuat data dari Spreadsheet', 'error');
-        }
+          showToast('Data berhasil dimuat dari Database', 'success');
+        } catch (e) { console.error(e); showToast('Gagal memuat data dari Database', 'error'); }
 
         window.dataSdk = {
-          create: async (record) => {
-            // Kita sudah push ID pre-assign di fungsi pemanggil
-            try {
-              const res = await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'create', data: record })
-              });
-              const r = await res.json();
-              return r;
-            } catch (e) { return { isOk: false }; }
-          },
-          update: async (record) => {
-            try {
-              const res = await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'update', data: record })
-              });
-              const r = await res.json();
-              if (r.isOk) {
-                const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId));
-                if (idx > -1) allRecords[idx] = record;
-                dataHandler.onDataChanged(allRecords);
-              }
-              return r;
-            } catch (e) { return { isOk: false }; }
-          },
-          delete: async (record) => {
-            try {
-              const res = await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } })
-              });
-              const r = await res.json();
-              if (r.isOk) {
-                allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId));
-                dataHandler.onDataChanged(allRecords);
-              }
-              return r;
-            } catch (e) { return { isOk: false }; }
-          }
+          create: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'create', data: record }) }); return await res.json(); } catch (e) { return { isOk: false }; } },
+          update: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'update', data: record }) }); const r = await res.json(); if (r.isOk) { const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId)); if (idx > -1) allRecords[idx] = record; dataHandler.onDataChanged(allRecords); } return r; } catch (e) { return { isOk: false }; } },
+          delete: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } }) }); const r = await res.json(); if (r.isOk) { allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId)); dataHandler.onDataChanged(allRecords); } return r; } catch (e) { return { isOk: false }; } }
         };
       } else {
-        if (window.dataSdk) {
-          const result = await window.dataSdk.init(dataHandler);
-          if (!result.isOk) {
-            console.error('Failed to initialize data SDK');
-          }
-        }
+        if (window.dataSdk) { const result = await window.dataSdk.init(dataHandler); if (!result.isOk) console.error('Failed to initialize data SDK'); }
       }
 
       if (window.elementSdk) {
-        window.elementSdk.init({
-          defaultConfig,
-          onConfigChange,
-          mapToCapabilities: (cfg) => ({
-            recolorables: [],
-            borderables: [],
-            fontEditable: undefined,
-            fontSizeable: undefined
-          }),
-          mapToEditPanelValues: (cfg) => new Map([
-            ['app_title', cfg.app_title || defaultConfig.app_title],
-            ['school_name', cfg.school_name || defaultConfig.school_name]
-          ])
-        });
+        window.elementSdk.init({ defaultConfig, onConfigChange: () => {}, mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }), mapToEditPanelValues: (cfg) => new Map([['app_title', cfg.app_title || defaultConfig.app_title], ['school_name', cfg.school_name || defaultConfig.school_name]]) });
       }
-
-      document.getElementById('filter-search').addEventListener('input', applyFilters);
-      document.getElementById('filter-date').addEventListener('change', applyFilters);
-      document.getElementById('filter-class').addEventListener('change', applyFilters);
-      document.getElementById('filter-type').addEventListener('change', applyFilters);
 
       checkUrlParams();
     }
