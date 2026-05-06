@@ -92,7 +92,6 @@
      <nav class="flex gap-2 sm:gap-6 -mb-px overflow-x-auto scrollbar-thin pt-3 tab-scroll">
       <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-3 sm:px-1 py-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all whitespace-nowrap touch-target">📊 <span class="mobile-hide">Dasbor Utama</span><span class="sm:hidden">Dasbor</span></button> 
       <button onclick="switchTab('bulk')" id="tab-bulk" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">⚡ <span class="mobile-hide">Input Presensi</span><span class="sm:hidden">Input</span></button> 
-      <button onclick="switchTab('absent')" id="tab-absent" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">⚠️ <span class="mobile-hide">Rekap Absen</span><span class="sm:hidden">Absen</span></button> 
       <button onclick="switchTab('analysis')" id="tab-analysis" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">📈 Analisis</button>
       <button onclick="switchTab('qr')" id="tab-qr" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">💳 <span class="mobile-hide">Kartu QR</span><span class="sm:hidden">QR</span></button>
       <button onclick="switchTab('scan')" id="tab-scan" class="tab-btn px-3 sm:px-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all whitespace-nowrap touch-target">📷 <span class="mobile-hide">Scan Kamera</span><span class="sm:hidden">Scan</span></button>
@@ -168,6 +167,7 @@
      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between mb-6">
        <h3 class="font-bold text-slate-800 flex items-center gap-2">🕐 Presensi Masuk Terbaru</h3>
+       <button onclick="switchTab('analysis')" class="text-blue-600 text-sm font-semibold hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">Ke Menu Analisis</button>
       </div>
       <div id="recent-records" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto scrollbar-thin">
        <div class="col-span-full text-center py-8 text-slate-400"><span class="text-4xl mb-2 block">📭</span><p>Belum ada yang melakukan presensi hari ini</p></div>
@@ -215,49 +215,42 @@
      </div>
     </div>
 
-    <!-- Absent Recap Tab (Siswa yang belum scan / alfa / izin / sakit) -->
-    <div id="content-absent" class="tab-content hidden fade-in">
-      <div class="max-w-5xl mx-auto">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 slide-up">
-          <div class="mb-6 border-b border-slate-100 pb-6">
-            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">⚠️ Rekap & Deteksi Absen Otomatis</h2>
-            <p class="text-slate-500 text-sm mt-1">Sistem otomatis mencocokkan data "Master Siswa" dengan "Riwayat Hadir". Siswa yang belum memindai QR akan terdeteksi di sini.</p>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-5 mb-6">
-            <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">1. Pilih Kelas</label>
-              <select id="absent-class-select" onchange="renderAbsentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white"></select>
-            </div>
-            <div>
-              <label class="block text-sm font-bold text-slate-700 mb-2">2. Pilih Tanggal</label>
-              <input type="date" id="absent-date" onchange="renderAbsentList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
-            </div>
-          </div>
-
-          <div id="absent-stats" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6"></div>
-
-          <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-            <div class="bg-slate-50 p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h3 class="font-bold text-slate-700 text-lg">📋 Daftar Siswa Tidak Hadir</h3>
-              <button id="btn-auto-alfa" onclick="processAutoAlfa()" class="hidden px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors shadow-md shadow-red-500/20">
-                Jadikan Alfa (Belum Presensi)
-              </button>
-            </div>
-            <div id="absent-student-list" class="max-h-[500px] overflow-y-auto bg-white p-4"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Analysis Tab -->
     <div id="content-analysis" class="tab-content hidden fade-in">
+     <!-- Download Action -->
+     <div class="flex justify-end mb-4">
+        <button onclick="exportData()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-colors shadow-md flex items-center gap-2">📥 Download Seluruh Data (CSV)</button>
+     </div>
+
      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6 flex flex-wrap items-center justify-between gap-4">
        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📈 Analisis Tren Kehadiran</h3>
        <div class="flex bg-slate-100 p-1 rounded-xl">
          <button onclick="setAnalysisPeriod('daily')" id="period-daily" class="period-btn px-5 py-2.5 rounded-lg text-sm font-bold bg-white text-blue-600 shadow-sm transition-all"> Harian </button> 
          <button onclick="setAnalysisPeriod('weekly')" id="period-weekly" class="period-btn px-5 py-2.5 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 transition-all"> Mingguan </button> 
          <button onclick="setAnalysisPeriod('monthly')" id="period-monthly" class="period-btn px-5 py-2.5 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 transition-all"> Bulanan </button>
+       </div>
+     </div>
+
+     <!-- Absent Students List Table (SMART DETECTION) -->
+     <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
+       <div class="p-6 border-b border-slate-100 bg-slate-50">
+           <h3 class="font-bold text-red-700 flex items-center gap-2 text-lg">⚠️ Daftar Siswa Tidak Hadir (Sesuai Periode Terpilih)</h3>
+           <p class="text-sm text-slate-500 mt-1">Siswa yang <strong>belum melakukan presensi / tidak absen</strong> akan dideteksi secara otomatis di sini bersamaan dengan siswa Izin, Sakit, dan Alfa.</p>
+       </div>
+       <div class="overflow-x-auto max-h-80 scrollbar-thin">
+         <table class="w-full text-left">
+            <thead class="bg-white sticky top-0 shadow-sm">
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody id="analysis-absent-table-body" class="divide-y divide-slate-100 bg-white">
+               <tr><td colspan="4" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
+            </tbody>
+         </table>
        </div>
      </div>
 
@@ -485,25 +478,18 @@
   <script>
     // === App State Variables ===
     let allRecords = [];
-    let filteredRecords = [];
-    let deleteTargetRecord = null;
-    let editTargetRecord = null;
     let currentPeriod = 'daily';
     let chartClass = null;
     let chartPie = null;
     let chartTrend = null;
     let chartGrade = null;
-    let currentStudentFilter = null;
     let html5QrcodeScanner = null;
     let isScannerRunning = false;
     let currentFacingMode = "environment";
     let currentScannedStudent = null;
     let lastScannedText = "";
     let scanTimeout = null;
-    
-    // Set for race condition prevention
     let processingScans = new Set();
-    let pendingAutoAlfaStudents = [];
     let isAdminUnlocked = false;
 
     // === Global Utility Functions ===
@@ -525,6 +511,7 @@
       setTimeout(() => { toast.classList.add('hidden'); }, 3000);
     }
 
+    // Mendapatkan tanggal waktu lokal Indonesia tanpa masalah offset Timezone
     function getLocalISODate() {
       const now = new Date();
       const offsetMs = now.getTimezoneOffset() * 60 * 1000;
@@ -532,8 +519,40 @@
       return localDate.toISOString().split('T')[0];
     }
 
-    function isDuplicatePresence(studentName, date) {
-      return allRecords.some(r => r.student_name === studentName && r.date === date);
+    // Fungsi cerdas membandingkan dua input format tanggal yang berbeda
+    function isSameDay(dateStr1, dateStr2) {
+      if (!dateStr1 || !dateStr2) return false;
+      try {
+        const d1 = new Date(dateStr1);
+        const d2 = new Date(dateStr2);
+        return d1.getFullYear() === d2.getFullYear() && 
+               d1.getMonth() === d2.getMonth() && 
+               d1.getDate() === d2.getDate();
+      } catch(e) { return false; }
+    }
+
+    function isDateInRange(dateStr, period) {
+       if (!dateStr) return false;
+       const todayIso = getLocalISODate();
+       if (period === 'daily') return dateStr === todayIso;
+       
+       try {
+         const d1 = new Date(dateStr);
+         const d2 = new Date(todayIso);
+         const diffDays = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+         
+         if (period === 'weekly') return diffDays <= 7 && diffDays >= 0;
+         if (period === 'monthly') return diffDays <= 30 && diffDays >= 0;
+         return false;
+       } catch(e) { return false; }
+    }
+
+    function isDuplicatePresence(studentName, targetDate) {
+      return allRecords.some(r => r.student_name === studentName && isSameDay(r.date, targetDate));
+    }
+
+    function formatDate(dateStr) { 
+      return new Date(dateStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); 
     }
 
     // === Student Data ===
@@ -615,14 +634,20 @@
     const dataHandler = {
       onDataChanged(data) {
         allRecords = data;
-        updateDashboard(); updateCharts(); updateSummaryStats();
+        updateDashboard(); 
+        updateCharts();
+        updateSummaryStats();
+        if(!document.getElementById('content-analysis').classList.contains('hidden')) {
+           updateAnalysisCharts(); 
+        }
       }
     };
 
-    // === Dashboard & History Tables ===
+    // === Dashboard Tables ===
     function updateDashboard() {
-      const today = getLocalISODate();
-      const todayRecords = allRecords.filter(r => r.date === today);
+      const today = new Date();
+      // Menggunakan fungsi isSameDay cerdas untuk menangkal masalah format tanggal bawaan GAS
+      const todayRecords = allRecords.filter(r => isSameDay(r.date, today));
       const totalSiswaAktif = getTotalStudents();
       
       const hadirToday = todayRecords.filter(r => r.type === 'hadir').length;
@@ -661,22 +686,34 @@
     function updateDailyStatistics() {
       const container = document.getElementById('daily-stats-container');
       const recordsByDate = {};
+      
+      // Standardisasi tanggal menjadi lokal untuk pengelompokkan yg akurat
       allRecords.forEach(record => {
-        if (!recordsByDate[record.date]) recordsByDate[record.date] = { hadir: 0, izin: 0, sakit: 0, alfa: 0, total: 0 };
-        recordsByDate[record.date][record.type]++;
-        recordsByDate[record.date].total++;
+        if(!record.date) return;
+        const d = new Date(record.date);
+        if (isNaN(d)) return;
+        const normalizedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        
+        if (!recordsByDate[normalizedDate]) recordsByDate[normalizedDate] = { hadir: 0, izin: 0, sakit: 0, alfa: 0, total: 0, originalDate: record.date };
+        recordsByDate[normalizedDate][record.type]++;
+        recordsByDate[normalizedDate].total++;
       });
+      
       const sortedDates = Object.keys(recordsByDate).sort((a, b) => new Date(b) - new Date(a));
 
       if (sortedDates.length === 0) {
         container.innerHTML = `<div class="text-center py-8 text-slate-400 w-full border-2 border-dashed border-slate-100 rounded-2xl"><span class="text-4xl mb-2 block opacity-50">📊</span><p class="font-bold">Belum ada rekapan per hari</p></div>`;
         return;
       }
+      
+      const todayLokal = new Date();
       container.innerHTML = sortedDates.slice(0, 7).map(dateStr => {
-        const stats = recordsByDate[dateStr]; const date = new Date(dateStr);
+        const stats = recordsByDate[dateStr]; 
+        const date = new Date(stats.originalDate);
         const dayName = date.toLocaleDateString('id-ID', { weekday: 'short' });
         const dateDisplay = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-        const isToday = dateStr === getLocalISODate();
+        const isToday = isSameDay(stats.originalDate, todayLokal);
+        
         return `
           <div class="flex-shrink-0 w-64 bg-white rounded-2xl p-5 border shadow-sm ${isToday ? 'border-blue-400 ring-4 ring-blue-50' : 'border-slate-200'} hover:-translate-y-1 transition-all">
             <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
@@ -695,148 +732,39 @@
       }).join('');
     }
 
-    function getTypeIcon(type) { return { 'hadir': '✅', 'izin': '📝', 'sakit': '🏥', 'alfa': '❌' }[type] || '📋'; }
-    function getTypeColor(type) { return { 'hadir': 'bg-emerald-100 border-emerald-200 border', 'izin': 'bg-amber-100 border-amber-200 border', 'sakit': 'bg-blue-100 border-blue-200 border', 'alfa': 'bg-red-100 border-red-200 border' }[type] || 'bg-slate-100 border-slate-200 border'; }
-    function getTypeBadgeClass(type) { return { 'hadir': 'bg-emerald-50 text-emerald-600 border-emerald-200', 'izin': 'bg-amber-50 text-amber-600 border-amber-200', 'sakit': 'bg-blue-50 text-blue-600 border-blue-200', 'alfa': 'bg-red-50 text-red-600 border-red-200' }[type] || 'bg-slate-50 text-slate-600 border-slate-200'; }
-
-    function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); }
-
-    // === Absent Recap Logic ===
-    function renderAbsentList() {
-      const cls = document.getElementById('absent-class-select').value;
-      const date = document.getElementById('absent-date').value;
-      const listContainer = document.getElementById('absent-student-list');
-      const statsContainer = document.getElementById('absent-stats');
-      const btnAutoAlfa = document.getElementById('btn-auto-alfa');
-      pendingAutoAlfaStudents = [];
-
-      if (!cls || !date) {
-        listContainer.innerHTML = '<div class="text-center py-16 text-slate-400"><span class="text-5xl mb-3 block opacity-50">👆</span><p class="font-medium text-lg">Pilih kelas dan tanggal untuk memuat data deteksi</p></div>';
-        statsContainer.classList.add('hidden'); btnAutoAlfa.classList.add('hidden'); return;
-      }
-
-      const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
-      if (students.length === 0) { listContainer.innerHTML = '<p class="text-center text-slate-500 py-4 font-bold">Tidak ada data siswa di kelas ini.</p>'; statsContainer.classList.add('hidden'); btnAutoAlfa.classList.add('hidden'); return; }
-
-      const recordsForDateClass = allRecords.filter(r => r.date === date && r.class_name === cls);
-      let absentList = [];
-      let stats = { izin: 0, sakit: 0, alfa_tercatat: 0, belum_presensi: 0 };
-
-      students.forEach(student => {
-        const record = recordsForDateClass.find(r => r.student_name === student);
-        if (record) {
-          if (record.type !== 'hadir') {
-            absentList.push({ name: student, status: record.type, desc: record.description });
-            if(record.type === 'izin') stats.izin++; if(record.type === 'sakit') stats.sakit++; if(record.type === 'alfa') stats.alfa_tercatat++;
-          }
-        } else {
-          absentList.push({ name: student, status: 'belum presensi', desc: 'Sistem tidak mendeteksi data (Kosong)' });
-          stats.belum_presensi++; pendingAutoAlfaStudents.push(student);
-        }
-      });
-
-      statsContainer.classList.remove('hidden');
-      statsContainer.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center"><p class="text-xs text-amber-700 font-bold uppercase mb-1">📝 Izin</p><p class="text-2xl font-black text-amber-600">${stats.izin}</p></div><div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center"><p class="text-xs text-blue-700 font-bold uppercase mb-1">🏥 Sakit</p><p class="text-2xl font-black text-blue-600">${stats.sakit}</p></div><div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center"><p class="text-xs text-red-700 font-bold uppercase mb-1">❌ Alfa (Tercatat)</p><p class="text-2xl font-black text-red-600">${stats.alfa_tercatat}</p></div><div class="bg-slate-100 border border-slate-300 rounded-xl p-3 text-center shadow-inner"><p class="text-xs text-slate-600 font-bold uppercase mb-1">⚠️ Belum Presensi</p><p class="text-2xl font-black text-slate-700">${stats.belum_presensi}</p></div>`;
-
-      if (stats.belum_presensi > 0) { btnAutoAlfa.classList.remove('hidden'); btnAutoAlfa.textContent = `Jadikan Alfa Semua (${stats.belum_presensi} Siswa)`; } else { btnAutoAlfa.classList.add('hidden'); }
-      if (absentList.length === 0) { listContainer.innerHTML = '<div class="text-center py-12 text-emerald-500"><span class="text-4xl mb-2 block">🎉</span><p class="font-black text-xl">Luar Biasa!</p><p class="font-medium text-slate-600">Seluruh siswa di kelas ini terekam "Hadir".</p></div>'; return; }
-      
-      absentList.sort((a, b) => a.name.localeCompare(b.name));
-      listContainer.innerHTML = `<ul class="divide-y divide-slate-100">${absentList.map(item => `
-        <li class="py-4 flex justify-between items-center px-2 hover:bg-slate-50 transition-colors">
-          <div><p class="font-bold text-slate-800 text-sm">${item.name}</p><p class="text-xs text-slate-500 mt-0.5">${item.desc || '-'}</p></div>
-          <div><span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-dashed ${getAbsentBadgeClass(item.status)}">${formatAbsentStatus(item.status)}</span></div>
-        </li>`).join('')}</ul>`;
+    function getTypeIcon(type) { 
+        return { 'hadir': '✅', 'izin': '📝', 'sakit': '🏥', 'alfa': '❌', 'belum scan': '⚠️' }[type] || '📋'; 
     }
     
-    function getAbsentBadgeClass(status) { return { 'izin': 'bg-amber-50 text-amber-700 border-amber-300', 'sakit': 'bg-blue-50 text-blue-700 border-blue-300', 'alfa': 'bg-red-50 text-red-700 border-red-300' }[status] || 'bg-slate-100 text-slate-600 border-slate-400'; }
-    function formatAbsentStatus(status) { return { 'izin': '📝 Izin', 'sakit': '🏥 Sakit', 'alfa': '❌ Alfa' }[status] || '⚠️ Belum Scan/Input'; }
-
-    async function processAutoAlfa() {
-      const cls = document.getElementById('absent-class-select').value; const date = document.getElementById('absent-date').value;
-      if (pendingAutoAlfaStudents.length === 0) return;
-      if (!confirm(`Yakin ingin menetapkan status ALFA kepada ${pendingAutoAlfaStudents.length} siswa yang belum presensi tersebut?`)) return;
-
-      const btnAutoAlfa = document.getElementById('btn-auto-alfa');
-      btnAutoAlfa.disabled = true; btnAutoAlfa.textContent = 'Memproses...';
-
-      let success = 0, fail = 0; let pendingOptimisticRecords = [];
-      for (const name of pendingAutoAlfaStudents) {
-        if (isDuplicatePresence(name, date)) continue;
-        const record = { id: 'id_' + Date.now() + Math.floor(Math.random()*1000), student_name: name, class_name: cls, date: date, type: 'alfa', description: 'Otomatis: Siswa tidak melakukan scan / tidak diinput', teacher_name: 'Sistem Deteksi', created_at: new Date().toISOString() };
-        allRecords.push(record); pendingOptimisticRecords.push(record); success++;
-      }
-      dataHandler.onDataChanged(allRecords); 
-
-      for (const record of pendingOptimisticRecords) {
-        const result = await window.dataSdk.create(record);
-        if (!result.isOk) { fail++; success--; allRecords = allRecords.filter(r => r.id !== record.id); }
-      }
-      if(fail > 0) dataHandler.onDataChanged(allRecords);
-
-      btnAutoAlfa.disabled = false; renderAbsentList();
-      if (fail === 0) { showToast(`Berhasil menetapkan ${success} siswa sebagai Alfa.`, 'success'); } else { showToast(`Selesai dengan ${fail} gagal terhubung ke server.`, 'error'); }
+    function getTypeColor(type) { 
+        return { 'hadir': 'bg-emerald-100 border-emerald-200 border', 'izin': 'bg-amber-100 border-amber-200 border', 'sakit': 'bg-blue-100 border-blue-200 border', 'alfa': 'bg-red-100 border-red-200 border' }[type] || 'bg-slate-100 border-slate-200 border'; 
+    }
+    
+    function getTypeBadgeClass(type) { 
+        return { 
+            'hadir': 'bg-emerald-50 text-emerald-600 border-emerald-200', 
+            'izin': 'bg-amber-50 text-amber-600 border-amber-200', 
+            'sakit': 'bg-blue-50 text-blue-600 border-blue-200', 
+            'alfa': 'bg-red-50 text-red-600 border-red-200',
+            'belum scan': 'bg-slate-50 text-slate-500 border-slate-300'
+        }[type] || 'bg-slate-50 text-slate-600 border-slate-200'; 
     }
 
-    // === Charts ===
-    function updateCharts() {
-      const ctxClass = document.getElementById('chart-class').getContext('2d');
-      const classes = ['7.1', '7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.4', '9.1', '9.2', '9.3'];
-      const dataHadir = classes.map(cls => allRecords.filter(r => String(r.class_name) === cls && r.type === 'hadir').length);
-      if (chartClass) chartClass.destroy();
-      chartClass = new Chart(ctxClass, { type: 'bar', data: { labels: classes.map(c => `Kls ${c}`), datasets: [{ label: 'Total Hadir', data: dataHadir, backgroundColor: '#10b981', borderRadius: 8, barThickness: 'flex', maxBarThickness: 40 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1, font: { weight: 'bold' } } } } } });
-
-      const ctxPie = document.getElementById('chart-pie').getContext('2d');
-      const hadir = allRecords.filter(r => r.type === 'hadir').length, izin = allRecords.filter(r => r.type === 'izin').length, sakit = allRecords.filter(r => r.type === 'sakit').length, alfa = allRecords.filter(r => r.type === 'alfa').length;
-      if (chartPie) chartPie.destroy();
-      chartPie = new Chart(ctxPie, { type: 'doughnut', data: { labels: ['Hadir', 'Izin', 'Sakit', 'Alfa'], datasets: [{ data: [hadir, izin, sakit, alfa], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 2, borderColor: '#ffffff', hoverOffset: 10 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { padding: 20, usePointStyle: true, font: { weight: 'bold' } } } } } });
+    function getAbsentBadgeClass(status) { 
+        return { 'izin': 'bg-amber-50 text-amber-700 border-amber-300', 'sakit': 'bg-blue-50 text-blue-700 border-blue-300', 'alfa': 'bg-red-50 text-red-700 border-red-300' }[status] || 'bg-slate-100 text-slate-600 border-slate-400'; 
     }
 
-    function setAnalysisPeriod(period) {
-      currentPeriod = period;
-      document.querySelectorAll('.period-btn').forEach(btn => { btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm'); btn.classList.add('text-slate-500', 'hover:text-slate-800'); });
-      document.getElementById(`period-${period}`).classList.remove('text-slate-500', 'hover:text-slate-800'); document.getElementById(`period-${period}`).classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-      updateAnalysisCharts();
-    }
-
-    function updateAnalysisCharts() {
-      const ctxTrend = document.getElementById('chart-trend').getContext('2d');
-      let labels = [], hadirData = [], absenData = []; 
-      const today = new Date();
-      if (currentPeriod === 'daily') {
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(today); date.setDate(date.getDate() - i); const dateStr = date.toISOString().split('T')[0];
-          labels.push(date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
-          const dayRecords = allRecords.filter(r => r.date === dateStr);
-          hadirData.push(dayRecords.filter(r => r.type === 'hadir').length); absenData.push(dayRecords.filter(r => r.type !== 'hadir').length);
-        }
-      } else if (currentPeriod === 'weekly') {
-        for (let i = 3; i >= 0; i--) {
-          const weekStart = new Date(today); weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
-          const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
-          labels.push(`Minggu ${4-i}`);
-          const weekRecords = allRecords.filter(r => { const d = new Date(r.date); return d >= weekStart && d <= weekEnd; });
-          hadirData.push(weekRecords.filter(r => r.type === 'hadir').length); absenData.push(weekRecords.filter(r => r.type !== 'hadir').length);
-        }
-      } else {
-        for (let i = 5; i >= 0; i--) {
-          const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
-          labels.push(month.toLocaleDateString('id-ID', { month: 'short' }));
-          const monthRecords = allRecords.filter(r => { const d = new Date(r.date); return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear(); });
-          hadirData.push(monthRecords.filter(r => r.type === 'hadir').length); absenData.push(monthRecords.filter(r => r.type !== 'hadir').length);
-        }
-      }
-      if (chartTrend) chartTrend.destroy();
-      chartTrend = new Chart(ctxTrend, { type: 'line', data: { labels: labels, datasets: [{ label: 'Hadir', data: hadirData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: true, borderWidth: 3 }, { label: 'Tidak Hadir (I/S/A)', data: absenData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.05)', tension: 0.4, fill: true, borderWidth: 3, borderDash: [5, 5] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { weight: 'bold' } } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
-
-      const ctxGrade = document.getElementById('chart-grade').getContext('2d');
-      const grade7 = allRecords.filter(r => String(r.class_name || '').startsWith('7.') && r.type === 'hadir').length, grade8 = allRecords.filter(r => String(r.class_name || '').startsWith('8.') && r.type === 'hadir').length, grade9 = allRecords.filter(r => String(r.class_name || '').startsWith('9.') && r.type === 'hadir').length;
-      if (chartGrade) chartGrade.destroy();
-      chartGrade = new Chart(ctxGrade, { type: 'bar', data: { labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'], datasets: [{ label: 'Total Hadir Aktual', data: [grade7, grade8, grade9], backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4'], borderRadius: 12, barThickness: 'flex', maxBarThickness: 60 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
-    }
-
-    function updateSummaryStats() {
-      document.getElementById('summary-total').textContent = allRecords.length; document.getElementById('summary-hadir').textContent = allRecords.filter(r => r.type === 'hadir').length; document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length; document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length; document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
+    // === Export Data ===
+    function exportData() {
+      if (allRecords.length === 0) return showToast('Tidak ada data yang dapat didownload.', 'error');
+      let csv = 'Nama Siswa,Kelas,Tanggal,Waktu,Jenis Presensi,Guru Pencatat,Keterangan Tambahan\n';
+      // Sort desc
+      const sorted = [...allRecords].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
+      sorted.forEach(r => { 
+        const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) : '-'; 
+        csv += `"${r.student_name}","${r.class_name}","${r.date}","${timeStr}","${r.type.toUpperCase()}","${r.teacher_name}","${r.description || '-'}"\n`; 
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Seluruh_Data_Presensi_${getLocalISODate()}.csv`; link.click();
     }
 
     // === Generator QR & Zip ===
@@ -999,10 +927,8 @@
       const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
       const selects = [
         { id: 'bulk-class', defaultText: '-- Kelas --' },
-        { id: 'edit-class-name', defaultText: '-- Kelas --' },
         { id: 'qr-class', defaultText: '-- Kelas --' },
-        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' },
-        { id: 'absent-class-select', defaultText: '-- Pilih Kelas --' }
+        { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' }
       ];
 
       selects.forEach(selInfo => {
@@ -1011,7 +937,6 @@
         const currentVal = sel.value;
         sel.innerHTML = `<option value="">${selInfo.defaultText}</option>` +
           classes.map(c => `<option value="${c}">${c}</option>`).join('');
-        // Pertahankan opsi yang sedang dipilih (jika kelas tersebut masih ada)
         if (classes.includes(currentVal)) sel.value = currentVal;
       });
     }
@@ -1056,19 +981,15 @@
         return showToast("Gagal: Nama siswa sudah terdaftar di kelas ini.", "error");
       }
 
-      // Add student
       studentsByClass[cls].push(name);
-      
-      // Sort (Keep NIHIL at top, sort the rest)
       const hasNihil = studentsByClass[cls].includes('NIHIL');
       const others = studentsByClass[cls].filter(s => s !== 'NIHIL').sort();
       studentsByClass[cls] = hasNihil ? ['NIHIL', ...others] : others;
 
       saveStudentsToLocal();
       nameInput.value = '';
-      
       renderAdminStudentList();
-      initDate(); // Refresh total count
+      initDate();
       showToast(`Berhasil menambahkan ${name} ke kelas ${cls}`, "success");
     }
 
@@ -1077,7 +998,7 @@
         studentsByClass[cls] = studentsByClass[cls].filter(s => s !== name);
         saveStudentsToLocal();
         renderAdminStudentList();
-        initDate(); // Refresh total count
+        initDate();
         showToast(`${name} berhasil dihapus dari daftar kelas.`, "success");
       }
     }
@@ -1087,50 +1008,36 @@
       if(newCls && newCls.trim()) {
         const clsName = newCls.trim();
         if(studentsByClass[clsName]) return showToast("Nama kelas sudah ada!", "error");
-        
         studentsByClass[clsName] = ['NIHIL'];
-        saveStudentsToLocal();
-        populateClassSelects();
-        
+        saveStudentsToLocal(); populateClassSelects();
         document.getElementById('admin-class-select').value = clsName;
-        renderAdminStudentList();
-        showToast(`Kelas ${clsName} berhasil ditambahkan`, "success");
+        renderAdminStudentList(); showToast(`Kelas ${clsName} berhasil ditambahkan`, "success");
       }
     }
 
     function promptRenameClass() {
       const oldCls = document.getElementById('admin-class-select').value;
       if(!oldCls) return showToast("Pilih kelas pada dropdown terlebih dahulu!", "error");
-      
       const newCls = prompt(`Ubah nama kelas ${oldCls} menjadi:`, oldCls);
       if(newCls && newCls.trim() && newCls.trim() !== oldCls) {
         const clsName = newCls.trim();
         if(studentsByClass[clsName]) return showToast("Nama kelas tersebut sudah digunakan!", "error");
-        
         studentsByClass[clsName] = studentsByClass[oldCls];
         delete studentsByClass[oldCls];
-        
-        saveStudentsToLocal();
-        populateClassSelects();
-        
+        saveStudentsToLocal(); populateClassSelects();
         document.getElementById('admin-class-select').value = clsName;
-        renderAdminStudentList();
-        showToast("Nama kelas berhasil diubah", "success");
+        renderAdminStudentList(); showToast("Nama kelas berhasil diubah", "success");
       }
     }
 
     function promptDeleteClass() {
       const cls = document.getElementById('admin-class-select').value;
       if(!cls) return showToast("Pilih kelas pada dropdown terlebih dahulu!", "error");
-      
       if(confirm(`⚠️ PERINGATAN!\n\nYakin ingin menghapus kelas ${cls} beserta seluruh daftar siswanya?`)) {
         delete studentsByClass[cls];
-        saveStudentsToLocal();
-        populateClassSelects();
-        
+        saveStudentsToLocal(); populateClassSelects();
         document.getElementById('admin-class-select').value = "";
-        renderAdminStudentList();
-        initDate(); // Perbarui statistik populasi
+        renderAdminStudentList(); initDate();
         showToast(`Kelas ${cls} beserta daftarnya berhasil dihapus`, "success");
       }
     }
@@ -1138,10 +1045,8 @@
     function addBulkStudents() {
       const cls = document.getElementById('admin-class-select').value;
       if(!cls) return showToast("Pilih kelas terlebih dahulu!", "error");
-      
       const text = document.getElementById('admin-bulk-students').value;
       const names = text.split('\n').map(n => n.trim()).filter(n => n);
-      
       if(names.length === 0) return showToast("Daftar nama tidak boleh kosong!", "error");
 
       let added = 0;
@@ -1156,30 +1061,19 @@
         const hasNihil = studentsByClass[cls].includes('NIHIL');
         const others = studentsByClass[cls].filter(s => s !== 'NIHIL').sort();
         studentsByClass[cls] = hasNihil ? ['NIHIL', ...others] : others;
-        
-        saveStudentsToLocal();
-        renderAdminStudentList();
-        initDate();
+        saveStudentsToLocal(); renderAdminStudentList(); initDate();
         document.getElementById('admin-bulk-students').value = '';
         showToast(`${added} siswa berhasil ditambahkan secara massal!`, "success");
-      } else {
-        showToast("Gagal: Semua siswa tersebut sudah terdaftar di kelas ini.", "error");
-      }
+      } else { showToast("Gagal: Semua siswa tersebut sudah terdaftar di kelas ini.", "error"); }
     }
 
     function deleteAllStudentsInClass() {
       const cls = document.getElementById('admin-class-select').value;
       if(!cls) return showToast("Pilih kelas terlebih dahulu!", "error");
-      
       const studentCount = studentsByClass[cls].filter(s => s !== 'NIHIL').length;
       if(studentCount === 0) return showToast("Daftar siswa sudah kosong!", "error");
-
       if(confirm(`⚠️ PERINGATAN BAHAYA!\n\nYakin menghapus SEMUA SISWA (${studentCount} orang) dari kelas ${cls}?\nTindakan ini akan mengosongkan daftar secara permanen.`)) {
-        studentsByClass[cls] = ['NIHIL'];
-        saveStudentsToLocal();
-        renderAdminStudentList();
-        initDate();
-        showToast(`Seluruh siswa di kelas ${cls} berhasil dihapus.`, "success");
+        studentsByClass[cls] = ['NIHIL']; saveStudentsToLocal(); renderAdminStudentList(); initDate(); showToast(`Seluruh siswa di kelas ${cls} berhasil dihapus.`, "success");
       }
     }
 
@@ -1211,11 +1105,147 @@
       else { allRecords = allRecords.filter(r => r.id !== record.id); dataHandler.onDataChanged(allRecords); icon.innerHTML = '<span class="text-6xl">📡</span>'; title.textContent = "Koneksi Terputus"; title.className = "text-3xl font-black text-slate-800 mb-2"; desc.textContent = "Gagal menjangkau server awan. Cek internet Anda lalu scan ulang."; }
     }
 
+    // === Analysis Logic (Including Auto Absent Detection) ===
+    function updateCharts() {
+      const ctxClass = document.getElementById('chart-class').getContext('2d');
+      const classes = ['7.1', '7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.4', '9.1', '9.2', '9.3'];
+      const dataHadir = classes.map(cls => allRecords.filter(r => String(r.class_name) === cls && r.type === 'hadir').length);
+      if (chartClass) chartClass.destroy();
+      chartClass = new Chart(ctxClass, { type: 'bar', data: { labels: classes.map(c => `Kls ${c}`), datasets: [{ label: 'Total Hadir', data: dataHadir, backgroundColor: '#10b981', borderRadius: 8, barThickness: 'flex', maxBarThickness: 40 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1, font: { weight: 'bold' } } } } } });
+
+      const ctxPie = document.getElementById('chart-pie').getContext('2d');
+      const hadir = allRecords.filter(r => r.type === 'hadir').length, izin = allRecords.filter(r => r.type === 'izin').length, sakit = allRecords.filter(r => r.type === 'sakit').length, alfa = allRecords.filter(r => r.type === 'alfa').length;
+      if (chartPie) chartPie.destroy();
+      chartPie = new Chart(ctxPie, { type: 'doughnut', data: { labels: ['Hadir', 'Izin', 'Sakit', 'Alfa'], datasets: [{ data: [hadir, izin, sakit, alfa], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 2, borderColor: '#ffffff', hoverOffset: 10 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { padding: 20, usePointStyle: true, font: { weight: 'bold' } } } } } });
+    }
+
+    function setAnalysisPeriod(period) {
+      currentPeriod = period;
+      document.querySelectorAll('.period-btn').forEach(btn => { btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm'); btn.classList.add('text-slate-500', 'hover:text-slate-800'); });
+      document.getElementById(`period-${period}`).classList.remove('text-slate-500', 'hover:text-slate-800'); document.getElementById(`period-${period}`).classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+      updateAnalysisCharts();
+    }
+
+    function updateAnalysisCharts() {
+      const ctxTrend = document.getElementById('chart-trend').getContext('2d');
+      let labels = [], hadirData = [], absenData = []; 
+      const today = new Date();
+      if (currentPeriod === 'daily') {
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today); date.setDate(date.getDate() - i); const dateStr = date.toISOString().split('T')[0];
+          labels.push(date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+          const dayRecords = allRecords.filter(r => isSameDay(r.date, dateStr));
+          hadirData.push(dayRecords.filter(r => r.type === 'hadir').length); absenData.push(dayRecords.filter(r => r.type !== 'hadir').length);
+        }
+      } else if (currentPeriod === 'weekly') {
+        for (let i = 3; i >= 0; i--) {
+          const weekStart = new Date(today); weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
+          const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+          labels.push(`Minggu ${4-i}`);
+          const weekRecords = allRecords.filter(r => { const d = new Date(r.date); return d >= weekStart && d <= weekEnd; });
+          hadirData.push(weekRecords.filter(r => r.type === 'hadir').length); absenData.push(weekRecords.filter(r => r.type !== 'hadir').length);
+        }
+      } else {
+        for (let i = 5; i >= 0; i--) {
+          const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+          labels.push(month.toLocaleDateString('id-ID', { month: 'short' }));
+          const monthRecords = allRecords.filter(r => { const d = new Date(r.date); return d.getMonth() === month.getMonth() && d.getFullYear() === month.getFullYear(); });
+          hadirData.push(monthRecords.filter(r => r.type === 'hadir').length); absenData.push(monthRecords.filter(r => r.type !== 'hadir').length);
+        }
+      }
+      if (chartTrend) chartTrend.destroy();
+      chartTrend = new Chart(ctxTrend, { type: 'line', data: { labels: labels, datasets: [{ label: 'Hadir', data: hadirData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: true, borderWidth: 3 }, { label: 'Tidak Hadir (I/S/A)', data: absenData, borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.05)', tension: 0.4, fill: true, borderWidth: 3, borderDash: [5, 5] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { weight: 'bold' } } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
+
+      const ctxGrade = document.getElementById('chart-grade').getContext('2d');
+      const grade7 = allRecords.filter(r => String(r.class_name || '').startsWith('7.') && r.type === 'hadir').length, grade8 = allRecords.filter(r => String(r.class_name || '').startsWith('8.') && r.type === 'hadir').length, grade9 = allRecords.filter(r => String(r.class_name || '').startsWith('9.') && r.type === 'hadir').length;
+      if (chartGrade) chartGrade.destroy();
+      chartGrade = new Chart(ctxGrade, { type: 'bar', data: { labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'], datasets: [{ label: 'Total Hadir Aktual', data: [grade7, grade8, grade9], backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4'], borderRadius: 12, barThickness: 'flex', maxBarThickness: 60 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { dash: [4, 4] }, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } } } } });
+
+      updateAbsentAnalysisTable();
+    }
+
+    function updateAbsentAnalysisTable() {
+      const container = document.getElementById('analysis-absent-table-body');
+      
+      // Ambil tanggal unik di allRecords berdasarkan filter periode yang diset
+      const uniqueDates = [...new Set(allRecords.map(r => r.date).filter(dateStr => isDateInRange(dateStr, currentPeriod)))];
+
+      // Jika tidak ada data hari ini dan periode "daily", paksa masukkan hari ini
+      // untuk mendeteksi siapa saja yang belum absen sama sekali
+      const todayIso = getLocalISODate();
+      if (!uniqueDates.includes(todayIso) && currentPeriod === 'daily') {
+         uniqueDates.push(todayIso);
+      }
+
+      let combinedAbsents = [];
+
+      // Mengecek data yang absen/belum absen di setiap tanggal aktif
+      uniqueDates.forEach(dateStr => {
+         const recordsOnDate = allRecords.filter(r => r.date === dateStr);
+         
+         Object.keys(studentsByClass).forEach(cls => {
+            const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
+            students.forEach(student => {
+               const record = recordsOnDate.find(r => r.student_name === student);
+               if (record) {
+                  if (record.type !== 'hadir') {
+                     // Ada rekaman tidak hadir (izin, sakit, alfa)
+                     combinedAbsents.push({
+                        student_name: student,
+                        class_name: cls,
+                        date: dateStr,
+                        type: record.type
+                     });
+                  }
+               } else {
+                  // Tidak ada record sama sekali -> "belum scan"
+                  combinedAbsents.push({
+                     student_name: student,
+                     class_name: cls,
+                     date: dateStr,
+                     type: 'belum scan'
+                  });
+               }
+            });
+         });
+      });
+
+      // Pengurutan: Tanggal terbaru -> Kelas (ascending) -> Nama A-Z
+      combinedAbsents.sort((a,b) => {
+         const dateDiff = new Date(b.date) - new Date(a.date);
+         if (dateDiff !== 0) return dateDiff;
+         const clsDiff = a.class_name.localeCompare(b.class_name, undefined, {numeric: true});
+         if (clsDiff !== 0) return clsDiff;
+         return a.student_name.localeCompare(b.student_name);
+      });
+
+      if (combinedAbsents.length === 0) {
+          container.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-500 font-medium">✨ Seluruh siswa hadir penuh pada periode ini.</td></tr>`;
+          return;
+      }
+
+      container.innerHTML = combinedAbsents.map(r => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
+              <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
+              <td class="py-3 px-6 text-sm font-medium text-slate-600">${formatDate(r.date)}</td>
+              <td class="py-3 px-6">
+                 <span class="px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider border ${getTypeBadgeClass(r.type)}">
+                    ${getTypeIcon(r.type)} ${r.type === 'belum scan' ? 'Belum Presensi' : r.type}
+                 </span>
+              </td>
+          </tr>
+      `).join('');
+    }
+
+    function updateSummaryStats() {
+      document.getElementById('summary-total').textContent = allRecords.length; document.getElementById('summary-hadir').textContent = allRecords.filter(r => r.type === 'hadir').length; document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length; document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length; document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
+    }
+
     // === Initialization ===
     async function initApp() {
       populateClassSelects(); initDate();
       if(document.getElementById('bulk-date')) document.getElementById('bulk-date').value = getLocalISODate();
-      if(document.getElementById('absent-date')) document.getElementById('absent-date').value = getLocalISODate();
 
       // GAS Backend URL
       const GAS_URL = "https://script.google.com/macros/s/AKfycbxBXrUz-CJP8gVmliG8-1Yg_sybr0z2nQFaeNZtwgri3644rlvqROvH-Ty6W4Ou-JAm/exec"; 
