@@ -335,6 +335,11 @@
           <select id="qr-student" disabled class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400 font-medium"></select>
          </div>
          <button onclick="generateQR()" id="btn-generate-qr" disabled class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 disabled:opacity-50 text-lg">Mulai Render QR</button>
+         
+         <div class="mt-4 pt-4 border-t border-slate-200">
+          <button onclick="generateAdminQR()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-700 shadow-md text-sm flex items-center justify-center gap-2">🔑 Cetak Barcode Sakti (Admin)</button>
+          <p class="text-xs text-slate-500 text-center mt-2">Gunakan barcode ini untuk membuka popup absen manual jika siswa lupa membawa QR Code-nya.</p>
+         </div>
         </div>
 
         <div class="flex flex-col items-center justify-center p-8 bg-slate-100 border-2 border-dashed border-slate-300 rounded-3xl min-h-[400px] relative">
@@ -529,8 +534,43 @@
       <h3 class="text-2xl font-black text-slate-800 mb-2">Hapus Baris?</h3>
       <p class="text-slate-500 text-sm mb-6 font-medium">Data riwayat presensi yang dihapus tidak dapat dipulihkan kembali ke tabel.</p>
       <div class="flex gap-3 mt-4">
-        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3.5 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50">Batal</button> 
-        <button type="button" id="confirm-delete-btn" class="flex-1 px-4 py-3.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-lg">Ya, Hapus</button>
+        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3.5 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors"> Batal </button> 
+        <button type="button" id="confirm-delete-btn" class="flex-1 px-4 py-3.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"> Ya, Hapus </button>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Admin Scan Modal (QR Sakti) -->
+   <div id="admin-scan-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl slide-up">
+     <div class="p-6 sm:p-8">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+       <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">🔑 Barcode Sakti (Presensi Manual)</h3>
+       <button onclick="closeAdminScanModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+      </div>
+      <div class="space-y-5">
+       <div>
+         <label class="block text-sm font-bold text-slate-700 mb-2">Kelas</label> 
+         <select id="admin-scan-class" onchange="updateAdminScanStudents()" class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-slate-50"></select>
+       </div>
+       <div>
+         <label class="block text-sm font-bold text-slate-700 mb-2">Nama Siswa</label> 
+         <select id="admin-scan-student" disabled class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-slate-50"><option value="">-- Pilih kelas dulu --</option></select>
+       </div>
+       <div>
+         <label class="block text-sm font-bold text-slate-700 mb-2">Status Presensi</label> 
+         <select id="admin-scan-type" class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white font-bold"> 
+           <option value="hadir" class="text-emerald-600">✅ Hadir</option> 
+           <option value="izin" class="text-amber-600">📝 Izin</option> 
+           <option value="sakit" class="text-blue-600">🏥 Sakit</option> 
+           <option value="alfa" class="text-red-600">❌ Alfa</option> 
+         </select>
+       </div>
+       <div class="flex gap-3 pt-4 border-t border-slate-100">
+         <button type="button" onclick="closeAdminScanModal()" class="flex-1 px-4 py-4 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50">Batal</button>
+         <button type="button" onclick="submitAdminScan()" id="admin-scan-submit-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg">💾 Simpan</button> 
+       </div>
       </div>
      </div>
     </div>
@@ -856,6 +896,20 @@
       new QRious({ element: document.getElementById('qr-canvas'), value: qrUrl, size: 220, level: 'H', foreground: '#0f172a' });
       document.getElementById('qr-placeholder').classList.add('hidden'); document.getElementById('qr-result-container').classList.remove('hidden');
     }
+    
+    function generateAdminQR() {
+      const baseUrl = window.location.origin + window.location.pathname; 
+      const qrUrl = `${baseUrl}?scan=true&admin=true`;
+      
+      document.getElementById('qr-display-name').textContent = "BARCODE SAKTI"; 
+      document.getElementById('qr-display-class').textContent = "Admin / Guru"; 
+      document.getElementById('qr-url-link').value = qrUrl;
+      
+      new QRious({ element: document.getElementById('qr-canvas'), value: qrUrl, size: 220, level: 'H', foreground: '#0f172a' });
+      
+      document.getElementById('qr-placeholder').classList.add('hidden'); 
+      document.getElementById('qr-result-container').classList.remove('hidden');
+    }
 
     function copyQRLink() {
       const copyText = document.getElementById('qr-url-link'); copyText.select(); copyText.setSelectionRange(0, 99999); document.execCommand("copy"); showToast('Tautan Presensi berhasil disalin.', 'success');
@@ -914,7 +968,18 @@
 
     function onScanSuccess(decodedText) {
       if (!isScannerRunning) return; if (decodedText === lastScannedText) return; lastScannedText = decodedText; clearTimeout(scanTimeout); scanTimeout = setTimeout(() => { lastScannedText = ""; }, 2500);
-      try { const url = new URL(decodedText); const cls = url.searchParams.get('c'); const sName = url.searchParams.get('s'); if (cls && sName) { playBeep(); autoSubmitPresence(cls, sName); } else { showToast('Format QR Code tidak dikenali oleh sistem ini.', 'error'); } } catch (e) { showToast('Format QR Invalid.', 'error'); }
+      try { 
+        const url = new URL(decodedText); 
+        const isAdmin = url.searchParams.get('admin');
+        if (isAdmin === 'true') {
+           playBeep();
+           openAdminScanModal();
+        } else {
+           const cls = url.searchParams.get('c'); const sName = url.searchParams.get('s'); 
+           if (cls && sName) { playBeep(); autoSubmitPresence(cls, sName); } 
+           else { showToast('Format QR Code tidak dikenali oleh sistem ini.', 'error'); } 
+        }
+      } catch (e) { showToast('Format QR Invalid.', 'error'); }
     }
 
     async function autoSubmitPresence(cls, studentName) {
@@ -941,6 +1006,94 @@
       if (e.target.files.length === 0) return; const file = e.target.files[0]; const h5qr = new Html5Qrcode("qr-reader"); showToast('Memindai piksel gambar...', 'success');
       h5qr.scanFile(file, true).then(decodedText => { isScannerRunning = true; onScanSuccess(decodedText); isScannerRunning = false; e.target.value = ''; }).catch(() => { showToast('Gagal: QR tidak terdeteksi pada gambar.', 'error'); e.target.value = ''; });
     });
+
+    // === Admin Scan Modal Logic (Barcode Sakti) ===
+    function openAdminScanModal() {
+      document.getElementById('admin-scan-modal').classList.remove('hidden');
+      
+      const clsSelect = document.getElementById('admin-scan-class');
+      const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+      clsSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
+      
+      document.getElementById('admin-scan-student').innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
+      document.getElementById('admin-scan-student').disabled = true;
+      document.getElementById('admin-scan-type').value = 'hadir';
+    }
+
+    function closeAdminScanModal() {
+      document.getElementById('admin-scan-modal').classList.add('hidden');
+    }
+
+    function updateAdminScanStudents() {
+      const cls = document.getElementById('admin-scan-class').value;
+      const studentSelect = document.getElementById('admin-scan-student');
+      if (!cls) {
+        studentSelect.innerHTML = '<option value="">-- Pilih kelas dulu --</option>';
+        studentSelect.disabled = true;
+        return;
+      }
+      const filterableStudents = studentsByClass[cls].filter(name => name !== 'NIHIL');
+      studentSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>' + filterableStudents.map(name => `<option value="${name}">${name}</option>`).join('');
+      studentSelect.disabled = false;
+    }
+
+    async function submitAdminScan() {
+      const cls = document.getElementById('admin-scan-class').value;
+      const studentName = document.getElementById('admin-scan-student').value;
+      const type = document.getElementById('admin-scan-type').value;
+
+      if (!cls || !studentName) {
+        return showToast('Pilih kelas dan nama siswa!', 'error');
+      }
+
+      const today = getLocalISODate();
+      const lockKey = `${studentName}-${today}`;
+      
+      if (processingScans.has(lockKey) || isDuplicatePresence(studentName, today)) { 
+        showToast('Gagal: Presensi siswa ini sudah tercatat hari ini.', 'error'); 
+        return; 
+      }
+      
+      processingScans.add(lockKey); 
+      const btn = document.getElementById('admin-scan-submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Menyimpan...';
+
+      const record = { 
+        id: 'id_' + Date.now() + Math.floor(Math.random()*1000), 
+        student_name: studentName, 
+        class_name: cls, 
+        date: today, 
+        type: type, 
+        description: 'Presensi via QR Sakti (Admin)', 
+        teacher_name: 'Admin QR', 
+        created_at: new Date().toISOString() 
+      };
+      
+      allRecords.push(record); 
+      dataHandler.onDataChanged(allRecords); 
+      
+      closeAdminScanModal();
+      showToast(`Sukses Merekam ${studentName} (${type.toUpperCase()})!`, 'success'); 
+      
+      let bgClass = 'bg-emerald-100'; let textClass = 'text-emerald-700';
+      if(type === 'izin') { bgClass = 'bg-amber-100'; textClass = 'text-amber-700'; }
+      if(type === 'sakit') { bgClass = 'bg-blue-100'; textClass = 'text-blue-700'; }
+      if(type === 'alfa') { bgClass = 'bg-red-100'; textClass = 'text-red-700'; }
+      showScanCard(cls, studentName, `TERCATAT: ${type.toUpperCase()}`, bgClass, textClass);
+
+      const result = await window.dataSdk.create(record); 
+      processingScans.delete(lockKey);
+      
+      btn.disabled = false;
+      btn.innerHTML = '💾 Simpan';
+
+      if (!result.isOk) { 
+        allRecords = allRecords.filter(r => r.id !== record.id); 
+        dataHandler.onDataChanged(allRecords); 
+        showToast('Masalah koneksi database. Presensi ditarik mundur.', 'error'); 
+      }
+    }
 
     // === Mass Bulk Entry ===
     document.getElementById('bulk-class').addEventListener('change', function() {
@@ -1248,6 +1401,13 @@
     function checkUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('scan') === 'true') {
+        const isAdmin = urlParams.get('admin');
+        if (isAdmin === 'true') {
+            showToast("Peringatan: QR Sakti hanya berfungsi jika disorot melalui Scanner Aplikasi.", "error");
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
+        }
+
         const cls = urlParams.get('c'); const s = urlParams.get('s');
         if (cls && s) {
           document.getElementById('app').style.display = 'none'; const screen = document.getElementById('student-direct-scan-screen'); screen.classList.remove('hidden'); screen.classList.add('flex');
