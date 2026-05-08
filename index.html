@@ -239,7 +239,7 @@
      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
        <div class="p-6 border-b border-slate-100 bg-slate-50">
            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Detail Presensi Siswa (Sesuai Periode Terpilih)</h3>
-           <p class="text-sm text-slate-500 mt-1">Daftar ini secara pintar akan mendeteksi seluruh siswa. Siswa yang lupa absen otomatis terdata sebagai <strong>Alfa</strong> dan dapat diedit.</p>
+           <p class="text-sm text-slate-500 mt-1">Daftar ini menampilkan rekaman data presensi aktual yang tersimpan di dalam database backend.</p>
        </div>
 
        <!-- Penambahan Filter Kelas, Tanggal, dan Status -->
@@ -740,7 +740,19 @@
 
     const dataHandler = {
       onDataChanged(data) {
-        allRecords = data;
+        // Normalisasi data dari backend agar date selalu berformat YYYY-MM-DD
+        // Ini memecahkan bug "Google Spreadsheet Date Object" yang menggagalkan filter HTML input type="date"
+        allRecords = data.map(r => {
+           let normalizedDate = r.date;
+           if (normalizedDate && normalizedDate.includes('T')) {
+               normalizedDate = normalizedDate.split('T')[0];
+           }
+           return {
+               ...r,
+               date: normalizedDate
+           };
+        });
+        
         updateDashboard(); 
         updateCharts();
         updateSummaryStats();
@@ -1484,64 +1496,23 @@
     function updateAbsentAnalysisTable() {
       const container = document.getElementById('analysis-absent-table-body');
       
-      const uniqueDates = [...new Set(allRecords.map(r => r.date).filter(dateStr => isDateInRange(dateStr, currentPeriod)))];
-      const todayIso = getLocalISODate();
-      if (!uniqueDates.includes(todayIso) && currentPeriod === 'daily') {
-         uniqueDates.push(todayIso);
-      }
+      // Ambil hanya record aktual dari backend yang sesuai dengan rentang waktu
+      let baseRecords = allRecords.filter(r => isDateInRange(r.date, currentPeriod));
 
-      let combinedRecords = [];
-
-      uniqueDates.forEach(dateStr => {
-         const recordsOnDate = allRecords.filter(r => r.date === dateStr);
-         
-         Object.keys(studentsByClass).forEach(cls => {
-            const students = studentsByClass[cls].filter(s => s !== 'NIHIL');
-            students.forEach(student => {
-               const record = recordsOnDate.find(r => r.student_name === student);
-               if (record) {
-                  combinedRecords.push({
-                     id: record.id || record.__backendId,
-                     student_name: student,
-                     class_name: cls,
-                     date: dateStr,
-                     type: record.type,
-                     created_at: record.created_at,
-                     description: record.description || '',
-                     teacher_name: record.teacher_name || '',
-                     is_synthetic: false
-                  });
-               } else {
-                  // Secara otomatis tandai Alfa (tampil UI saja)
-                  combinedRecords.push({
-                     id: null,
-                     student_name: student,
-                     class_name: cls,
-                     date: dateStr,
-                     type: 'alfa',
-                     created_at: null,
-                     description: 'Sistem Deteksi Otomatis (Belum Presensi)',
-                     teacher_name: 'Sistem',
-                     is_synthetic: true
-                  });
-               }
-            });
-         });
-      });
-
-      combinedRecords.sort((a,b) => {
+      // Urutkan berdasarkan Tanggal -> Kelas -> Nama Siswa
+      baseRecords.sort((a,b) => {
          const dateDiff = new Date(b.date) - new Date(a.date);
          if (dateDiff !== 0) return dateDiff;
-         const clsDiff = a.class_name.localeCompare(b.class_name, undefined, {numeric: true});
+         const clsDiff = (a.class_name || '').localeCompare(b.class_name || '', undefined, {numeric: true});
          if (clsDiff !== 0) return clsDiff;
-         return a.student_name.localeCompare(b.student_name);
+         return (a.student_name || '').localeCompare(b.student_name || '');
       });
 
       const filterClass = document.getElementById('analysis-filter-class') ? document.getElementById('analysis-filter-class').value : '';
       const filterDate = document.getElementById('analysis-filter-date') ? document.getElementById('analysis-filter-date').value : '';
       const filterStatus = document.getElementById('analysis-filter-status') ? document.getElementById('analysis-filter-status').value : '';
 
-      let finalRecords = combinedRecords.filter(r => {
+      let finalRecords = baseRecords.filter(r => {
          const matchClass = !filterClass || r.class_name === filterClass;
          const matchDate = !filterDate || r.date === filterDate;
          const matchStatus = !filterStatus || r.type === filterStatus;
@@ -1549,16 +1520,12 @@
       });
 
       if (finalRecords.length === 0) {
-          container.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500 font-medium">✨ Tidak ada data yang cocok dengan filter.</td></tr>`;
+          container.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500 font-medium">✨ Tidak ada data presensi yang cocok.</td></tr>`;
           return;
       }
 
       container.innerHTML = finalRecords.map(r => {
-          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '<span class="text-red-400">Belum Ada Data</span>';
-          const synName = encodeURIComponent(r.student_name);
-          const synClass = encodeURIComponent(r.class_name);
-          const synDate = encodeURIComponent(r.date);
-          const onClickFn = r.is_synthetic ? `openSyntheticEditModal('${synName}', '${synClass}', '${synDate}')` : `openEditModal('${r.id}')`;
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '<span class="text-slate-400">-</span>';
 
           return `
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
@@ -1574,7 +1541,7 @@
                  </span>
               </td>
               <td class="py-3 px-6 text-center">
-                 <button onclick="${onClickFn}" class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors touch-target" title="Edit Data">✏️</button>
+                 <button onclick="openEditModal('${r.id || r.__backendId}')" class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors touch-target" title="Edit Data">✏️</button>
               </td>
           </tr>
           `;
