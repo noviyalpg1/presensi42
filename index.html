@@ -234,8 +234,8 @@
      <!-- Absent Students List Table (SMART DETECTION WITH FILTERS) -->
      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
        <div class="p-6 border-b border-slate-100 bg-slate-50">
-           <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Detail Presensi Siswa (Sesuai Periode Terpilih)</h3>
-           <p class="text-sm text-slate-500 mt-1">Daftar ini secara pintar akan mendeteksi seluruh siswa. Siswa yang lupa absen otomatis terdata sebagai <strong>Alfa</strong> dan dapat diedit.</p>
+           <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">⚠️ Rekap Seluruh Presensi (Hadir & Tidak Hadir)</h3>
+           <p class="text-sm text-slate-500 mt-1">Siswa yang <strong>sudah scan otomatis Hadir</strong>. Siswa yang belum memindai QR akan terdeteksi sebagai <strong>Alfa</strong> dan dapat diedit menjadi Sakit/Izin.</p>
        </div>
 
        <!-- Penambahan Filter Kelas, Tanggal, dan Status -->
@@ -269,14 +269,13 @@
               <tr>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Waktu Kehadiran</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal & Waktu</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
                 <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Opsi</th>
               </tr>
             </thead>
             <tbody id="analysis-absent-table-body" class="divide-y divide-slate-100 bg-white">
-               <tr><td colspan="6" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
+               <tr><td colspan="5" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
             </tbody>
          </table>
        </div>
@@ -1546,12 +1545,12 @@
       });
 
       if (finalRecords.length === 0) {
-          container.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500 font-medium">✨ Tidak ada data yang cocok dengan filter.</td></tr>`;
+          container.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500 font-medium">✨ Tidak ada data yang cocok dengan filter.</td></tr>`;
           return;
       }
 
       container.innerHTML = finalRecords.map(r => {
-          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '-';
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '<span class="text-red-400">Belum Ada Data</span>';
           const synName = encodeURIComponent(r.student_name);
           const synClass = encodeURIComponent(r.class_name);
           const synDate = encodeURIComponent(r.date);
@@ -1561,8 +1560,10 @@
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
               <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
               <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
-              <td class="py-3 px-6 text-sm font-medium text-slate-600">${formatDate(r.date)}</td>
-              <td class="py-3 px-6 text-sm font-medium text-slate-600">${timeStr}</td>
+              <td class="py-3 px-6 text-sm font-medium text-slate-600">
+                ${formatDate(r.date)}<br>
+                <span class="text-[10px] font-bold text-slate-400">${timeStr}</span>
+              </td>
               <td class="py-3 px-6">
                  <span class="px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider border ${getTypeBadgeClass(r.type)}">
                     ${getTypeIcon(r.type)} ${r.type}
