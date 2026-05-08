@@ -74,6 +74,10 @@
          </div>
         </div>
         <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+         <button onclick="refreshData()" class="p-2 sm:px-3 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors touch-target text-white flex items-center gap-2 shadow-md shadow-blue-500/20" title="Sinkronkan Data Server">
+          <span class="text-sm">🔄</span>
+          <span class="hidden sm:inline text-sm font-bold" id="sync-btn-text">Sinkron</span>
+         </button>
          <button onclick="toggleFullscreen()" id="fullscreen-btn" class="p-2 sm:px-3 sm:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors touch-target text-slate-300 flex items-center gap-2" title="Toggle Fullscreen">
           <svg id="fullscreen-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
           <span class="hidden sm:inline text-sm font-medium">Layar Penuh</span>
@@ -269,14 +273,13 @@
               <tr>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Waktu Kehadiran</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal & Waktu</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
                 <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Opsi</th>
               </tr>
             </thead>
             <tbody id="analysis-absent-table-body" class="divide-y divide-slate-100 bg-white">
-               <tr><td colspan="6" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
+               <tr><td colspan="5" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
             </tbody>
          </table>
        </div>
@@ -526,21 +529,6 @@
     </div>
    </div>
 
-   <!-- Delete Confirmation Modal (unused mostly but kept for safety) -->
-   <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl slide-up">
-     <div class="text-center">
-      <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-red-100"><span class="text-4xl">🗑️</span></div>
-      <h3 class="text-2xl font-black text-slate-800 mb-2">Hapus Baris?</h3>
-      <p class="text-slate-500 text-sm mb-6 font-medium">Data riwayat presensi yang dihapus tidak dapat dipulihkan kembali ke tabel.</p>
-      <div class="flex gap-3 mt-4">
-        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3.5 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors"> Batal </button> 
-        <button type="button" id="confirm-delete-btn" class="flex-1 px-4 py-3.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"> Ya, Hapus </button>
-      </div>
-     </div>
-    </div>
-   </div>
-
    <!-- Admin Scan Modal (QR Sakti) -->
    <div id="admin-scan-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
     <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl slide-up">
@@ -595,9 +583,6 @@
   <script>
     // === App State Variables ===
     let allRecords = [];
-    let filteredRecords = [];
-    let deleteTargetRecord = null;
-    let editTargetRecord = null;
     let currentPeriod = 'daily';
     let chartClass = null;
     let chartPie = null;
@@ -1248,7 +1233,8 @@
         { id: 'qr-class', defaultText: '-- Kelas --' },
         { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' },
         { id: 'analysis-filter-class', defaultText: 'Semua Kelas' },
-        { id: 'edit-class-name', defaultText: '-- Kelas --' }
+        { id: 'edit-class-name', defaultText: '-- Kelas --' },
+        { id: 'admin-scan-class', defaultText: '-- Pilih Kelas --'}
       ];
 
       selects.forEach(selInfo => {
@@ -1397,7 +1383,7 @@
       }
     }
 
-    // === Direct Scan Logic ===
+    // === Direct Scan URL Logic ===
     function checkUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('scan') === 'true') {
@@ -1522,6 +1508,7 @@
                      is_synthetic: false
                   });
                } else {
+                  // Secara otomatis tandai Alfa (tampil UI saja)
                   combinedRecords.push({
                      id: null,
                      student_name: student,
@@ -1563,7 +1550,7 @@
       }
 
       container.innerHTML = finalRecords.map(r => {
-          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '-';
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '<span class="text-red-400">Belum Ada Data</span>';
           const synName = encodeURIComponent(r.student_name);
           const synClass = encodeURIComponent(r.class_name);
           const synDate = encodeURIComponent(r.date);
@@ -1573,8 +1560,10 @@
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
               <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
               <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
-              <td class="py-3 px-6 text-sm font-medium text-slate-600">${formatDate(r.date)}</td>
-              <td class="py-3 px-6 text-sm font-medium text-slate-600">${timeStr}</td>
+              <td class="py-3 px-6 text-sm font-medium text-slate-600">
+                ${formatDate(r.date)}<br>
+                <span class="text-[10px] font-bold text-slate-400">${timeStr}</span>
+              </td>
               <td class="py-3 px-6">
                  <span class="px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider border ${getTypeBadgeClass(r.type)}">
                     ${getTypeIcon(r.type)} ${r.type}
@@ -1592,6 +1581,38 @@
       document.getElementById('summary-total').textContent = allRecords.length; document.getElementById('summary-hadir').textContent = allRecords.filter(r => r.type === 'hadir').length; document.getElementById('summary-izin').textContent = allRecords.filter(r => r.type === 'izin').length; document.getElementById('summary-sakit').textContent = allRecords.filter(r => r.type === 'sakit').length; document.getElementById('summary-alfa').textContent = allRecords.filter(r => r.type === 'alfa').length;
     }
 
+    async function refreshData() {
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbx3vbxnrFvFVWDukTOZ5Cyzy4XEiyyO9dQwtuh5KHFwco38mAfhMimkHpnaOVBp0b5P/exec"; 
+      const syncBtnText = document.getElementById('sync-btn-text');
+      if (syncBtnText) syncBtnText.textContent = 'Menyinkron...';
+      
+      try {
+        const res = await fetch(GAS_URL + "?t=" + new Date().getTime());
+        const data = await res.json();
+        
+        if (data && data.records !== undefined) {
+           dataHandler.onDataChanged(data.records);
+           if (data.studentsByClass && Object.keys(data.studentsByClass).length > 0) {
+               studentsByClass = data.studentsByClass;
+               localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
+               populateClassSelects();
+               initDate();
+           } else {
+               saveStudentsToLocal();
+           }
+        } else {
+           dataHandler.onDataChanged(Array.isArray(data) ? data : []);
+        }
+
+        showToast('Berhasil menyinkronkan data terbaru', 'success');
+      } catch (e) {
+        console.error(e);
+        showToast('Gagal sinkronisasi. Periksa koneksi internet.', 'error');
+      }
+      
+      if (syncBtnText) syncBtnText.textContent = 'Sinkron';
+    }
+
     // === Initialization ===
     async function initApp() {
       populateClassSelects(); initDate();
@@ -1603,8 +1624,22 @@
       if (GAS_URL !== "") {
         showToast('Menghubungkan ke Database Cloud...', 'success');
         try {
-          const res = await fetch(GAS_URL); const data = await res.json();
-          dataHandler.onDataChanged(Array.isArray(data) ? data : []);
+          const res = await fetch(GAS_URL + "?t=" + new Date().getTime()); const data = await res.json();
+          
+          if (data && data.records !== undefined) {
+             dataHandler.onDataChanged(data.records);
+             if (data.studentsByClass && Object.keys(data.studentsByClass).length > 0) {
+                 studentsByClass = data.studentsByClass;
+                 localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
+                 populateClassSelects();
+                 initDate();
+             } else {
+                 saveStudentsToLocal();
+             }
+          } else {
+             dataHandler.onDataChanged(Array.isArray(data) ? data : []);
+          }
+          
           showToast('Data berhasil dimuat dari Database', 'success');
         } catch (e) { console.error(e); showToast('Gagal memuat data dari Database', 'error'); }
 
