@@ -235,11 +235,11 @@
        </div>
      </div>
 
-     <!-- Absent Students List Table (SMART DETECTION WITH FILTERS) -->
+     <!-- Absent Students List Table -->
      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
        <div class="p-6 border-b border-slate-100 bg-slate-50">
            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Detail Presensi Siswa (Sesuai Periode Terpilih)</h3>
-           <p class="text-sm text-slate-500 mt-1">Daftar ini menampilkan rekaman data presensi aktual yang tersimpan di dalam database backend.</p>
+           <p class="text-sm text-slate-500 mt-1">Daftar ini murni menampilkan rekaman data presensi aktual yang tersimpan di dalam database backend secara real-time.</p>
        </div>
 
        <!-- Penambahan Filter Kelas, Tanggal, dan Status -->
@@ -647,7 +647,7 @@
          
          if (period === 'weekly') return diffDays <= 7 && diffDays >= 0;
          if (period === 'monthly') return diffDays <= 30 && diffDays >= 0;
-         return false;
+         return true; 
        } catch(e) { return false; }
     }
 
@@ -740,16 +740,28 @@
 
     const dataHandler = {
       onDataChanged(data) {
-        // Normalisasi data dari backend agar date selalu berformat YYYY-MM-DD
-        // Ini memecahkan bug "Google Spreadsheet Date Object" yang menggagalkan filter HTML input type="date"
-        allRecords = data.map(r => {
-           let normalizedDate = r.date;
-           if (normalizedDate && normalizedDate.includes('T')) {
-               normalizedDate = normalizedDate.split('T')[0];
+        // Normalisasi data dari backend agar date selalu berformat YYYY-MM-DD dengan sempurna
+        allRecords = (Array.isArray(data) ? data : []).map(r => {
+           let rawDate = r.date || r.created_at;
+           let normalizedDate = "";
+           
+           if (rawDate) {
+               const d = new Date(rawDate);
+               if (!isNaN(d.getTime())) {
+                   normalizedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+               } else if (typeof rawDate === 'string') {
+                   normalizedDate = rawDate.split('T')[0];
+               }
+           } else {
+               normalizedDate = getLocalISODate(); // Fallback jika kosong total
            }
+           
            return {
                ...r,
-               date: normalizedDate
+               date: normalizedDate,
+               student_name: r.student_name || 'Tanpa Nama',
+               class_name: r.class_name || '-',
+               type: String(r.type || 'hadir').toLowerCase()
            };
         });
         
@@ -1515,7 +1527,7 @@
       let finalRecords = baseRecords.filter(r => {
          const matchClass = !filterClass || r.class_name === filterClass;
          const matchDate = !filterDate || r.date === filterDate;
-         const matchStatus = !filterStatus || r.type === filterStatus;
+         const matchStatus = !filterStatus || (r.type || '').toLowerCase() === filterStatus.toLowerCase();
          return matchClass && matchDate && matchStatus;
       });
 
@@ -1529,8 +1541,8 @@
 
           return `
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-              <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
-              <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
+              <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name || 'Tanpa Nama'}</td>
+              <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name || '-'}</td>
               <td class="py-3 px-6 text-sm font-medium text-slate-600">
                 ${formatDate(r.date)}<br>
                 <span class="text-[10px] font-bold text-slate-400">${timeStr}</span>
