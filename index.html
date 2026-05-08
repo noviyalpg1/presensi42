@@ -231,14 +231,14 @@
        </div>
      </div>
 
-     <!-- Absent Students List Table (SMART DETECTION) -->
+     <!-- Absent Students List Table (SMART DETECTION WITH FILTERS) -->
      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
        <div class="p-6 border-b border-slate-100 bg-slate-50">
-           <h3 class="font-bold text-red-700 flex items-center gap-2 text-lg">⚠️ Daftar Siswa Tidak Hadir (Sesuai Periode Terpilih)</h3>
-           <p class="text-sm text-slate-500 mt-1">Siswa yang <strong>belum melakukan presensi / tidak absen</strong> akan dideteksi secara otomatis di sini bersamaan dengan siswa Izin, Sakit, dan Alfa.</p>
+           <h3 class="font-bold text-slate-800 flex items-center gap-2 text-lg">📋 Detail Presensi Siswa (Sesuai Periode Terpilih)</h3>
+           <p class="text-sm text-slate-500 mt-1">Daftar ini secara pintar akan mendeteksi seluruh siswa. Siswa yang lupa absen otomatis terdata sebagai <strong>Alfa</strong> dan dapat diedit.</p>
        </div>
 
-       <!-- Penambahan Filter Kelas dan Tanggal -->
+       <!-- Penambahan Filter Kelas, Tanggal, dan Status -->
        <div class="p-4 bg-white border-b border-slate-100 flex flex-wrap gap-4 items-end">
            <div>
                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Filter Kelas</label>
@@ -250,21 +250,33 @@
                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Filter Tanggal</label>
                <input type="date" id="analysis-filter-date" onchange="updateAbsentAnalysisTable()" class="w-40 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500">
            </div>
-           <button onclick="document.getElementById('analysis-filter-class').value=''; document.getElementById('analysis-filter-date').value=''; updateAbsentAnalysisTable();" class="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Reset</button>
+           <div>
+               <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Filter Status</label>
+               <select id="analysis-filter-status" onchange="updateAbsentAnalysisTable()" class="w-40 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500">
+                   <option value="">Semua Status</option>
+                   <option value="hadir">✅ Hadir</option>
+                   <option value="izin">📝 Izin</option>
+                   <option value="sakit">🏥 Sakit</option>
+                   <option value="alfa">❌ Alfa</option>
+               </select>
+           </div>
+           <button onclick="document.getElementById('analysis-filter-class').value=''; document.getElementById('analysis-filter-date').value=''; document.getElementById('analysis-filter-status').value=''; updateAbsentAnalysisTable();" class="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Reset</button>
        </div>
 
-       <div class="overflow-x-auto max-h-80 scrollbar-thin">
+       <div class="overflow-x-auto max-h-96 scrollbar-thin">
          <table class="w-full text-left">
-            <thead class="bg-white sticky top-0 shadow-sm">
+            <thead class="bg-white sticky top-0 shadow-sm z-10">
               <tr>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Waktu Kehadiran</th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Opsi</th>
               </tr>
             </thead>
             <tbody id="analysis-absent-table-body" class="divide-y divide-slate-100 bg-white">
-               <tr><td colspan="4" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
+               <tr><td colspan="6" class="text-center py-8 text-slate-400">Pilih periode untuk memuat data.</td></tr>
             </tbody>
          </table>
        </div>
@@ -475,6 +487,55 @@
 
    </main>
 
+   <!-- Edit Modal -->
+   <div id="edit-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90%] overflow-y-auto shadow-2xl slide-up">
+     <div class="p-6 sm:p-8">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+       <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">✏️ Edit Presensi</h3>
+       <button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+      </div>
+      <form id="edit-form" class="space-y-5"><input type="hidden" id="edit-id">
+       <div><label class="block text-sm font-bold text-slate-700 mb-2">Nama Siswa</label> <input type="text" id="edit-student-name" required class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-slate-50 text-slate-800"></div>
+       <div class="grid grid-cols-2 gap-4">
+         <div><label class="block text-sm font-bold text-slate-700 mb-2">Kelas</label> <select id="edit-class-name" required class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-slate-50"></select></div>
+         <div><label class="block text-sm font-bold text-slate-700 mb-2">Tanggal</label> <input type="date" id="edit-date" required class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-slate-50"></div>
+       </div>
+       <div><label class="block text-sm font-bold text-slate-700 mb-2">Status Presensi</label> 
+         <select id="edit-type" required class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white font-bold"> 
+           <option value="hadir" class="text-emerald-600">✅ Hadir</option> 
+           <option value="izin" class="text-amber-600">📝 Izin</option> 
+           <option value="sakit" class="text-blue-600">🏥 Sakit</option> 
+           <option value="alfa" class="text-red-600">❌ Alfa</option> 
+         </select>
+       </div>
+       <div><label class="block text-sm font-bold text-slate-700 mb-2">Pencatat (Guru)</label> <input type="text" id="edit-teacher" required class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white"></div>
+       <div><label class="block text-sm font-bold text-slate-700 mb-2">Keterangan Opsional</label> <textarea id="edit-description" rows="2" class="w-full px-4 py-3 border border-slate-300 rounded-xl resize-none bg-white"></textarea></div>
+       
+       <div class="flex gap-3 pt-4 border-t border-slate-100">
+         <button type="button" onclick="closeEditModal()" class="flex-1 px-4 py-4 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50">Batal</button>
+         <button type="submit" id="edit-submit-btn" class="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg">💾 Simpan Pembaruan</button> 
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+
+   <!-- Delete Confirmation Modal (unused mostly but kept for safety) -->
+   <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl slide-up">
+     <div class="text-center">
+      <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-red-100"><span class="text-4xl">🗑️</span></div>
+      <h3 class="text-2xl font-black text-slate-800 mb-2">Hapus Baris?</h3>
+      <p class="text-slate-500 text-sm mb-6 font-medium">Data riwayat presensi yang dihapus tidak dapat dipulihkan kembali ke tabel.</p>
+      <div class="flex gap-3 mt-4">
+        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-3.5 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50">Batal</button> 
+        <button type="button" id="confirm-delete-btn" class="flex-1 px-4 py-3.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-lg">Ya, Hapus</button>
+      </div>
+     </div>
+    </div>
+   </div>
+
    <!-- Toast Notification -->
    <div id="toast" class="hidden fixed bottom-6 right-6 z-[200] px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 flex items-center gap-3">
     <span id="toast-icon" class="text-2xl bg-white/20 w-8 h-8 flex items-center justify-center rounded-full"></span> 
@@ -494,6 +555,9 @@
   <script>
     // === App State Variables ===
     let allRecords = [];
+    let filteredRecords = [];
+    let deleteTargetRecord = null;
+    let editTargetRecord = null;
     let currentPeriod = 'daily';
     let chartClass = null;
     let chartPie = null;
@@ -527,7 +591,6 @@
       setTimeout(() => { toast.classList.add('hidden'); }, 3000);
     }
 
-    // Mendapatkan tanggal waktu lokal Indonesia tanpa masalah offset Timezone
     function getLocalISODate() {
       const now = new Date();
       const offsetMs = now.getTimezoneOffset() * 60 * 1000;
@@ -535,7 +598,6 @@
       return localDate.toISOString().split('T')[0];
     }
 
-    // Fungsi cerdas membandingkan dua input format tanggal yang berbeda
     function isSameDay(dateStr1, dateStr2) {
       if (!dateStr1 || !dateStr2) return false;
       try {
@@ -662,7 +724,6 @@
     // === Dashboard Tables ===
     function updateDashboard() {
       const today = new Date();
-      // Menggunakan fungsi isSameDay cerdas untuk menangkal masalah format tanggal bawaan GAS
       const todayRecords = allRecords.filter(r => isSameDay(r.date, today));
       const totalSiswaAktif = getTotalStudents();
       
@@ -703,7 +764,6 @@
       const container = document.getElementById('daily-stats-container');
       const recordsByDate = {};
       
-      // Standardisasi tanggal menjadi lokal untuk pengelompokkan yg akurat
       allRecords.forEach(record => {
         if(!record.date) return;
         const d = new Date(record.date);
@@ -749,7 +809,7 @@
     }
 
     function getTypeIcon(type) { 
-        return { 'hadir': '✅', 'izin': '📝', 'sakit': '🏥', 'alfa': '❌', 'belum scan': '⚠️' }[type] || '📋'; 
+        return { 'hadir': '✅', 'izin': '📝', 'sakit': '🏥', 'alfa': '❌' }[type] || '📋'; 
     }
     
     function getTypeColor(type) { 
@@ -761,13 +821,8 @@
             'hadir': 'bg-emerald-50 text-emerald-600 border-emerald-200', 
             'izin': 'bg-amber-50 text-amber-600 border-amber-200', 
             'sakit': 'bg-blue-50 text-blue-600 border-blue-200', 
-            'alfa': 'bg-red-50 text-red-600 border-red-200',
-            'belum scan': 'bg-slate-50 text-slate-500 border-slate-300'
+            'alfa': 'bg-red-50 text-red-600 border-red-200'
         }[type] || 'bg-slate-50 text-slate-600 border-slate-200'; 
-    }
-
-    function getAbsentBadgeClass(status) { 
-        return { 'izin': 'bg-amber-50 text-amber-700 border-amber-300', 'sakit': 'bg-blue-50 text-blue-700 border-blue-300', 'alfa': 'bg-red-50 text-red-700 border-red-300' }[status] || 'bg-slate-100 text-slate-600 border-slate-400'; 
     }
 
     // === Export Data ===
@@ -938,6 +993,100 @@
 
     function resetBulkForm() { document.getElementById('bulk-class').value = ''; document.getElementById('bulk-date').value = getLocalISODate(); document.getElementById('bulk-student-list').innerHTML = `<div class="text-center py-16 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50"><span class="text-5xl mb-3 block">👇</span><p class="font-medium">Pilih kelas di atas untuk memuat daftar siswa</p></div>`; document.getElementById('bulk-submit-btn').disabled = true; }
 
+    // === Edit/Modal Logic ===
+    function openEditModal(id) {
+      editTargetRecord = allRecords.find(r => r.id === id || r.__backendId === id);
+      if (!editTargetRecord) return;
+
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-student-name').value = editTargetRecord.student_name;
+      document.getElementById('edit-class-name').value = editTargetRecord.class_name;
+      document.getElementById('edit-date').value = editTargetRecord.date;
+      document.getElementById('edit-type').value = editTargetRecord.type;
+      document.getElementById('edit-teacher').value = editTargetRecord.teacher_name || '';
+      document.getElementById('edit-description').value = editTargetRecord.description || '';
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function openSyntheticEditModal(encName, encClass, encDate) {
+      const studentName = decodeURIComponent(encName);
+      const className = decodeURIComponent(encClass);
+      const date = decodeURIComponent(encDate);
+
+      editTargetRecord = {
+        is_synthetic: true,
+        student_name: studentName,
+        class_name: className,
+        date: date,
+        type: 'alfa',
+        description: 'Sistem Deteksi Otomatis (Belum Presensi)',
+        teacher_name: 'Sistem'
+      };
+
+      document.getElementById('edit-id').value = '';
+      document.getElementById('edit-student-name').value = studentName;
+      document.getElementById('edit-class-name').value = className;
+      document.getElementById('edit-date').value = date;
+      document.getElementById('edit-type').value = 'alfa';
+      document.getElementById('edit-teacher').value = 'Sistem';
+      document.getElementById('edit-description').value = 'Sistem Deteksi Otomatis (Belum Presensi)';
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      editTargetRecord = null;
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!editTargetRecord) return;
+
+      const editBtn = document.getElementById('edit-submit-btn');
+      editBtn.disabled = true;
+      editBtn.innerHTML = '⏳ Memproses...';
+
+      const updatedRecord = {
+        ...editTargetRecord,
+        student_name: document.getElementById('edit-student-name').value.trim(),
+        class_name: document.getElementById('edit-class-name').value,
+        date: document.getElementById('edit-date').value,
+        type: document.getElementById('edit-type').value,
+        description: document.getElementById('edit-description').value.trim(),
+        teacher_name: document.getElementById('edit-teacher').value.trim()
+      };
+
+      let result;
+      if (editTargetRecord.is_synthetic) {
+        updatedRecord.id = 'id_' + Date.now() + Math.floor(Math.random()*1000);
+        updatedRecord.created_at = new Date().toISOString();
+        delete updatedRecord.is_synthetic;
+        
+        allRecords.push(updatedRecord);
+        dataHandler.onDataChanged(allRecords);
+
+        result = await window.dataSdk.create(updatedRecord);
+        if (!result.isOk) {
+            allRecords = allRecords.filter(r => r.id !== updatedRecord.id);
+            dataHandler.onDataChanged(allRecords);
+        }
+      } else {
+        result = await window.dataSdk.update(updatedRecord);
+      }
+
+      editBtn.disabled = false;
+      editBtn.innerHTML = '💾 Simpan Pembaruan';
+
+      if (result.isOk) {
+        showToast('Presensi berhasil diperbarui!', 'success');
+        closeEditModal();
+      } else {
+        showToast('Gagal terhubung ke database. Coba lagi.', 'error');
+      }
+    });
+
     // === Admin Logic ===
     function populateClassSelects() {
       const classes = Object.keys(studentsByClass).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
@@ -945,7 +1094,8 @@
         { id: 'bulk-class', defaultText: '-- Kelas --' },
         { id: 'qr-class', defaultText: '-- Kelas --' },
         { id: 'admin-class-select', defaultText: '-- Pilih Kelas --' },
-        { id: 'analysis-filter-class', defaultText: 'Semua Kelas' }
+        { id: 'analysis-filter-class', defaultText: 'Semua Kelas' },
+        { id: 'edit-class-name', defaultText: '-- Kelas --' }
       ];
 
       selects.forEach(selInfo => {
@@ -1184,19 +1334,14 @@
     function updateAbsentAnalysisTable() {
       const container = document.getElementById('analysis-absent-table-body');
       
-      // Ambil tanggal unik di allRecords berdasarkan filter periode yang diset
       const uniqueDates = [...new Set(allRecords.map(r => r.date).filter(dateStr => isDateInRange(dateStr, currentPeriod)))];
-
-      // Jika tidak ada data hari ini dan periode "daily", paksa masukkan hari ini
-      // untuk mendeteksi siapa saja yang belum absen sama sekali
       const todayIso = getLocalISODate();
       if (!uniqueDates.includes(todayIso) && currentPeriod === 'daily') {
          uniqueDates.push(todayIso);
       }
 
-      let combinedAbsents = [];
+      let combinedRecords = [];
 
-      // Mengecek data yang absen/belum absen di setiap tanggal aktif
       uniqueDates.forEach(dateStr => {
          const recordsOnDate = allRecords.filter(r => r.date === dateStr);
          
@@ -1205,30 +1350,35 @@
             students.forEach(student => {
                const record = recordsOnDate.find(r => r.student_name === student);
                if (record) {
-                  if (record.type !== 'hadir') {
-                     // Ada rekaman tidak hadir (izin, sakit, alfa)
-                     combinedAbsents.push({
-                        student_name: student,
-                        class_name: cls,
-                        date: dateStr,
-                        type: record.type
-                     });
-                  }
-               } else {
-                  // Tidak ada record sama sekali -> "belum scan"
-                  combinedAbsents.push({
+                  combinedRecords.push({
+                     id: record.id || record.__backendId,
                      student_name: student,
                      class_name: cls,
                      date: dateStr,
-                     type: 'belum scan'
+                     type: record.type,
+                     created_at: record.created_at,
+                     description: record.description || '',
+                     teacher_name: record.teacher_name || '',
+                     is_synthetic: false
+                  });
+               } else {
+                  combinedRecords.push({
+                     id: null,
+                     student_name: student,
+                     class_name: cls,
+                     date: dateStr,
+                     type: 'alfa',
+                     created_at: null,
+                     description: 'Sistem Deteksi Otomatis (Belum Presensi)',
+                     teacher_name: 'Sistem',
+                     is_synthetic: true
                   });
                }
             });
          });
       });
 
-      // Pengurutan: Tanggal terbaru -> Kelas (ascending) -> Nama A-Z
-      combinedAbsents.sort((a,b) => {
+      combinedRecords.sort((a,b) => {
          const dateDiff = new Date(b.date) - new Date(a.date);
          if (dateDiff !== 0) return dateDiff;
          const clsDiff = a.class_name.localeCompare(b.class_name, undefined, {numeric: true});
@@ -1236,33 +1386,46 @@
          return a.student_name.localeCompare(b.student_name);
       });
 
-      // Menerapkan Filter Kelas dan Tanggal
       const filterClass = document.getElementById('analysis-filter-class') ? document.getElementById('analysis-filter-class').value : '';
       const filterDate = document.getElementById('analysis-filter-date') ? document.getElementById('analysis-filter-date').value : '';
+      const filterStatus = document.getElementById('analysis-filter-status') ? document.getElementById('analysis-filter-status').value : '';
 
-      let finalAbsents = combinedAbsents.filter(r => {
+      let finalRecords = combinedRecords.filter(r => {
          const matchClass = !filterClass || r.class_name === filterClass;
          const matchDate = !filterDate || r.date === filterDate;
-         return matchClass && matchDate;
+         const matchStatus = !filterStatus || r.type === filterStatus;
+         return matchClass && matchDate && matchStatus;
       });
 
-      if (finalAbsents.length === 0) {
-          container.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-500 font-medium">✨ Seluruh siswa hadir penuh pada periode ini atau tidak ada data yang cocok dengan filter.</td></tr>`;
+      if (finalRecords.length === 0) {
+          container.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500 font-medium">✨ Tidak ada data yang cocok dengan filter.</td></tr>`;
           return;
       }
 
-      container.innerHTML = finalAbsents.map(r => `
+      container.innerHTML = finalRecords.map(r => {
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB' : '-';
+          const synName = encodeURIComponent(r.student_name);
+          const synClass = encodeURIComponent(r.class_name);
+          const synDate = encodeURIComponent(r.date);
+          const onClickFn = r.is_synthetic ? `openSyntheticEditModal('${synName}', '${synClass}', '${synDate}')` : `openEditModal('${r.id}')`;
+
+          return `
           <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
               <td class="py-3 px-6 text-sm font-bold text-slate-800">${r.student_name}</td>
               <td class="py-3 px-6 text-sm font-bold text-slate-500">Kelas ${r.class_name}</td>
               <td class="py-3 px-6 text-sm font-medium text-slate-600">${formatDate(r.date)}</td>
+              <td class="py-3 px-6 text-sm font-medium text-slate-600">${timeStr}</td>
               <td class="py-3 px-6">
                  <span class="px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider border ${getTypeBadgeClass(r.type)}">
-                    ${getTypeIcon(r.type)} ${r.type === 'belum scan' ? 'Belum Presensi' : r.type}
+                    ${getTypeIcon(r.type)} ${r.type}
                  </span>
               </td>
+              <td class="py-3 px-6 text-center">
+                 <button onclick="${onClickFn}" class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors touch-target" title="Edit Data">✏️</button>
+              </td>
           </tr>
-      `).join('');
+          `;
+      }).join('');
     }
 
     function updateSummaryStats() {
