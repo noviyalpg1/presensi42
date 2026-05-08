@@ -582,7 +582,7 @@
 
   <script>
     // === App State Variables ===
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxBXrUz-CJP8gVmliG8-1Yg_sybr0z2nQFaeNZtwgri3644rlvqROvH-Ty6W4Ou-JAm/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyKVFQlaJ3EIayaRYgt6ZmuD7b-cTWOjxvQPkt7uiVsZDPbCTpMJJYuWOUuwiAK7ETk3A/exec";
     let allRecords = [];
     let currentPeriod = 'daily';
     let chartClass = null;
@@ -660,19 +660,7 @@
     }
 
     // === Student Data ===
-    const defaultStudentsByClass = {
-      '7.1': ['NIHIL', 'A. Nurul Mutiarah', 'Adelia Difitri', 'Ahmad Maulana Yusuf', 'Atikah Salsabilla', 'Bhayu Shetiawan', 'Devi Eka Safitri', 'Erlangga Dwi Irawan', 'Givan Dwie Abian', 'Ilyas Samsul', 'Inayah Septianah', 'Kenzi Prasetio', 'Laili Dwi Khiar. H', 'M Muiidzan Zaki Sfiyan', 'M. Nabil Nopriyansyah', 'M.Ardiyansa', 'M.Rama Dhanu', 'M.Rizal', 'Muhammad Adam Khoiru', 'Muhammad Fuzi', 'Muhammad Nur Ramadhan', 'Nasyila Maghfirotul Afalla', 'Nova Haryani', 'Putri Rahaf Abdul Naser', 'Rakka Al-Fathir', 'Rizky Novia Azzahra', 'Silva Deswita H', 'Siti Hafidzoh', 'Syafikah Nawwarah', 'Vitalia Charisa Putri', 'Wieni Dwi Anggraeni', 'Yusuf Juriansyah'],
-      '8.1': ['NIHIL', 'ABU HANIFAH AR-RAYHAN', 'AISYARINI RUSWANDI', 'ALBI AL FARIZI', 'AMELLA NUR HUSNAH', 'ANNISA TRI RAHMADANI', 'ANNISAH', 'ARYANA FEBRA SABILA', 'ASYIFA', 'CAHYA NOVITA PUTRI', 'CHANTIO RAFFA MAULANA', 'FATTAN AQILA PRANAJA', 'GELORA FLORRA INESIA', 'LUTHFIYAH AL VARRETA', 'M ALFARAS', 'M SAMAN AL KAMAL', 'M. FHAKRI FHAQI', 'M. NAZZARULLAH FAJAR AKBAR', 'M. Yogi Syah Putra', 'NABILA VITA LIA', 'NAIRA SYIFA WANDIRA', 'NURIZA GUSTIANI PUTRI', 'RAFASHA NICHO ATHMAJA', 'RAYEN PUTRA PERATAMA', 'RIZKY RIDHO SYAPUTRA', 'SAFFA PUTRI AMELIA', 'SEFA LIYANA PURNAMA', 'SITI NUR AENI', 'SITI SARNAH', 'SYAFIK ABIABDILLAH', 'SYHID SEPTIADI', 'TIARA ANGGITA SARI', 'VILA SATIRA'],
-      '7.2': ['NIHIL', 'Adliyan Viki Wijaya', 'Al Faqih', 'Alika Putri', 'Amelia Safitri', 'Aniqah Hanun Azalia', 'Aqila Cinta Ramadhan', 'Aulia Puteri Zulhijjah', 'Candra Maulana Rajata', 'Dewi Widiyah', 'Fadli Muhammad Yusuf', 'Hibnu Targiansyah', 'Iswatul Nur Al-Liyah', 'Lisda Amelia', 'M Aji Saputra', 'M Tora Hidayat', 'M. Rafi', 'M.Arfan Pratama', 'M.Rendi', 'M.Satrio Arifin', 'Muhammad Al Faisal', 'Muhammad Indra Herlangga', 'Muhammad Ridho Wijaya', 'Nazwa Al Mukarromah', 'Nurul Afifah Addini', 'Refi Yana', 'Rizki Harvierdi Pratama', 'Sapirah', 'Shiva Nijwa', 'Siti Kaesa Al Husna', 'Tanisa Oktaviani', 'Windi Lestari', 'Zidane Hatim Al-Habib'],
-      '7.3': ['NIHIL', 'Ahmad Luthfi Zaidan', 'Albi Alkhalifi', 'Alika Safitri', 'Amora Al Adhwa Ananda', 'Arjun Rahman Saputra', 'Cika Juliana', 'Diajeng Ayu Santosa', 'Gibran Ibni Al-Habshi', 'Jassica Kristabel', 'Jihad Abdillah', 'M Alif Julian Syah', 'M. Indra Saputra', 'M. Khoirul', 'M. Rezeque Caesar Khemiz', 'M.Arka Saputra', 'M.Rian Maulana', 'Medina Humaira', 'Muhamad Davi', 'Muhammad Desta Mahardhika', 'Muhammad Khanif', 'Muhammmad Fikri', 'Nazwa Safitri', 'Putri Anisya', 'Restu Ali Diansah', 'Rindi Yani Alika', 'Rizky Pratama Yunus', 'Sevani Nurkholifah', 'Siti Ayu Maulina Anam', 'Siti Hanifah Anggraeini', 'Siti Syakila', 'Tiara Anggraeni', 'Zaskia Rahmadani'],
-      '7.4': ['NIHIL', 'Anisa Febriyanti', 'Arkan Maulana Yusuf', 'Asifa Aulia', 'Azkar Mahvin', 'Cindy Lestari', 'Desta Marchell Pratama', 'Dimas Satrio', 'Feni Yuanita Sari', 'Jihan Sofiyah Azizah', 'Joshua Andrian', 'Kynaya Vitaloka Afriyani', 'M Khoirul Hubay', 'M. Melfiaro Rakyan Firman', 'M.Alfarizy', 'M.Farhan Elkadi', 'M.Ridho Rhomadon', 'Mikayla Ramadhani', 'Muhamad Lutfi', 'Muhammad Faqih', 'Muhammad Nasir', 'Neynah Anjayani', 'Putri Nayra', 'Raditiya Sulaiman', 'Risti Andini', 'Sandi Drajat', 'Sinta Wati', 'Siti Ainurrohmah', 'Siti Cahaya Kamila', 'Siti Zahrah', 'Viky Agustiyan Ramadhani', 'Yoga Saputra', 'Zahra Aqilah Putri'],
-      '8.2': ['NIHIL', 'ALISA KANZA RINA', 'AMELIA AZZAHRA', 'ASHILA SANDRA', 'AULIA', 'DIMAS ADITYA RIZKI', 'EKA SYAPUTRA', 'ERIK HARTAWAN', 'FARDAN ABDILLAH', 'HAFIDZH ALJABAR', 'HOIRUL PRATAMA', 'IKHWAN UBADILAH', 'IRHAM EFFENDI', 'M ARDIAN ILHAM', 'M MARYAN', 'M. JHAFA MAULANA', 'M. RIZKI ALVARO', 'M. VALENTINO', 'M. WILDAN AL-FARIZI', 'M. YUSUF RAMLAN', 'MUHAMAD YAVIS ALGHIFARI', 'MUHAMMAD AFANDY MAULANA', 'MUHAMMAD FADHIL AKNI FEBRIAN', 'MUHAMMAD FARIZ AL-KHATAM', 'MUHAMMAD RIZKI FATUWLOH', 'RAIHAN SAPUTRA', 'RIMBUN AZMA PUTRI SABILA', 'SATRIA ABDURROHIM', 'TRI SUNARYO', 'VIOLA WINDRIA', 'WAWAN SAPUTRA', 'ZHUANDIKA TRI CAHAYADI'],
-      '8.3': ['NIHIL', 'A. MUHAMMAD TAUFIK HIDAYAT', 'ADE IRMA AULIA', 'ADELIA RAMADHANI', 'AHMAD AKBAR', 'AJENG PARAMITA', 'ALVIERO AGRA', 'ALYA FEBRIYANI', 'BAGASKORO SAPUTRA', 'FANDY HEZA HAIKAL', 'FARDEN PERMANA PUTRA', 'ILHAM', 'KARINA', 'KAYLA SYAVANA', 'KHOIRUL NIZAM', 'LAODIA FADHILA AZAHRA', 'M. ALIF SAHAN', 'M. DEFRAN ARIZKI', 'M. FADHIL AL AZZAM', 'M. IRWANSYAH', 'M. MIFTAH FARID', 'M. REPAN', 'M. RIZKI', 'M.ADZAN', 'MUHAMMAD FADLU', 'MUHAMMAD FIKRI MAULANA', 'MUHAMMAD ZAKI AMDIANSYAH', 'NAZWA PUTRI JAMILAH', 'NURISA APRILIA', 'RANDIKA', 'RASTIA PUTRI', 'VANIA DWI TADZKIRA'],
-      '8.4': ['NIHIL', 'ABDULA SIDIK', 'AFIKAH BACHRI', 'AGHIS ZULHAQ MAULANA', 'ALIF NUR ROHMAN', 'ALISYAH PUTRI RAMADHANI', 'AMELIA', 'ARUMI FATMAWATI', 'AZZAHRA DEWI PUTRI', 'CAHAYA PUTRI', 'DIKA RIZKI', 'ELVAISHA SAIFA', 'JUWITA RAHMADANTI', 'KENZO SEBASTIAN RAMADHAN', 'KEYLA ZALIYA', 'KIRANA ANGGRAENI', 'LEVI AMANDA', 'M ABDUL FATTAH', 'M. RANGGA SAPUTRA', 'MAULA MIFTAHUR RISKYA', 'MUHAMAD ARYADHILLA ALISLAMY', 'MUHAMMAD ARDABILLI', 'MUHAMMAD AZHAR GUNAWAN', 'MUHAMMAD KEYZA ALFARIZI', 'NAYSIFA AULIA', 'PUTRI NAISILAH', 'SAHARA AULIA', 'SILVANA AZZARA OKTAVIANI', 'TOMI PUTRA RAMADHAN', 'TRI OKTA WULANDARI', 'VITA LIA', 'ZAFIR FADILLAH AZKA', 'WENDI EKA PUTRA'],
-      '9.1': ['NIHIL', 'ALIF BILALDI AL HABSY', 'ARIEA PUTRI SWASTIKANING NUGROHO', 'BELLA RAMADHANI', 'CITRA IMELDA TIARA SYAHRINI', 'ERICK SUSANTO', 'FITRI AULIA', 'FITRI WULANDARI', 'GIZKA PUTRI APRILIA', 'HALWA RENITA', 'HERLIN DAMARWULAN', 'LELA ADELIA', 'M RYAN SYAFARI NUR', 'M. ARIPKA DUTAMA', 'M. RAMADHAN AL GHAFFAR', 'M.AKBAR RAJABIE', 'MELISA SAFARIAH', 'NATASYA DEWI', 'NOLI AULIA', 'NUR RIZKI KAMILA HS', 'NUR ZAKILAH PADILAH', 'NURAINI', 'NUR\'AINI', 'NURUL AQILA SYARAFAH', 'RISKA PURNAMA SARI', 'ROSDIANA', 'SALSABILLA ARIANA', 'SYAHRANI PUTRI', 'TANIA PUTRI NURYANTO', 'VIKA DAMAYANTI', 'ZAHIRA'],
-      '9.2': ['NIHIL', 'A. ROYANI', 'A.GIBRAN ANAFRI', 'DWIKA APRILIA', 'EDO VERNANDO', 'FATIA DESKANIA PUTRI', 'GALANG ESTRADA PUTRA IRAWAN', 'HANDIKA PRATAMA', 'IBRAHIM WICAKSONO', 'INDRI YANI', 'KHIARA JAUZA ZAHIR', 'M. ALDI SAPUTRA', 'M. ANAS MUQODASH', 'M. BAGUS MAULANA', 'M. NASRUDIN', 'M. RIVALDI SAPUTRA', 'MAULIYA ISMAYANTI', 'MUHAMAD HABIBIE', 'MUHAMMAD FARDAN AL DUSLAN', 'MUHAMMAD HUSEN', 'MUHAMMAD TAUFIQ QURAHMAN', 'NAUFAL FATHAN HIDAYAH', 'NAURA', 'RENGGA DUWI TABRANI', 'REZZA DEWA AGUSTA', 'SADEWA PRATAMA', 'SAFITRA INDRIYANI', 'SUDIRA WIJAYA', 'VIRGINIA AGUSTIN'],
-      '9.3': ['NIHIL', 'AFRIYANSAH', 'AHMAD ALFA IBRAHIM', 'AHMAD ANWAR', 'AHMAD MUFRODI', 'ANDI BAOMA NUANSA', 'ANDRE SETIAWAN PRATAMA', 'BAYYU GHONI', 'BULAN JUHAYIRAH', 'DEDE WILYARDI', 'HAERUL ALDI SAPUTRA', 'ILHAMUSSALIM', 'IRFAN SETIAWAN', 'KHAIRULLAH', 'M. NASRUDIN', 'M. RIFKI MAULANA', 'M.ARKHAN PRATAMA', 'M.FAZRIEL FAHREZY', 'M.SANDI PRATAMA', 'MUHAMAD HABIBI ILHAM', 'MUHAMMAD  AXL DEALOVA', 'MURFID HADI', 'NURUL ASRAFA', 'OMAN SAPUTRA', 'PAJA FAUZAN', 'PARIS PRAKASA', 'PUTRA ARYA PRIANTO', 'RENO ADRIANSYAH', 'REZA MANDALA PUTRA', 'RIFANDI', 'SADEWA PRATAMA', 'YUSUF HIDAYAT']
-    };
+    const defaultStudentsByClass = {};
 
     let studentsByClass = { ...defaultStudentsByClass };
     const savedStudents = localStorage.getItem('studentsByClass');
@@ -680,12 +668,19 @@
       try { studentsByClass = JSON.parse(savedStudents); } catch (e) { console.error(e); }
     }
 
-    function saveStudentsToLocal() { 
+    async function saveStudentsToLocal() { 
       localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass)); 
       
       // Mengirim pembaruan Master Siswa ke Backend GAS secara otomatis
       if (window.dataSdk && window.dataSdk.saveStudents) {
-         window.dataSdk.saveStudents(studentsByClass).catch(e => console.error("Cloud sync error", e));
+         try {
+            const res = await window.dataSdk.saveStudents(studentsByClass);
+            if (!res.isOk) {
+                showToast('Peringatan: Gagal sinkron master siswa ke Cloud', 'error');
+            }
+         } catch(e) {
+            console.error("Cloud sync error", e);
+         }
       }
     }
     
@@ -1604,6 +1599,7 @@
                studentsByClass = data.studentsByClass;
                localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
                populateClassSelects();
+               renderAdminStudentList();
                initDate();
            } else {
                saveStudentsToLocal();
@@ -1637,6 +1633,7 @@
                  studentsByClass = data.studentsByClass;
                  localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass));
                  populateClassSelects();
+                 renderAdminStudentList();
                  initDate();
              } else {
                  saveStudentsToLocal();
