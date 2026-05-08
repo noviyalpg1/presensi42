@@ -582,6 +582,7 @@
 
   <script>
     // === App State Variables ===
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxBXrUz-CJP8gVmliG8-1Yg_sybr0z2nQFaeNZtwgri3644rlvqROvH-Ty6W4Ou-JAm/exec";
     let allRecords = [];
     let currentPeriod = 'daily';
     let chartClass = null;
@@ -679,7 +680,15 @@
       try { studentsByClass = JSON.parse(savedStudents); } catch (e) { console.error(e); }
     }
 
-    function saveStudentsToLocal() { localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass)); }
+    function saveStudentsToLocal() { 
+      localStorage.setItem('studentsByClass', JSON.stringify(studentsByClass)); 
+      
+      // Mengirim pembaruan Master Siswa ke Backend GAS secara otomatis
+      if (window.dataSdk && window.dataSdk.saveStudents) {
+         window.dataSdk.saveStudents(studentsByClass).catch(e => console.error("Cloud sync error", e));
+      }
+    }
+    
     function getTotalStudents() {
       let total = 0;
       for (let cls in studentsByClass) { total += studentsByClass[cls].filter(s => s !== 'NIHIL').length; }
@@ -1582,7 +1591,6 @@
     }
 
     async function refreshData() {
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbx3vbxnrFvFVWDukTOZ5Cyzy4XEiyyO9dQwtuh5KHFwco38mAfhMimkHpnaOVBp0b5P/exec"; 
       const syncBtnText = document.getElementById('sync-btn-text');
       if (syncBtnText) syncBtnText.textContent = 'Menyinkron...';
       
@@ -1618,9 +1626,6 @@
       populateClassSelects(); initDate();
       if(document.getElementById('bulk-date')) document.getElementById('bulk-date').value = getLocalISODate();
 
-      // GAS Backend URL
-      const GAS_URL = "https://script.google.com/macros/s/AKfycbxBXrUz-CJP8gVmliG8-1Yg_sybr0z2nQFaeNZtwgri3644rlvqROvH-Ty6W4Ou-JAm/exec"; 
-
       if (GAS_URL !== "") {
         showToast('Menghubungkan ke Database Cloud...', 'success');
         try {
@@ -1646,7 +1651,8 @@
         window.dataSdk = {
           create: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'create', data: record }) }); return await res.json(); } catch (e) { return { isOk: false }; } },
           update: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'update', data: record }) }); const r = await res.json(); if (r.isOk) { const idx = allRecords.findIndex(x => (x.id || x.__backendId) === (record.id || record.__backendId)); if (idx > -1) allRecords[idx] = record; dataHandler.onDataChanged(allRecords); } return r; } catch (e) { return { isOk: false }; } },
-          delete: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } }) }); const r = await res.json(); if (r.isOk) { allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId)); dataHandler.onDataChanged(allRecords); } return r; } catch (e) { return { isOk: false }; } }
+          delete: async (record) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', data: { id: record.id || record.__backendId } }) }); const r = await res.json(); if (r.isOk) { allRecords = allRecords.filter(x => (x.id || x.__backendId) !== (record.id || record.__backendId)); dataHandler.onDataChanged(allRecords); } return r; } catch (e) { return { isOk: false }; } },
+          saveStudents: async (studentsData) => { try { const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'save_students', data: studentsData }) }); return await res.json(); } catch (e) { return { isOk: false }; } }
         };
       } else {
         if (window.dataSdk) { const result = await window.dataSdk.init(dataHandler); if (!result.isOk) console.error('Failed to initialize data SDK'); }
